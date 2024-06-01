@@ -1,0 +1,144 @@
+Poker Hand #HD1194925800: Hold'em No Limit  ($0.02/$0.05) - 2023/04/08 16:04:58
+Table 'NLHBlue51' 6-max Seat #2 is the button
+Seat 1: Hero ($5 in chips)
+Seat 2: 583a07f3 ($5.18 in chips)
+Seat 4: fd9ce06f ($5.13 in chips)
+Seat 5: 8c786aa6 ($6.22 in chips)
+fd9ce06f: posts small blind $0.02
+8c786aa6: posts big blind $0.05
+*** HOLE CARDS ***
+Dealt to Hero [6d Tc]
+Dealt to 583a07f3 
+Dealt to fd9ce06f 
+Dealt to 8c786aa6 
+Hero: folds
+583a07f3: folds
+fd9ce06f: folds
+Uncalled bet ($0.03) returned to 8c786aa6
+*** SHOWDOWN ***
+8c786aa6 collected $0.04 from pot
+*** SUMMARY ***
+Total pot $0.04 | Rake $0 | Jackpot $0 | Bingo $0 | Fortune $0
+Seat 1: Hero folded before Flop (didn't bet)
+Seat 2: 583a07f3 (button) folded before Flop (didn't bet)
+Seat 4: fd9ce06f (small blind) folded before Flop
+Seat 5: 8c786aa6 (big blind) collected ($0.04)
+
+
+Poker Hand #HD1194925733: Hold'em No Limit  ($0.02/$0.05) - 2023/04/08 16:04:16
+Table 'NLHBlue51' 6-max Seat #1 is the button
+Seat 1: Hero ($5 in chips)
+Seat 2: 583a07f3 ($5.2 in chips)
+Seat 4: fd9ce06f ($5 in chips)
+Seat 5: 8c786aa6 ($6.22 in chips)
+Seat 6: 7be7bfd7 ($9.54 in chips)
+583a07f3: posts small blind $0.02
+fd9ce06f: posts big blind $0.05
+*** HOLE CARDS ***
+Dealt to Hero [Kc 9d]
+Dealt to 583a07f3 
+Dealt to fd9ce06f 
+Dealt to 8c786aa6 
+Dealt to 7be7bfd7 
+8c786aa6: folds
+7be7bfd7: folds
+Hero: raises $0.07 to $0.12
+583a07f3: folds
+fd9ce06f: calls $0.07
+*** FLOP *** [Qc 6h Jh]
+fd9ce06f: bets $0.18
+Hero: folds
+Uncalled bet ($0.18) returned to fd9ce06f
+*** SHOWDOWN ***
+fd9ce06f collected $0.25 from pot
+*** SUMMARY ***
+Total pot $0.26 | Rake $0.01 | Jackpot $0 | Bingo $0 | Fortune $0
+Board [Qc 6h Jh]
+Seat 1: Hero (button) folded on the Flop
+Seat 2: 583a07f3 (small blind) folded before Flop
+Seat 4: fd9ce06f (big blind) won ($0.25)
+Seat 5: 8c786aa6 folded before Flop (didn't bet)
+Seat 6: 7be7bfd7 folded before Flop (didn't bet)
+
+
+Poker Hand #HD1194925642: Hold'em No Limit  ($0.02/$0.05) - 2023/04/08 16:03:20
+Table 'NLHBlue51' 6-max Seat #6 is the button
+Seat 1: Hero ($5 in chips)
+Seat 2: 583a07f3 ($5.25 in chips)
+Seat 3: 28b05242 ($9.97 in chips)
+Seat 4: fd9ce06f ($5 in chips)
+Seat 5: 8c786aa6 ($6.22 in chips)
+Seat 6: 7be7bfd7 ($9.15 in chips)
+Hero: posts small blind $0.02
+583a07f3: posts big blind $0.05
+*** HOLE CARDS ***
+Dealt to Hero [Ac 8h]
+Dealt to 583a07f3 
+Dealt to 28b05242 
+Dealt to fd9ce06f 
+Dealt to 8c786aa6 
+Dealt to 7be7bfd7 
+28b05242: raises $0.05 to $0.1
+fd9ce06f: folds
+8c786aa6: folds
+7be7bfd7: raises $0.26 to $0.36
+Hero: folds
+583a07f3: folds
+28b05242: calls $0.26
+*** FLOP *** [Kc 4d Th]
+28b05242: checks
+7be7bfd7: bets $0.44
+28b05242: folds
+Uncalled bet ($0.44) returned to 7be7bfd7
+*** SHOWDOWN ***
+7be7bfd7 collected $0.75 from pot
+*** SUMMARY ***
+Total pot $0.79 | Rake $0.04 | Jackpot $0 | Bingo $0 | Fortune $0
+Board [Kc 4d Th]
+Seat 1: Hero (small blind) folded before Flop
+Seat 2: 583a07f3 (big blind) folded before Flop
+Seat 3: 28b05242 folded on the Flop
+Seat 4: fd9ce06f folded before Flop (didn't bet)
+Seat 5: 8c786aa6 folded before Flop (didn't bet)
+Seat 6: 7be7bfd7 (button) won ($0.75)
+
+
+Poker Hand #HD1194845560: Hold'em No Limit  ($0.02/$0.05) - 2023/04/08 16:02:34
+Table 'NLHBlue51' 6-max Seat #5 is the button
+Seat 1: Hero ($5 in chips)
+Seat 2: 583a07f3 ($5.25 in chips)
+Seat 3: 28b05242 ($9.31 in chips)
+Seat 4: fd9ce06f ($5.24 in chips)
+Seat 5: 8c786aa6 ($6.54 in chips)
+Seat 6: 7be7bfd7 ($9.17 in chips)
+7be7bfd7: posts small blind $0.02
+Hero: posts big blind $0.05
+*** HOLE CARDS ***
+Dealt to Hero [6h 7d]
+Dealt to 583a07f3 
+Dealt to 28b05242 
+Dealt to fd9ce06f 
+Dealt to 8c786aa6 
+Dealt to 7be7bfd7 
+583a07f3: folds
+28b05242: raises $0.05 to $0.1
+fd9ce06f: raises $0.22 to $0.32
+8c786aa6: calls $0.32
+7be7bfd7: folds
+Hero: folds
+28b05242: raises $0.68 to $1
+fd9ce06f: folds
+8c786aa6: folds
+Uncalled bet ($0.68) returned to 28b05242
+*** SHOWDOWN ***
+28b05242 collected $0.98 from pot
+*** SUMMARY ***
+Total pot $1.03 | Rake $0.05 | Jackpot $0 | Bingo $0 | Fortune $0
+Seat 1: Hero (big blind) folded before Flop
+Seat 2: 583a07f3 folded before Flop (didn't bet)
+Seat 3: 28b05242 collected ($0.98)
+Seat 4: fd9ce06f folded before Flop
+Seat 5: 8c786aa6 (button) folded before Flop
+Seat 6: 7be7bfd7 (small blind) folded before Flop
+
+

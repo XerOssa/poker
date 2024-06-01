@@ -1,0 +1,76 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Game Rules</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div id="rule_box">
+        <h2 class="sub-header">Rule</h2>
+        <div id="game_rule">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Initial Stack</th>
+                            <th>Big Blind</th>
+                            <th>Ante</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ rules.initial_stack }}</td>
+                            <td>{{ rules.small_blind }}</td>
+                            <td>{{ rules.ante }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="player_box">
+        <h2 class="sub-header">Players</h2>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Player Type</th>
+                        <th>Player Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for player in ai_players %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ player.type }}</td>
+                            <td>{{ player.name }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div>
+            <form action="{% url 'waiting_room' %}" method="post" id="registration_form" class="form-inline">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="name">Register Me</label>
+                    <input name="name" id="name" class="form-control" placeholder="Enter your name">
+                </div>
+                <input type="submit" value="Register" class="btn btn-primary">
+                <input type="hidden" name="next" value="{{ request.path }}">
+            </form>
+            <form action="{% url 'start_game' %}" method="post" id="start_game_form">
+                {% csrf_token %}
+                <div class="form-group" style="text-align: center;">
+                    <input type="submit" value="Start Poker" class="btn btn-success">
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

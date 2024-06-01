@@ -1,0 +1,105 @@
+Poker Hand #HD1207130230: Hold'em No Limit  ($0.02/$0.05) - 2023/04/17 21:57:05
+Table 'NLHBlue110' 6-max Seat #4 is the button
+Seat 1: 3d270ccf ($6.25 in chips)
+Seat 4: Hero ($5 in chips)
+Seat 5: fcf11e1c ($4.89 in chips)
+fcf11e1c: posts small blind $0.02
+3d270ccf: posts big blind $0.05
+*** HOLE CARDS ***
+Dealt to 3d270ccf 
+Dealt to Hero [3s 4s]
+Dealt to fcf11e1c 
+Hero: raises $0.07 to $0.12
+fcf11e1c: folds
+3d270ccf: calls $0.07
+*** FLOP *** [2c Qh 2d]
+3d270ccf: checks
+Hero: checks
+*** TURN *** [2c Qh 2d] [8h]
+3d270ccf: checks
+Hero: checks
+*** RIVER *** [2c Qh 2d 8h] [Ks]
+3d270ccf: checks
+Hero: checks
+3d270ccf: shows [Js Td] (Pair of Twos)
+Hero: shows [3s 4s] (Pair of Twos)
+*** SHOWDOWN ***
+3d270ccf collected $0.25 from pot
+*** SUMMARY ***
+Total pot $0.26 | Rake $0.01 | Jackpot $0 | Bingo $0 | Fortune $0
+Board [2c Qh 2d 8h Ks]
+Seat 1: 3d270ccf (big blind) showed [Js Td] and won ($0.25) with Pair of Twos
+Seat 4: Hero (button) showed [3s 4s] and lost with Pair of Twos
+Seat 5: fcf11e1c (small blind) folded before Flop
+
+
+Poker Hand #HD1207130165: Hold'em No Limit  ($0.02/$0.05) - 2023/04/17 21:56:23
+Table 'NLHBlue110' 6-max Seat #3 is the button
+Seat 1: 3d270ccf ($6.25 in chips)
+Seat 3: 429cc3cf ($5.94 in chips)
+Seat 4: Hero ($5 in chips)
+Seat 5: fcf11e1c ($4.76 in chips)
+Hero: posts small blind $0.02
+fcf11e1c: posts big blind $0.05
+*** HOLE CARDS ***
+Dealt to 3d270ccf 
+Dealt to 429cc3cf 
+Dealt to Hero [4d Ad]
+Dealt to fcf11e1c 
+3d270ccf: folds
+429cc3cf: folds
+Hero: raises $0.09 to $0.14
+fcf11e1c: calls $0.09
+*** FLOP *** [6c 9s 8c]
+Hero: checks
+fcf11e1c: checks
+*** TURN *** [6c 9s 8c] [7c]
+Hero: checks
+fcf11e1c: checks
+*** RIVER *** [6c 9s 8c 7c] [Qs]
+Hero: checks
+fcf11e1c: bets $0.1
+Hero: folds
+Uncalled bet ($0.1) returned to fcf11e1c
+*** SHOWDOWN ***
+fcf11e1c collected $0.27 from pot
+*** SUMMARY ***
+Total pot $0.28 | Rake $0.01 | Jackpot $0 | Bingo $0 | Fortune $0
+Board [6c 9s 8c 7c Qs]
+Seat 1: 3d270ccf folded before Flop (didn't bet)
+Seat 3: 429cc3cf (button) folded before Flop (didn't bet)
+Seat 4: Hero (small blind) folded on the River
+Seat 5: fcf11e1c (big blind) won ($0.27)
+
+
+Poker Hand #HD1207130105: Hold'em No Limit  ($0.02/$0.05) - 2023/04/17 21:55:46
+Table 'NLHBlue110' 6-max Seat #1 is the button
+Seat 1: 3d270ccf ($6.25 in chips)
+Seat 3: 429cc3cf ($5.82 in chips)
+Seat 4: Hero ($5 in chips)
+429cc3cf: posts small blind $0.02
+Hero: posts big blind $0.05
+*** HOLE CARDS ***
+Dealt to 3d270ccf 
+Dealt to 429cc3cf 
+Dealt to Hero [3s 3d]
+3d270ccf: folds
+429cc3cf: raises $0.08 to $0.13
+Hero: calls $0.08
+*** FLOP *** [6h Qd 7s]
+429cc3cf: checks
+Hero: checks
+*** TURN *** [6h Qd 7s] [9s]
+429cc3cf: bets $0.2
+Hero: folds
+Uncalled bet ($0.2) returned to 429cc3cf
+*** SHOWDOWN ***
+429cc3cf collected $0.25 from pot
+*** SUMMARY ***
+Total pot $0.26 | Rake $0.01 | Jackpot $0 | Bingo $0 | Fortune $0
+Board [6h Qd 7s 9s]
+Seat 1: 3d270ccf (button) folded before Flop (didn't bet)
+Seat 3: 429cc3cf (small blind) won ($0.25)
+Seat 4: Hero (big blind) folded on the Turn
+
+

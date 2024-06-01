@@ -1,0 +1,57 @@
+<div id="round_state">
+  <div class="text-center">
+    <h3>Round {{ round_state['round_count'] }} ( {{ round_state['street'].upper() }} )</h3></div>
+  <div id="round-state-table" class="img-rounded">
+  <div id="seats-upper" class="row row-center">
+      {% for idx, player in zip(range(len(round_state['seats']))[:int(len(round_state['seats'])/2)], round_state['seats']) %}
+      {% include "player_game_upper.html" %}
+    {% end %}
+    </div>
+    <div id="community_card" class="text-center">
+      {% if len(round_state['community_card']) > 0 %}
+        <h4 class="round-state-table-text"></h4>
+        {% for card in round_state['community_card'] %}
+          <img class="card" src="{{ static_url("images/card_%s.png" % card) }}" >
+        {% end %}
+      {% else %}
+        <!-- Pokaż zakryte karty -->
+        <img class="card" src="{{ static_url("images/card_B1.png") }}" >
+        <img class="card" src="{{ static_url("images/card_B1.png") }}" >
+        <img class="card" src="{{ static_url("images/card_B1.png") }}" >
+      {% end %}
+    </div>
+
+    <div id="pot">
+
+      <div class="text-center">
+        <h4 class="round-state-table-text">Pot</h4>
+      </div>
+
+      <div class="row row-center">
+        <!-- main pot -->
+        <div class="col-xs-3">
+          <div class="text-center">
+            <img src="{{ static_url("images/poker_pot.png") }}" width=30%>
+            <h4 class="round-state-table-text">${{ round_state['pot']['main']['amount'] }}</p>
+          </div>
+        </div>
+        <!-- side pot -->
+        {% for sidepot in round_state['pot']['side'] %}
+          {% if sidepot['amount']!=0 %}
+            <div class="col-xs-2">
+              <div class="text-center">
+                <img src="{{ static_url("images/poker_pot.png") }}" width=30%>
+                <h4 class="round-state-table-text">${{ sidepot['amount'] }}</p>
+              </div>
+            </div>
+          {% end %}
+        {% end %}
+      </div>
+    </div>
+    <div id="seats-lower" class="row row-center">
+      {% for idx, player in zip(range(len(round_state['seats'])-1, int(len(round_state['seats'])/2)-1, -1), round_state['seats'][::-1][:int(len(round_state['seats'])/2)]) %}
+        {% include "player_game_down.html" %}
+      {% end %}
+    </div>
+  </div>
+</div>

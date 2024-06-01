@@ -1,0 +1,24 @@
+
+<div class="col-xs-2 player-{{"active" if player["state"]=="participating" else "folded"}}">
+  <div>
+    {% if round_state["dealer_btn"]==idx %}
+      <span class="label label-warning">D</span>
+    {% end %}
+    {% if round_state["small_blind_pos"]==idx %}
+      <span class="label label-success">SB</span>
+    {% end %}
+    {% if round_state["big_blind_pos"]==idx %}
+      <span class="label label-info">BB</span>
+    {% end %}
+  </div>
+  <i class="material-icons md-48
+  {{"inactive" if player["state"]=="folded" else ""}} 
+  {{"color-human" if player["name"] == "Hero" else "color-ai"}}
+  {{"color-decision" if round_state["next_player"]==idx else ""}}">
+  {{ 'face' if player["name"] == "Hero" else 'android' }}
+  </i>
+  <span class="round-state-table-text player-name">{{player["name"]}}</span></br>
+  <span class="round-state-table-text player-stack">${{player["stack"]}}</span></br>
+</div>
+
+

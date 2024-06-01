@@ -1,0 +1,250 @@
+Poker Hand #HD1203253440: Hold'em No Limit  ($0.02/$0.05) - 2023/04/14 21:37:17
+Table 'NLHBlue105' 6-max Seat #4 is the button
+Seat 1: Hero ($5 in chips)
+Seat 2: e2c599d2 ($5.05 in chips)
+Seat 3: 1fd851e2 ($12.52 in chips)
+Seat 4: 66d00087 ($6.69 in chips)
+Seat 5: c15d6473 ($5.47 in chips)
+Seat 6: 82d0b1e0 ($4.19 in chips)
+c15d6473: posts small blind $0.02
+82d0b1e0: posts big blind $0.05
+*** HOLE CARDS ***
+Dealt to Hero [Kd 2c]
+Dealt to e2c599d2 
+Dealt to 1fd851e2 
+Dealt to 66d00087 
+Dealt to c15d6473 
+Dealt to 82d0b1e0 
+Hero: folds
+e2c599d2: folds
+1fd851e2: raises $0.06 to $0.11
+66d00087: folds
+c15d6473: folds
+82d0b1e0: calls $0.06
+*** FLOP *** [8d 6d 3h]
+82d0b1e0: checks
+1fd851e2: checks
+*** TURN *** [8d 6d 3h] [Ts]
+82d0b1e0: checks
+1fd851e2: bets $0.08
+82d0b1e0: calls $0.08
+*** RIVER *** [8d 6d 3h Ts] [8h]
+82d0b1e0: checks
+1fd851e2: checks
+82d0b1e0: shows [As Qs] (Pair of Eights)
+1fd851e2: shows [6h Qh] (Pair of Eights and Pair of Sixes)
+*** SHOWDOWN ***
+1fd851e2 collected $0.38 from pot
+*** SUMMARY ***
+Total pot $0.4 | Rake $0.02 | Jackpot $0 | Bingo $0 | Fortune $0
+Board [8d 6d 3h Ts 8h]
+Seat 1: Hero folded before Flop (didn't bet)
+Seat 2: e2c599d2 folded before Flop (didn't bet)
+Seat 3: 1fd851e2 showed [6h Qh] and won ($0.38) with Pair of Eights and Pair of Sixes
+Seat 4: 66d00087 (button) folded before Flop (didn't bet)
+Seat 5: c15d6473 (small blind) folded before Flop
+Seat 6: 82d0b1e0 (big blind) showed [As Qs] and lost with Pair of Eights
+
+
+Poker Hand #HD1203253362: Hold'em No Limit  ($0.02/$0.05) - 2023/04/14 21:36:25
+Table 'NLHBlue105' 6-max Seat #3 is the button
+Seat 1: Hero ($5 in chips)
+Seat 2: e2c599d2 ($5.05 in chips)
+Seat 3: 1fd851e2 ($12.86 in chips)
+Seat 4: 66d00087 ($6.71 in chips)
+Seat 5: c15d6473 ($5.14 in chips)
+Seat 6: 82d0b1e0 ($4.19 in chips)
+66d00087: posts small blind $0.02
+c15d6473: posts big blind $0.05
+*** HOLE CARDS ***
+Dealt to Hero [2c Jd]
+Dealt to e2c599d2 
+Dealt to 1fd851e2 
+Dealt to 66d00087 
+Dealt to c15d6473 
+Dealt to 82d0b1e0 
+82d0b1e0: folds
+Hero: folds
+e2c599d2: folds
+1fd851e2: raises $0.08 to $0.13
+66d00087: folds
+c15d6473: calls $0.08
+*** FLOP *** [Qh Kc Qd]
+c15d6473: checks
+1fd851e2: bets $0.21
+c15d6473: calls $0.21
+*** TURN *** [Qh Kc Qd] [4d]
+c15d6473: checks
+1fd851e2: checks
+*** RIVER *** [Qh Kc Qd 4d] [7h]
+c15d6473: bets $0.54
+1fd851e2: folds
+Uncalled bet ($0.54) returned to c15d6473
+*** SHOWDOWN ***
+c15d6473 collected $0.67 from pot
+*** SUMMARY ***
+Total pot $0.7 | Rake $0.03 | Jackpot $0 | Bingo $0 | Fortune $0
+Board [Qh Kc Qd 4d 7h]
+Seat 1: Hero folded before Flop (didn't bet)
+Seat 2: e2c599d2 folded before Flop (didn't bet)
+Seat 3: 1fd851e2 (button) folded on the River
+Seat 4: 66d00087 (small blind) folded before Flop
+Seat 5: c15d6473 (big blind) won ($0.67)
+Seat 6: 82d0b1e0 folded before Flop (didn't bet)
+
+
+Poker Hand #HD1203253338: Hold'em No Limit  ($0.02/$0.05) - 2023/04/14 21:36:12
+Table 'NLHBlue105' 6-max Seat #2 is the button
+Seat 1: Hero ($5 in chips)
+Seat 2: e2c599d2 ($5.05 in chips)
+Seat 3: 1fd851e2 ($12.88 in chips)
+Seat 4: 66d00087 ($6.69 in chips)
+Seat 5: c15d6473 ($5.14 in chips)
+Seat 6: 82d0b1e0 ($4.19 in chips)
+1fd851e2: posts small blind $0.02
+66d00087: posts big blind $0.05
+*** HOLE CARDS ***
+Dealt to Hero [Kd 2h]
+Dealt to e2c599d2 
+Dealt to 1fd851e2 
+Dealt to 66d00087 
+Dealt to c15d6473 
+Dealt to 82d0b1e0 
+c15d6473: folds
+82d0b1e0: folds
+Hero: folds
+e2c599d2: folds
+1fd851e2: folds
+Uncalled bet ($0.03) returned to 66d00087
+*** SHOWDOWN ***
+66d00087 collected $0.04 from pot
+*** SUMMARY ***
+Total pot $0.04 | Rake $0 | Jackpot $0 | Bingo $0 | Fortune $0
+Seat 1: Hero folded before Flop (didn't bet)
+Seat 2: e2c599d2 (button) folded before Flop (didn't bet)
+Seat 3: 1fd851e2 (small blind) folded before Flop
+Seat 4: 66d00087 (big blind) collected ($0.04)
+Seat 5: c15d6473 folded before Flop (didn't bet)
+Seat 6: 82d0b1e0 folded before Flop (didn't bet)
+
+
+Poker Hand #HD1203253309: Hold'em No Limit  ($0.02/$0.05) - 2023/04/14 21:35:57
+Table 'NLHBlue105' 6-max Seat #1 is the button
+Seat 1: Hero ($5 in chips)
+Seat 2: e2c599d2 ($5.07 in chips)
+Seat 3: 1fd851e2 ($12.93 in chips)
+Seat 4: 66d00087 ($6.69 in chips)
+Seat 5: c15d6473 ($5.07 in chips)
+Seat 6: 82d0b1e0 ($4.19 in chips)
+e2c599d2: posts small blind $0.02
+1fd851e2: posts big blind $0.05
+*** HOLE CARDS ***
+Dealt to Hero [8h Th]
+Dealt to e2c599d2 
+Dealt to 1fd851e2 
+Dealt to 66d00087 
+Dealt to c15d6473 
+Dealt to 82d0b1e0 
+66d00087: folds
+c15d6473: raises $0.1 to $0.15
+82d0b1e0: folds
+Hero: folds
+e2c599d2: folds
+1fd851e2: folds
+Uncalled bet ($0.1) returned to c15d6473
+*** SHOWDOWN ***
+c15d6473 collected $0.12 from pot
+*** SUMMARY ***
+Total pot $0.12 | Rake $0 | Jackpot $0 | Bingo $0 | Fortune $0
+Seat 1: Hero (button) folded before Flop (didn't bet)
+Seat 2: e2c599d2 (small blind) folded before Flop
+Seat 3: 1fd851e2 (big blind) folded before Flop
+Seat 4: 66d00087 folded before Flop (didn't bet)
+Seat 5: c15d6473 collected ($0.12)
+Seat 6: 82d0b1e0 folded before Flop (didn't bet)
+
+
+Poker Hand #HD1203253287: Hold'em No Limit  ($0.02/$0.05) - 2023/04/14 21:35:41
+Table 'NLHBlue105' 6-max Seat #6 is the button
+Seat 1: Hero ($5 in chips)
+Seat 2: e2c599d2 ($5.12 in chips)
+Seat 3: 1fd851e2 ($12.93 in chips)
+Seat 4: 66d00087 ($6.69 in chips)
+Seat 5: c15d6473 ($5 in chips)
+Seat 6: 82d0b1e0 ($4.19 in chips)
+Hero: posts small blind $0.02
+e2c599d2: posts big blind $0.05
+*** HOLE CARDS ***
+Dealt to Hero [3d 9h]
+Dealt to e2c599d2 
+Dealt to 1fd851e2 
+Dealt to 66d00087 
+Dealt to c15d6473 
+Dealt to 82d0b1e0 
+1fd851e2: folds
+66d00087: folds
+c15d6473: raises $0.1 to $0.15
+82d0b1e0: folds
+Hero: folds
+e2c599d2: folds
+Uncalled bet ($0.1) returned to c15d6473
+*** SHOWDOWN ***
+c15d6473 collected $0.12 from pot
+*** SUMMARY ***
+Total pot $0.12 | Rake $0 | Jackpot $0 | Bingo $0 | Fortune $0
+Seat 1: Hero (small blind) folded before Flop
+Seat 2: e2c599d2 (big blind) folded before Flop
+Seat 3: 1fd851e2 folded before Flop (didn't bet)
+Seat 4: 66d00087 folded before Flop (didn't bet)
+Seat 5: c15d6473 collected ($0.12)
+Seat 6: 82d0b1e0 (button) folded before Flop (didn't bet)
+
+
+Poker Hand #HD1203253169: Hold'em No Limit  ($0.02/$0.05) - 2023/04/14 21:34:39
+Table 'NLHBlue105' 6-max Seat #5 is the button
+Seat 1: Hero ($5 in chips)
+Seat 2: e2c599d2 ($5.12 in chips)
+Seat 3: 1fd851e2 ($12.03 in chips)
+Seat 4: 66d00087 ($6.69 in chips)
+Seat 5: c15d6473 ($5.33 in chips)
+Seat 6: 82d0b1e0 ($4.21 in chips)
+82d0b1e0: posts small blind $0.02
+Hero: posts big blind $0.05
+*** HOLE CARDS ***
+Dealt to Hero [5d Kd]
+Dealt to e2c599d2 
+Dealt to 1fd851e2 
+Dealt to 66d00087 
+Dealt to c15d6473 
+Dealt to 82d0b1e0 
+e2c599d2: folds
+1fd851e2: raises $0.06 to $0.11
+66d00087: folds
+c15d6473: raises $0.44 to $0.55
+82d0b1e0: folds
+Hero: folds
+1fd851e2: calls $0.44
+*** FLOP *** [5h 4s 3c]
+1fd851e2: checks
+c15d6473: bets $0.42
+1fd851e2: calls $0.42
+*** TURN *** [5h 4s 3c] [2h]
+1fd851e2: checks
+c15d6473: checks
+*** RIVER *** [5h 4s 3c 2h] [Qd]
+1fd851e2: bets $1.01
+c15d6473: folds
+Uncalled bet ($1.01) returned to 1fd851e2
+*** SHOWDOWN ***
+1fd851e2 collected $1.87 from pot
+*** SUMMARY ***
+Total pot $2.01 | Rake $0.09 | Jackpot $0.05 | Bingo $0 | Fortune $0
+Board [5h 4s 3c 2h Qd]
+Seat 1: Hero (big blind) folded before Flop
+Seat 2: e2c599d2 folded before Flop (didn't bet)
+Seat 3: 1fd851e2 won ($1.87)
+Seat 4: 66d00087 folded before Flop (didn't bet)
+Seat 5: c15d6473 (button) folded on the River
+Seat 6: 82d0b1e0 (small blind) folded before Flop
+
+
