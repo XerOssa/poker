@@ -54,11 +54,11 @@ def game_rule_view(request):
 
     # Definiowanie ai_players na początku, aby była dostępna w każdym przypadku
     ai_players = [
-        {'type': 'AI', 'name': '0_fish_player', 'path': 'D:/ROBOTA/python/poker/playground/sample_player/fish_player_setupCHECK.py'},
-        {'type': 'AI', 'name': '1_random_player', 'path': 'D:/ROBOTA/python/poker/playground/sample_player/random_player_setupCHECK.py'},
-        {'type': 'AI', 'name': '2_Tag', 'path': 'D:/ROBOTA/python/poker/playground/sample_player/TagCHECK.py'},
-        {'type': 'AI', 'name': '3_fish', 'path': 'D:/ROBOTA/python/poker/playground/sample_player/fish_player_setupCHECK.py'},
-        {'type': 'AI', 'name': '4_Whale', 'path': 'D:/ROBOTA/python/poker/playground/sample_player/fish_player_setupCHECK.py'}
+        {'type': 'AI', 'name': '0_fish_player', 'path': 'D:/ROBOTA/python/poker/hand_history/sample_player/fish_player_setupCHECK.py'},
+        {'type': 'AI', 'name': '1_random_player', 'path': 'D:/ROBOTA/python/poker/hand_history/sample_player/random_player_setupCHECK.py'},
+        {'type': 'AI', 'name': '2_Tag', 'path': 'D:/ROBOTA/python/poker/hand_history/sample_player/TagCHECK.py'},
+        {'type': 'AI', 'name': '3_fish', 'path': 'D:/ROBOTA/python/poker/hand_history/sample_player/fish_player_setupCHECK.py'},
+        {'type': 'AI', 'name': '4_Whale', 'path': 'D:/ROBOTA/python/poker/hand_history/sample_player/fish_player_setupCHECK.py'}
     ]
 
     if request.method == 'POST':
