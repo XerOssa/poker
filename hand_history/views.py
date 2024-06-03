@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from poker_analysis import process_poker_hand, save_to_csv
 from .models import Player
 import os
+import ast
 from django.conf import settings
 from django import forms
 
@@ -56,6 +57,20 @@ class GameConfigForm(forms.Form):
     small_blind = forms.IntegerField(label='Small Blind', initial=5, widget=forms.TextInput(attrs={'style': 'text-align: center;'}))
     ante = forms.IntegerField(label='Ante', initial=0, widget=forms.TextInput(attrs={'style': 'text-align: center;'}))
 
+
+def read_config(file_path):
+    config_players = []
+    with open(file_path, 'r') as file:
+        for line in file:
+            if line.strip():  # Ignore empty lines
+                player_info = ast.literal_eval("{" + line.strip() + "}")
+                config_players.append({'name': player_info['name'], 'path': player_info['path'], 'type': 'AI'})
+    return config_players
+
+file_path = 'D:/ROBOTA/python/poker/hand_history/config_players.txt'
+config_players = read_config(file_path)
+
+
 def waiting_room_view(request):
     config = {
         'initial_stack': 100,
@@ -65,14 +80,7 @@ def waiting_room_view(request):
 
     config['small_blind'] *= 2
 
-    # Definiowanie ai_players na początku, aby była dostępna w każdym przypadku
-    players = [
-        {'type': 'AI', 'name': 'random_player', 'path': 'D:/ROBOTA/python/poker/hand_history/sample_player/random_player_setupCHECK.py'},
-        {'type': 'AI', 'name': 'Tag', 'path': 'D:/ROBOTA/python/poker/hand_history/sample_player/TagCHECK.py'},
-        {'type': 'AI', 'name': 'fish', 'path': 'D:/ROBOTA/python/poker/hand_history/sample_player/fish_player_setupCHECK.py'},
-        {'type': 'AI', 'name': 'Whale', 'path': 'D:/ROBOTA/python/poker/hand_history/sample_player/fish_player_setupCHECK.py'}
-    ]
-
+    players = []  # Initialize players as a list
     if request.method == 'POST':
         config_form = GameConfigForm(request.POST)
         form = PlayerForm(request.POST)
@@ -80,24 +88,26 @@ def waiting_room_view(request):
             config = config_form.cleaned_data
         if form.is_valid():
             player = form.save()
-            players.append({'type': 'Hero', 'name': player.name})
+            # Recalculate display_id
+            display_id = len(Player.objects.all()) + 1
+            players.append({'id': display_id, 'type': 'Hero', 'name': player.name})
             return redirect('waiting_room')
         else:
-            print("Form is not valid")  # Debugowanie
-            print(form.errors)  # Debugowanie
+            print("Form is not valid")  # Debugging
+            print(form.errors)  # Debugging
     else:
         config_form = GameConfigForm(initial=config)
-        form = PlayerForm()  # Inicjalizacja formularza w przypadku, gdy żądanie nie jest "POST"
+        form = PlayerForm()  # Initialize the form when the request is not "POST"
 
-    # Dodanie graczy z bazy danych do listy ai_players
+    # Add AI players from config_players to the players list
+    for idx, player_info in enumerate(config_players, start=1):
+        players.append({'id': idx, 'type': player_info['type'], 'name': player_info['name'], 'path': player_info['path']})
+
+    # Add players from the database to the players list with sequential display_id
     db_players = Player.objects.all()
-    for player in db_players:
-        players.append({'type': 'Hero', 'name': player.name})
+    for idx, player in enumerate(db_players, start=len(config_players) + 1):
+        players.append({'id': idx, 'type': 'Hero', 'name': player.name})
 
-    # Debugowanie
-    print("Liczba graczy w bazie danych:", db_players.count())
-    for player in db_players:
-        print("Gracz w bazie danych:", player.name, 'Hero')
 
     return render(request, 'waiting_room.html', {
         'rules': config,

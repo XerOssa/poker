@@ -4,9 +4,14 @@ body {
     background-repeat: no-repeat; /* Wyłączenie powtarzania tła */
 }
 .button {
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    width: 200px; /* Szerokość przycisku */
+    height: 50px; /* Wysokość przycisku */
     display: grid;
     padding: 10px 20px;
-    background-color: #0d5097; /* Kolor tła przycisku */
+    background-color: #ac1838; /* Kolor tła przycisku */
     color: #030000; /* Kolor tekstu */
     border: 1px solid #f2f4f5;
     border-radius: 10px;
@@ -14,6 +19,14 @@ body {
     text-decoration: none; /* Usunięcie podkreślenia dla odnośnika */
     max-width: 150px;
     text-align: center;
-    margin-right: 10px;
-    float: right;
+    margin-bottom: 10px;
+}
+
+.button-container {
+    
+    display: flex;
+    flex-direction: column; /* Ustawienie kierunku na kolumnę */
+    align-items: flex-end; /* Wyrównanie przycisków do prawej */
+    margin-top: 200px;
+    margin-right: 160px;
 }
