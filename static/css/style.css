@@ -1,5 +1,21 @@
 /* style.css */
 
+.button {
+  display: grid;
+  padding: 10px 20px;
+  background-color: #0d5097; /* Kolor tła przycisku */
+  color: #030000; /* Kolor tekstu */
+  border: 1px solid #f2f4f5;
+  border-radius: 10px;
+  cursor: pointer;
+  text-decoration: none; /* Usunięcie podkreślenia dla odnośnika */
+  max-width: 150px;
+  text-align: center
+}
+
+
+
+
 /* Ogólne ustawienia dla całej strony */
 body {
   font-family: Arial, sans-serif;
@@ -89,3 +105,9 @@ h2.sub-header {
 .table-bordered thead th, .table-bordered thead td {
   border-bottom-width: 2px;
 }
+
+.center-input {
+  text-align: center;
+  width: 100px; /* Dopasuj szerokość wg potrzeb */
+}
+

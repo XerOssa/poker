@@ -1,0 +1,82 @@
+
+
+
+/* Ustawienia ogólne */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .text-center {
+    text-align: center;
+  }
+  
+  .img-rounded {
+    border-radius: 15px;
+    background-color: #ffffff;
+    padding: 20px;
+    margin: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .row-center {
+    justify-content: center;
+  }
+  
+  .card {
+    width: 60px;
+    height: 100px;
+    margin: 5px;
+  }
+
+  #round-state-table {
+
+    width: 700px;
+    height: 600px;
+    margin: 30px auto;
+    padding: 0; 
+    background-color: #2E7D32;
+    border-radius: 250px;
+  }
+
+  .round-state-table-text {
+    font-size: 1.2em;
+    margin: 10px 0;
+  }
+  
+  #pot img {
+    display: block;
+    margin: 0 auto;
+  }
+  
+  .col-xs-3, .col-xs-2 {
+    flex: 1;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+  
+  /* Stylowanie dla przycisków */
+  .button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 1em;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .button:hover {
+    background-color: #0056b3;
+  }

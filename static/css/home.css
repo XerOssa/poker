@@ -1,5 +1,5 @@
 body {
-    background-image: url('media_root/main.jpg');
+    background-image: url('/static/images/main.jpg');
     background-size: cover; /* Dopasowanie tła do rozmiaru okna przeglądarki */
     background-repeat: no-repeat; /* Wyłączenie powtarzania tła */
 }
@@ -13,4 +13,7 @@ body {
     cursor: pointer;
     text-decoration: none; /* Usunięcie podkreślenia dla odnośnika */
     max-width: 150px;
+    text-align: center;
+    margin-right: 10px;
+    float: right;
 }

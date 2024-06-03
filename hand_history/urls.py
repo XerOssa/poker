@@ -10,12 +10,12 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('charts/', views.charts, name='charts'),
     path('hand_history/', views.handhistory, name='handhistory'),
-    path('waiting_room/', views.game_rule_view, name='waiting_room'),
-    path('register', views.game_rule_view, name='register'),
+    path('waiting_room/', views.waiting_room_view, name='waiting_room'),
+    path('register', views.waiting_room_view, name='register'),
     path('start_game/', views.start_game_view, name='start_game'),
     path('__debug__/', include(debug_toolbar.urls)),
     path('', views.home, name='home'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
 

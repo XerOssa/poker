@@ -1,0 +1,17 @@
+<form action="{% url 'waiting_room' %}" method="post" id="registration_form" class="form-inline">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="name">Register Me</label>
+        <input name="name" id="name" class="form-control" placeholder="Enter your name">
+    </div>
+    <input type="submit" value="Register" class="btn btn-primary">
+    <input type="hidden" name="next" value="{{ request.path }}">
+</form>
+<form action="{% url 'start_game' %}" method="post" id="start_game_form">
+    {% csrf_token %}
+    <div class="form-group" style="text-align: center;">
+        <input type="submit" value="Start Poker" class="btn btn-success">
+        <input type="hidden" name="next" value="{{ request.path }}">
+    </div>
+</form>
+

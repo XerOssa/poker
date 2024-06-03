@@ -5,6 +5,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from poker_analysis import process_poker_hand, save_to_csv
 from .models import Player
+import os
+from django.conf import settings
+from django import forms
 
 def home(request):
     context = {}
@@ -36,14 +39,24 @@ def charts(request):
     plt.ylabel('Suma kumulacyjna win_loss')
     plt.grid(True)
 
-    plot_path = 'static/charts/poker_hand.png'
+    plot_filename = 'poker_hand.png'
+    plot_path = os.path.join(settings.MEDIA_ROOT, plot_filename)
+    # plot_path = os.path.join('media', 'poker_hand.png')
 
     plt.savefig(plot_path)
-    return render(request, 'charts.html', {'plot_path': plot_path})
+    plt.close()
+
+    plot_url = os.path.join(settings.MEDIA_URL, plot_filename)
+    return render(request, 'charts.html', {'plot_url': plot_url})
+    # return render(request, 'charts.html', {'plot_path': plot_path})
 
 
+class GameConfigForm(forms.Form):
+    initial_stack = forms.IntegerField(label='Initial Stack', initial=100, widget=forms.TextInput(attrs={'style': 'text-align: center;'}))
+    small_blind = forms.IntegerField(label='Small Blind', initial=5, widget=forms.TextInput(attrs={'style': 'text-align: center;'}))
+    ante = forms.IntegerField(label='Ante', initial=0, widget=forms.TextInput(attrs={'style': 'text-align: center;'}))
 
-def game_rule_view(request):
+def waiting_room_view(request):
     config = {
         'initial_stack': 100,
         'small_blind': 5,
@@ -53,31 +66,33 @@ def game_rule_view(request):
     config['small_blind'] *= 2
 
     # Definiowanie ai_players na początku, aby była dostępna w każdym przypadku
-    ai_players = [
-        {'type': 'AI', 'name': '0_fish_player', 'path': 'D:/ROBOTA/python/poker/hand_history/sample_player/fish_player_setupCHECK.py'},
-        {'type': 'AI', 'name': '1_random_player', 'path': 'D:/ROBOTA/python/poker/hand_history/sample_player/random_player_setupCHECK.py'},
-        {'type': 'AI', 'name': '2_Tag', 'path': 'D:/ROBOTA/python/poker/hand_history/sample_player/TagCHECK.py'},
-        {'type': 'AI', 'name': '3_fish', 'path': 'D:/ROBOTA/python/poker/hand_history/sample_player/fish_player_setupCHECK.py'},
-        {'type': 'AI', 'name': '4_Whale', 'path': 'D:/ROBOTA/python/poker/hand_history/sample_player/fish_player_setupCHECK.py'}
+    players = [
+        {'type': 'AI', 'name': 'random_player', 'path': 'D:/ROBOTA/python/poker/hand_history/sample_player/random_player_setupCHECK.py'},
+        {'type': 'AI', 'name': 'Tag', 'path': 'D:/ROBOTA/python/poker/hand_history/sample_player/TagCHECK.py'},
+        {'type': 'AI', 'name': 'fish', 'path': 'D:/ROBOTA/python/poker/hand_history/sample_player/fish_player_setupCHECK.py'},
+        {'type': 'AI', 'name': 'Whale', 'path': 'D:/ROBOTA/python/poker/hand_history/sample_player/fish_player_setupCHECK.py'}
     ]
 
     if request.method == 'POST':
+        config_form = GameConfigForm(request.POST)
         form = PlayerForm(request.POST)
+        if config_form.is_valid():
+            config = config_form.cleaned_data
         if form.is_valid():
             player = form.save()
-            # Dodanie nowego gracza do listy ai_players
-            ai_players.append({'type': 'Hero', 'name': player.name})
+            players.append({'type': 'Hero', 'name': player.name})
             return redirect('waiting_room')
         else:
             print("Form is not valid")  # Debugowanie
             print(form.errors)  # Debugowanie
     else:
+        config_form = GameConfigForm(initial=config)
         form = PlayerForm()  # Inicjalizacja formularza w przypadku, gdy żądanie nie jest "POST"
 
     # Dodanie graczy z bazy danych do listy ai_players
     db_players = Player.objects.all()
     for player in db_players:
-        ai_players.append({'type': 'Hero', 'name': player.name})
+        players.append({'type': 'Hero', 'name': player.name})
 
     # Debugowanie
     print("Liczba graczy w bazie danych:", db_players.count())
@@ -87,13 +102,25 @@ def game_rule_view(request):
     return render(request, 'waiting_room.html', {
         'rules': config,
         'form': form,
-        'ai_players': ai_players
+        'players': players,
+        'config_form': config_form,
     })
 
 
-
 def start_game_view(request):
-    if request.method == 'POST':
-        # Obsługa logiki rozpoczęcia gry
-        return HttpResponse("Game started")
-    return redirect('start_game.html')
+    # Pobranie listy graczy z sesji
+    players = request.session.get('players', [])
+
+    return render(request, 'start_game.html', {
+        'players': players,
+        'round_state': {
+            'round_count': 1,
+            'street': 'flop',
+            'seats': players,
+            'community_card': ['AS'],
+            'pot': {
+                'main': {'amount': 500},
+                'side': [{'amount': 200}, {'amount': 300}]
+            }
+        }
+    })
