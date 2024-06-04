@@ -14,9 +14,11 @@
         </div>
         <div id="round-state-table" class="img-rounded">
             <div id="seats-upper" class="row row-center">
-                {% for player in round_state.seats|slice:":{{ round_state.seats|length|divisibleby:2 }}" %}
-                    {% include "player_game_upper.html" %}
-                {% endfor %}
+                {% with half_length=round_state.seats|length // 2 %}
+                    {% for player in round_state.seats|slice:":half_length" %}
+                        {% include "player_game_upper.html" %}
+                    {% endfor %}
+                {% endwith %}
             </div>
             <div id="community_card" class="text-center">
                 {% if round_state.community_card|length > 0 %}
@@ -54,9 +56,11 @@
                 </div>
             </div>
             <div id="seats-lower" class="row row-center">
-                {% for player in round_state.seats|slice:"{{ round_state.seats|length|divisibleby:2 }}:" %}
-                    {% include "player_game_down.html" %}
-                {% endfor %}
+                {% with half_length=round_state.seats|length // 2 %}
+                    {% for player in round_state.seats|slice:"half_length:" %}
+                        {% include "player_game_down.html" %}
+                    {% endfor %}
+                {% endwith %}
             </div>
         </div>
     </div>
