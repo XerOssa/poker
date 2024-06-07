@@ -5,9 +5,10 @@ from poker_analysis import process_poker_hand, save_to_csv
 from .models import Player
 import os
 from django.conf import settings
-import waiting_room_param 
-from forms import PlayerForm
-
+from waiting_room_param import players_list, configurations_table, read_config
+from .forms import PlayerForm, GameConfigForm
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 def home(request):
     context = {}
@@ -53,33 +54,44 @@ def charts(request):
 
 
 def waiting_room_view(request):
-    
-    config = configurations_table
-    config['small_blind'] *= 2
+    config_table = configurations_table({})
+    config_form = GameConfigForm(initial=config_table)
 
-    config_form = GameConfigForm(initial=config)
+    file_path = 'D:/ROBOTA/python/poker/hand_history/config_players.txt'
+    config_players = read_config(file_path)
+    players = players_list(config_players)
 
-    players = players_list
     if request.method == 'POST':
         config_form = GameConfigForm(request.POST)
         form = PlayerForm(request.POST)
         if config_form.is_valid():
-            config = config_form.cleaned_data
+            config_table = config_form.cleaned_data
         if form.is_valid():
             player = form.save()
-            # Recalculate display_id
+            channel_layer = get_channel_layer()
             display_id = len(Player.objects.all()) + 1
             players.append({'id': display_id, 'type': 'Hero', 'name': player.name})
-            return redirect('waiting_room')
+
+            # Zapisz listę graczy w sesji
+            request.session['players'] = players
+            async_to_sync(channel_layer.group_send)(
+                'poker', {
+                    'type': 'register_player',
+                    'message': {
+                        'name': player.name
+                    }
+                }
+            )
+            
+            return redirect('waiting_room')  # Przekierowanie z powrotem do 'waiting_room'
         else:
             print("Form is not valid")  # Debugging
             print(form.errors)  # Debugging
     else:
-        form = PlayerForm() 
-
+        form = PlayerForm()
 
     return render(request, 'waiting_room.html', {
-        'config': config,
+        'config': config_table,
         'form': form,
         'players': players,
         'config_form': config_form,
@@ -87,19 +99,38 @@ def waiting_room_view(request):
 
 
 def start_game_view(request):
-    # Pobranie listy graczy z sesji
     players = request.session.get('players', [])
 
-    return render(request, 'start_game.html', {
-        'players': players,
-        'round_state': {
-            'round_count': 1,
-            'street': 'flop',
-            'seats': players,
-            'community_card': ['AS'],
-            'pot': {
-                'main': {'amount': 500},
-                'side': [{'amount': 200}, {'amount': 300}]
+    round_state = {
+        'round_count': 1,
+        'street': 'flop',
+        'seats': players,
+        'community_card': ['AS'],
+        'pot': {
+            'main': {'amount': 100},
+            'side': [{'amount': 200}, {'amount': 300}]
+        },
+        'next_player': 1,  # index of the next player
+        'dealer_btn': 0,
+        'small_blind_pos': 1,
+        'big_blind_pos': 2
+    }
+    half_length = len(round_state['seats']) // 2
+    upper_seats = round_state['seats'][:half_length]
+    lower_seats = round_state['seats'][half_length:]
+    if request.method == 'POST':
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            'poker', {
+                'type': 'start_game',
+                'message': {}
             }
-        }
+        )
+        return redirect('start_game')
+    return render(request, 'start_game.html', {
+        'round_state': round_state,
+        'upper_seats': upper_seats,
+        'lower_seats': lower_seats,
     })
+
+

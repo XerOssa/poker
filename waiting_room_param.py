@@ -1,11 +1,7 @@
 import ast
 from django import forms
-from models import Player
+from hand_history.models import Player
 
-class GameConfigForm(forms.Form):
-    initial_stack = forms.IntegerField(label='Initial Stack', initial=100, widget=forms.TextInput(attrs={'style': 'text-align: center;'}))
-    small_blind = forms.IntegerField(label='Small Blind', initial=5, widget=forms.TextInput(attrs={'style': 'text-align: center;'}))
-    ante = forms.IntegerField(label='Ante', initial=0, widget=forms.TextInput(attrs={'style': 'text-align: center;'}))
 
 
 def read_config(file_path):
@@ -19,7 +15,7 @@ def read_config(file_path):
 
 
 file_path = 'D:/ROBOTA/python/poker/hand_history/config_players.txt'
-config_players = read_config(file_path)
+
 
 def configurations_table(config_table):
     config_table = {

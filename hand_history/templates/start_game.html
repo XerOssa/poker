@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game Round</title>
     <link rel="stylesheet" href="{% static 'css/game.css' %}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
 </head>
 <body>
     <div id="round_state">
@@ -14,11 +18,9 @@
         </div>
         <div id="round-state-table" class="img-rounded">
             <div id="seats-upper" class="row row-center">
-                {% with half_length=round_state.seats|length // 2 %}
-                    {% for player in round_state.seats|slice:":half_length" %}
-                        {% include "player_game_upper.html" %}
-                    {% endfor %}
-                {% endwith %}
+                {% for player in upper_seats %}
+                    {% include "player_game_upper.html" %}
+                {% endfor %}
             </div>
             <div id="community_card" class="text-center">
                 {% if round_state.community_card|length > 0 %}
@@ -56,11 +58,11 @@
                 </div>
             </div>
             <div id="seats-lower" class="row row-center">
-                {% with half_length=round_state.seats|length // 2 %}
-                    {% for player in round_state.seats|slice:"half_length:" %}
-                        {% include "player_game_down.html" %}
-                    {% endfor %}
-                {% endwith %}
+
+                {% for player in lower_seats %}
+                    {% include "player_game_down.html" %}
+                {% endfor %}
+
             </div>
         </div>
     </div>

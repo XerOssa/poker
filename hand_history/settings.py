@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'hand_history',
     'poker_analysis',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -57,7 +58,14 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'hand_history.wsgi.application'
+ASGI_APPLICATION = 'hand_history.asgi.application'
 
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 
 DATABASES = {
     'default': {

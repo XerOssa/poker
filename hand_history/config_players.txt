@@ -2,4 +2,4 @@
 'name': 'Tag', 'path': 'D:/ROBOTA/python/poker/hand_history/sample_player/TagCHECK.py',
 'name': 'Tag', 'path': 'D:/ROBOTA/python/poker/hand_history/sample_player/TagCHECK.py',
 'name': 'fish', 'path': 'D:/ROBOTA/python/poker/hand_history/sample_player/fish_player_setupCHECK.py',
-'name': 'Whale', 'path': 'D:/ROBOTA/python/poker/hand_history/sample_player/fish_player_setupCHECK.py'
+'name': 'Whale', 'path': 'D:/ROBOTA/python/poker/hand_history/sample_player/fish_player_setupCHECK.py',
