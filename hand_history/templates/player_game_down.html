@@ -1,17 +1,16 @@
+{% load static %}
+
 <div class="col-xs-2 player-{% if player.state == 'participating' %}active{% else %}folded{% endif %}">
     <i class="material-icons md-48
     {% if player.state == 'folded' %}inactive{% endif %}
-    {% if player.name == 'Jacek' %}color-human{% else %}color-ai{% endif %}
+    {% if player.name == 'Jacek' %}color-human {% else %}color-ai{% endif %}
     {% if round_state.next_player == idx %}color-decision{% endif %}">
-    {% if player.name == 'Jacek' %}
-        face
-    {% else %}
-        android
-    {% endif %}
+    {% if player.name == 'Jacek' %}face{% else %}android{% endif %}
     </i>
     <div>
         <span class="round-state-table-text player-name">{{ player.name }}</span></br>
         <span class="round-state-table-text player-stack">${{ player.stack }}</span></br>
+        
         {% if round_state.dealer_btn == idx %}
             <span class="label label-warning">D</span>
         {% endif %}
@@ -22,4 +21,15 @@
             <span class="label label-info">BB</span>
         {% endif %}
     </div>
+    
+
 </div>
+{% if player.name == 'Jacek' %}
+    <div class="player-cards">
+        
+        {% for card in hole_card %}
+            <img class="card" src="{% static 'images/card_' %}{{ card }}.png" >
+        {% endfor %}
+        
+    </div>
+{% endif %}

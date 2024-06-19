@@ -13,6 +13,14 @@ body {
     text-align: center;
   }
   
+  .round {
+    height: 35px;
+    font-size: 2em;
+    text-align: center;
+    padding: 3px;
+    /* margin-top: 10px; */
+  }
+
   .img-rounded {
     border-radius: 15px;
     background-color: #ffffff;
@@ -32,19 +40,23 @@ body {
   }
   
   .card {
-    width: 60px;
+    width: 65px;
     height: 100px;
     margin: 5px;
   }
 
   #round-state-table {
 
-    width: 700px;
-    height: 600px;
-    margin: 30px auto;
+    width: 1000px; /* ustalona szerokość */
+    height: 740px;
+    margin: 0px auto;
     padding: 0; 
     background-color: #2E7D32;
-    border-radius: 250px;
+    border-radius: 310px;
+  }
+  #round-state-table {
+    width: 1000px; /* ustalona szerokość */
+    height: 740px; /* ustalona wysokość */
   }
 
   .round-state-table-text {
@@ -125,10 +137,7 @@ body {
 * For product stuff
 */
 
-.card {
-  width: 15%;
-  padding-top: 10px;
-}
+
 
 .card-small {
   width: 20%
@@ -154,14 +163,7 @@ body {
   padding: 10px;
 }
 
-#round-state-table {
-  width: 700px; /* ustalona szerokość */
-  height: 600px; /* ustalona wysokość */
-  margin-top: 30px;
-  padding: 0; /* Usunięcie paddingu */
-  background-color: #2E7D32;
-  border-radius: 250px;
-}
+
 
 
 .round-state-table-text {
@@ -169,7 +171,8 @@ body {
 }
 
 #seats-lower {
-  margin-top: 80px; /* lub dowolną inną wartość, aby uzyskać pożądane przesunięcie */
+  margin-top: 20px; 
+  margin-left: 90px;/* lub dowolną inną wartość, aby uzyskać pożądane przesunięcie */
 }
 /*
 * For Google Icon Font
@@ -214,3 +217,51 @@ body {
 }
 
 
+#seats-upper {
+  width: 80%; /* or a specific value like 600px */
+  height: 120px; /* or a specific value like 300px */
+  margin: 0 auto; /* Center the element horizontally */
+  padding: 5px; /* Adjust padding as needed */
+  box-sizing: border-box; /* Ensure padding and border are included in the width and height */
+}
+
+#seats-lower {
+  width: 80%; /* or a specific value like 600px */
+  height: 120px; /* or a specific value like 300px */
+  margin: 50; /* Center the element horizontally */
+  padding: 5px; /* Adjust padding as needed */
+  box-sizing: border-box; /* Ensure padding and border are included in the width and height */
+}
+
+.button-action {
+  display: flex;
+  flex-direction: row; /* Ustawienie kierunku na wiersz */
+  justify-content: flex-end; /* Wyrównanie przycisków do prawej */
+  align-items: center; /* Wyrównanie przycisków do środka w pionie */
+  width: 83%; /* Dodanie szerokości 100% dla kontenera */
+}
+.button {
+  justify-content: right;
+  align-items: center;
+  font-size: 17px;
+  width: 120px; /* Szerokość przycisku */
+  height: 50px; /* Wysokość przycisku */
+  display: grid;
+  padding: 10px 20px;
+  background-color: #ac1838; /* Kolor tła przycisku */
+  color: #030000; /* Kolor tekstu */
+  border-radius: 10px;
+  cursor: pointer;
+  text-decoration: none; /* Usunięcie podkreślenia dla odnośnika */
+  max-width: 150px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+
+.player-cards {
+  width: 150px;
+  padding-top: 10px;
+/* Adjust as needed */
+
+}

@@ -1,6 +1,12 @@
+from channels.routing import ProtocolTypeRouter, URLRouter
+from channels.auth import AuthMiddlewareStack
 from django.urls import path
-from . import consumers
+from hand_history import consumers
 
-websocket_urlpatterns = [
-    path('ws/pokersocket/', consumers.PokerConsumer.as_asgi()),
-]
+application = ProtocolTypeRouter({
+    'websocket': AuthMiddlewareStack(
+        URLRouter([
+            path('ws/pokersocket/', consumers.PokerConsumer.as_asgi()),
+        ])
+    ),
+})

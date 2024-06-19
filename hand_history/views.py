@@ -61,6 +61,10 @@ def waiting_room_view(request):
     config_players = read_config(file_path)
     players = players_list(config_players)
 
+    for player in players:
+            if 'stack' not in player:
+                player['stack'] = 100 
+
     if request.method == 'POST':
         config_form = GameConfigForm(request.POST)
         form = PlayerForm(request.POST)
@@ -70,7 +74,12 @@ def waiting_room_view(request):
             player = form.save()
             channel_layer = get_channel_layer()
             display_id = len(Player.objects.all()) + 1
-            players.append({'id': display_id, 'type': 'Hero', 'name': player.name})
+            players.append({
+                'id': display_id,
+                'type': 'Hero',
+                'name': player.name,
+                'stack': player.stack,
+                })
 
             # Zapisz listę graczy w sesji
             request.session['players'] = players
@@ -78,7 +87,8 @@ def waiting_room_view(request):
                 'poker', {
                     'type': 'register_player',
                     'message': {
-                        'name': player.name
+                        'name': player.name,
+                        'stack': player.stack,
                     }
                 }
             )
@@ -100,10 +110,9 @@ def waiting_room_view(request):
 
 def start_game_view(request):
     players = request.session.get('players', [])
-
     round_state = {
         'round_count': 1,
-        'street': 'flop',
+        'street': 'preflop',
         'seats': players,
         'community_card': ['AS'],
         'pot': {
@@ -118,6 +127,7 @@ def start_game_view(request):
     half_length = len(round_state['seats']) // 2
     upper_seats = round_state['seats'][:half_length]
     lower_seats = round_state['seats'][half_length:]
+    hole_card =['2c','2h']
     if request.method == 'POST':
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
@@ -131,6 +141,8 @@ def start_game_view(request):
         'round_state': round_state,
         'upper_seats': upper_seats,
         'lower_seats': lower_seats,
+        'hole_card': hole_card,
     })
+
 
 

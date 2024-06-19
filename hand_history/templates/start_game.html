@@ -12,11 +12,13 @@
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
 </head>
 <body>
+    {% include "WebSocket.html" %}
     <div id="round_state">
-        <div class="text-center">
-            <h3>Round {{ round_state.round_count }} ( {{ round_state.street|upper }} )</h3>
-        </div>
+        
         <div id="round-state-table" class="img-rounded">
+            <div class="round">
+                <h3>Round {{ round_state.round_count }} ( {{ round_state.street|upper }} )</h3>
+            </div>
             <div id="seats-upper" class="row row-center">
                 {% for player in upper_seats %}
                     {% include "player_game_upper.html" %}
@@ -26,6 +28,8 @@
                 {% if round_state.community_card|length > 0 %}
                     <h4 class="round-state-table-text"></h4>
                     {% for card in round_state.community_card %}
+                      <img class="card" src="{% static 'images/card_B1.png' %}" alt="card">
+                      <img class="card" src="{% static 'images/card_B1.png' %}" alt="card">
                       <img class="card" src="{% static 'images/card_B1.png' %}" alt="card">
                       <img class="card" src="{% static 'images/card_B1.png' %}" alt="card">
                       <img class="card" src="{% static 'images/card_B1.png' %}" alt="card">
@@ -62,8 +66,13 @@
                 {% for player in lower_seats %}
                     {% include "player_game_down.html" %}
                 {% endfor %}
-
+                
             </div>
+            
+            <div>
+                {% include "button_action.html" %}   
+            </div>
+            
         </div>
     </div>
 </body>

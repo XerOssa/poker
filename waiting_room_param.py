@@ -34,6 +34,6 @@ def players_list(config_players):
     # Add players from the database to the players list with sequential display_id
     db_players = Player.objects.all()
     for idx, player in enumerate(db_players, start=len(config_players) + 1):
-        players.append({'id': idx, 'type': 'Hero', 'name': player.name})
+        players.append({'id': idx, 'type': 'Hero', 'name': player.name, 'stack': player.stack})
     return players
 

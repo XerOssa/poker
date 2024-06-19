@@ -1,4 +1,4 @@
-<form action="{% url 'waiting_room' %}" method="post" id="registration_form" class="form-inline">
+{% comment %} <form action="{% url 'waiting_room' %}" method="post" id="registration_form" class="form-inline">
     {% csrf_token %}
     <div class="form-group">
         <label for="name">Register Me</label>
@@ -6,12 +6,14 @@
     </div>
     <input type="submit" value="Register" class="btn btn-primary">
     <input type="hidden" name="next" value="{{ request.path }}">
-</form>
-<form action="{% url 'start_game' %}" method="post" id="start_game_form">
-    {% csrf_token %}
-    <div class="form-group" style="text-align: center;">
-        <input type="submit" value="Start Poker" class="btn btn-success">
-        <input type="hidden" name="next" value="{{ request.path }}">
-    </div>
-</form>
+</form> {% endcomment %}
 
+
+<div id="player_registration">
+    <h2 class="sub-header">Player Registration</h2>
+    <form method="post" action="{% url 'waiting_room' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Register Player</button>
+    </form>
+</div>
