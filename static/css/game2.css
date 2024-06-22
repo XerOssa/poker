@@ -1,0 +1,442 @@
+html {
+    height: 100%;
+    font-size: var(--root-font-size);
+    background: #222;
+  }
+  
+  html, body {
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+  }
+  
+  html {
+    box-sizing: border-box;
+  }
+  *, *:before, *:after {
+    box-sizing: inherit;
+  }
+  
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+  
+  .layout {
+    display: flex;
+    flex-direction: column;
+    width: 3840rem;
+    height: 2160rem;
+    border: 10rem solid #f00;
+    background: #aaa;
+  }
+  
+  .top {
+    border: 10rem solid #0f0; 
+    width: 100%;
+    height: 200rem;
+  }
+  
+  .middle {
+    border: 10rem solid #00f; 
+    flex: 1 1 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .bottom {
+    border: 10rem solid #0f0; 
+    width: 100%;
+    height: 265rem;
+  }
+  
+  .bar {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .bar .buttons {
+    height: 100%;
+    display: flex;
+  }
+  
+  .bar .buttons button {
+    height: 100%;
+    font-size: 80rem;
+    text-transform: uppercase;
+  }
+  
+  .action-buttons {
+    width: 2123rem;
+    align-content: stretch;
+  }
+  
+  .action-buttons button {
+    width: 100%;
+  }
+  
+  .table {
+    position: relative;
+    width: 3611rem;
+    height: 1360rem;
+    border: 2px solid #0ff;
+    border-radius: 20%;
+  }
+  
+  .top button {
+    width: 417rem;
+  }
+  
+  .icon {
+    width: 110rem;
+    height: 110rem;
+    border: 1px solid;
+    display: inline-block;
+  }
+  
+  .seat {
+    position: absolute;
+    width: 553rem;
+    
+    border-radius: 10rem;
+    top: -3000rem;
+    left:-3000rem;
+    text-align: center;
+  }
+  
+  .seat .seat-body {
+    height: 190rem;
+    background: rgba(0, 0, 0, .5);
+    padding: 30rem 0;
+  }
+  
+  .seat-body .player-name {
+    color: #fff;
+    font-size: 57rem;
+    white-space: nowrap;
+  }
+  
+  .seat-body .player-bank {
+    color: #fff;
+    font-size: 71rem;
+    white-space: nowrap;
+  }
+  
+  .seat .seat-action {
+    height: 70rem;
+    background: #66be2c;
+    font-size: 57rem;
+    color: #fff;
+  }
+  
+  .seat.s1 {
+    top: 825rem;
+    left: 0rem;
+  }
+  
+  .seat.s2 {
+    top: 325rem;
+    left: 0rem;
+  }
+  
+  .seat.s3 {
+    top: 0rem;
+    left: 714rem;
+  }
+  
+  .seat.s4 {
+    top: 0rem;
+    left: 1534rem;
+  }
+  
+  .seat.s5 {
+    top: 0rem;
+    left: 2346rem;
+  }
+  
+  .tools {
+    position: fixed;
+    font-size: 14px;
+    width: 50%;
+    top: 0;
+    background: rgba(255,255,255,.7);
+    display: flex;
+    flex-direction: column;
+    display: none;
+  }
+
+
+
+
+
+
+  
+
+
+Ustawienia ogólne
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .text-center {
+    text-align: center;
+  }
+  
+  .round {
+    height: 35px;
+    font-size: 2em;
+    text-align: center;
+    padding: 3px;
+    /* margin-top: 10px; */
+  }
+
+  .img-rounded {
+    border-radius: 15px;
+    background-color: #ffffff;
+    padding: 20px;
+    margin: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .row-center {
+    justify-content: center;
+  }
+  
+  .card {
+    width: 65px;
+    height: 100px;
+    margin: 5px;
+  }
+
+  #round-state-table {
+
+    width: 1000px; /* ustalona szerokość */
+    height: 740px;
+    margin: 0px auto;
+    padding: 0; 
+    background-color: #2E7D32;
+    border-radius: 310px;
+  }
+  #round-state-table {
+    width: 1000px; /* ustalona szerokość */
+    height: 740px; /* ustalona wysokość */
+  }
+
+  .round-state-table-text {
+    font-size: 1.2em;
+    margin: 10px 0;
+  }
+  
+  #pot img {
+    display: block;
+    margin: 0 auto;
+  }
+  
+  .col-xs-3, .col-xs-2 {
+    flex: 1;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+  
+  /* Stylowanie dla przycisków */
+  .button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 1em;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .button:hover {
+    background-color: #0056b3;
+  }
+
+
+  /*
+ * Base structure
+ */
+
+/* Move down content because we have a fixed navbar that is 50px tall */
+body {
+  padding-top: 0px;
+  padding-bottom: 50px;
+}
+
+
+/*
+ * Global add-ons
+ */
+
+.sub-header {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+/*
+ * Top navigation
+ * Hide default border to remove 1px line.
+ */
+.navbar-fixed-top {
+  border: 0;
+}
+
+.row-center{
+  text-align:center;
+  letter-spacing:-0.4em;
+  }
+  .row-center > [class*='col-'] {
+  display:inline-block;
+  letter-spacing:0;
+  vertical-align:top;
+  float:none !important;
+}
+
+/*
+* For product stuff
+*/
+
+
+
+.card-small {
+  width: 20%
+}
+
+.pot {
+  width: 10%
+}
+
+.info-box {
+  background-color: #f9f9f9;
+  padding: 10px;       /* margines wewnętrzny */
+  margin-top: 0px;
+  margin-left: 0;
+  width: 40%;
+  max-width: 35%;      /* maksymalna szerokość */
+}
+
+
+
+
+#event_content {
+  padding: 10px;
+}
+
+
+
+
+.round-state-table-text {
+  color: #ffffff;
+}
+
+#seats-lower {
+  margin-top: 20px; 
+  margin-left: 90px;/* lub dowolną inną wartość, aby uzyskać pożądane przesunięcie */
+}
+/*
+* For Google Icon Font
+*/
+
+/* option class for icon size*/
+.material-icons.md-18 { font-size: 18px; }
+.material-icons.md-24 { font-size: 24px; }
+.material-icons.md-36 { font-size: 36px; }
+.material-icons.md-48 { font-size: 48px; }
+
+/* option class for icon color */
+.material-icons.color-ai { color: #E8F5E9; }
+.material-icons.color-ai.inactive { color: #212121; }
+.material-icons.color-ai.dark { color: #43A047; }
+.material-icons.color-ai.dark.inactive { color: #212121; }
+.material-icons.color-human { color: #FAFAFA; }
+.material-icons.color-human.inactive { color: #212121; }
+.material-icons.color-human.dark { color: #757575; }
+.material-icons.color-human.dark.inactive { color: #212121; }
+.material-icons.color-decision { color: #e4e72b; }
+.material-icons.orange600 { color: #FB8C00; }
+ 
+.material-icons.md-dark { color: rgba(0, 0, 0, 1.0); }
+.material-icons.md-dark.md-inactive { color: rgba(0, 0, 0, 0.26); }
+ 
+.material-icons.md-light { color: rgba(255, 255, 255, 1); }
+.material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.3); }
+
+
+.custom-button {
+  background-color: #4CAF50; /* Zielony kolor tła */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+
+#seats-upper {
+  width: 80%; /* or a specific value like 600px */
+  height: 120px; /* or a specific value like 300px */
+  margin: 10px auto 0 auto; /* Center the element horizontally */
+  padding: 10px; /* Adjust padding as needed */
+  box-sizing: border-box; /* Ensure padding and border are included in the width and height */
+}
+
+#seats-lower {
+  width: 80%; /* or a specific value like 600px */
+  height: 120px; /* or a specific value like 300px */
+  margin: 50; /* Center the element horizontally */
+  padding: 5px; /* Adjust padding as needed */
+  box-sizing: border-box; /* Ensure padding and border are included in the width and height */
+}
+
+.button-action {
+  display: flex;
+  flex-direction: row; /* Ustawienie kierunku na wiersz */
+  justify-content: flex-end; /* Wyrównanie przycisków do prawej */
+  align-items: center; /* Wyrównanie przycisków do środka w pionie */
+  width: 83%; /* Dodanie szerokości 100% dla kontenera */
+}
+.button {
+  justify-content: right;
+  align-items: center;
+  font-size: 17px;
+  width: 120px; /* Szerokość przycisku */
+  height: 50px; /* Wysokość przycisku */
+  display: grid;
+  padding: 10px 20px;
+  background-color: #ac1838; /* Kolor tła przycisku */
+  color: #030000; /* Kolor tekstu */
+  border-radius: 10px;
+  cursor: pointer;
+  text-decoration: none; /* Usunięcie podkreślenia dla odnośnika */
+  max-width: 150px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+
+.player-cards {
+  width: 150px;
+  padding-top: 10px;
+/* Adjust as needed */
+
+}

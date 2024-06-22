@@ -1,10 +1,6 @@
-
-
-
-/* Ustawienia ogólne */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
+    background-color: #98ec70;
     margin: 0;
     padding: 0;
   }
@@ -34,11 +30,7 @@ body {
     justify-content: center;
     align-items: center;
   }
-  
-  .row-center {
-    justify-content: center;
-  }
-  
+    
   .card {
     width: 65px;
     height: 100px;
@@ -53,10 +45,6 @@ body {
     padding: 0; 
     background-color: #2E7D32;
     border-radius: 310px;
-  }
-  #round-state-table {
-    width: 1000px; /* ustalona szerokość */
-    height: 740px; /* ustalona wysokość */
   }
 
   .round-state-table-text {
@@ -92,59 +80,52 @@ body {
   .button:hover {
     background-color: #0056b3;
   }
-
-
-  /*
- * Base structure
- */
-
 /* Move down content because we have a fixed navbar that is 50px tall */
 body {
   padding-top: 0px;
   padding-bottom: 50px;
 }
 
-
-/*
- * Global add-ons
- */
-
 .sub-header {
   padding-bottom: 10px;
   border-bottom: 1px solid #eee;
 }
 
-/*
- * Top navigation
- * Hide default border to remove 1px line.
+.community_card {
+  text-align:center;
+  vertical-align:center;
+  line-height: 600px;
+
+}
+/*e default border to pxove 1px line.
  */
 .navbar-fixed-top {
   border: 0;
 }
-
-.row-center{
-  text-align:center;
-  letter-spacing:-0.4em;
-  }
-  .row-center > [class*='col-'] {
-  display:inline-block;
-  letter-spacing:0;
-  vertical-align:top;
-  float:none !important;
-}
-
-/*
-* For product stuff
-*/
-
-
 
 .card-small {
   width: 20%
 }
 
 .pot {
-  width: 10%
+  top: 380px; 
+  left: 850px;
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  text-align: center;
+}
+
+.pot img {
+  width: 100%; /* Ustaw szerokość ikony na pełną szerokość kontenera */
+  height: auto; /* Automatyczna wysokość proporcjonalna do szerokości */
+}
+
+.main_pot {
+  text-align: center;
+  margin-top: 5px; /* Odstęp na górę między ikoną a wartością */
+  font-size: 16px; /* Rozmiar czcionki wartości */
+  color: #fff; /* Kolor tekstu wartości */
 }
 
 .info-box {
@@ -156,27 +137,9 @@ body {
   max-width: 35%;      /* maksymalna szerokość */
 }
 
-
-
-
 #event_content {
   padding: 10px;
 }
-
-
-
-
-.round-state-table-text {
-  color: #ffffff;
-}
-
-#seats-lower {
-  margin-top: 20px; 
-  margin-left: 90px;/* lub dowolną inną wartość, aby uzyskać pożądane przesunięcie */
-}
-/*
-* For Google Icon Font
-*/
 
 /* option class for icon size*/
 .material-icons.md-18 { font-size: 18px; }
@@ -216,23 +179,6 @@ body {
   cursor: pointer;
 }
 
-
-#seats-upper {
-  width: 80%; /* or a specific value like 600px */
-  height: 120px; /* or a specific value like 300px */
-  margin: 0 auto; /* Center the element horizontally */
-  padding: 5px; /* Adjust padding as needed */
-  box-sizing: border-box; /* Ensure padding and border are included in the width and height */
-}
-
-#seats-lower {
-  width: 80%; /* or a specific value like 600px */
-  height: 120px; /* or a specific value like 300px */
-  margin: 50; /* Center the element horizontally */
-  padding: 5px; /* Adjust padding as needed */
-  box-sizing: border-box; /* Ensure padding and border are included in the width and height */
-}
-
 .button-action {
   display: flex;
   flex-direction: row; /* Ustawienie kierunku na wiersz */
@@ -264,4 +210,60 @@ body {
   padding-top: 10px;
 /* Adjust as needed */
 
+}
+
+
+.seat {
+  position: absolute;
+  width: 153px;
+  height: 133px;
+  border-radius: 60px;
+  top: 300px;
+  left: 300px;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  font-size: 18px;
+  line-height: 50px; /* Ustawienie wysokości linii na wysokość siedzenia */
+}
+
+.seat .seat-body {
+  padding: 5px 10px; /* Zmniejszenie wcięcia */
+}
+
+.seat-body .player-name,
+.seat-body .player-bank {
+  color: #ffffff;
+  white-space: nowrap;
+  text-overflow: ellipsis; /* Wyświetlanie elipsy dla nadmiarowego tekstu */
+}
+
+.seat .seat-action {
+  font-size: 1.2em;
+  color: #fff;
+}
+
+.seat.s1 {
+  top: 325px;
+  left: 450px;
+}
+.seat.s2 {
+  top: 70px;
+  left: 650px;
+}
+.seat.s3 {
+  top: 70px;
+  left: 1000px;
+}
+.seat.s4 {
+  top: 325px;
+  left: 1200px;
+}
+.seat.s5 {
+  top: 525px;
+  left: 1000px;
+}
+.seat.s6 {
+  top: 525px;
+  left: 650px;
 }

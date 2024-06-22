@@ -199,3 +199,21 @@ function updateRaiseAmount(value) {
 document.getElementById('raiseAmountRange').addEventListener('input', function() {
   updateRaiseAmount(this.value);
 });
+
+
+
+
+const gameSocket = new WebSocket('ws://' + window.location.host + '/ws/game/');
+
+gameSocket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    if (data.type === 'round_count') {
+        document.getElementById('round_count').innerText = data.round_count;
+    }
+};
+
+function updateRoundCount() {
+    gameSocket.send(JSON.stringify({
+        'type': 'update_round_count'
+    }));
+}

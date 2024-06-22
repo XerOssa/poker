@@ -1,14 +1,16 @@
-from django.shortcuts import render, redirect
-import pandas as pd
 import matplotlib.pyplot as plt
+import os
+import pandas as pd
+from django.shortcuts import render, redirect
 from poker_analysis import process_poker_hand, save_to_csv
 from .models import Player
-import os
+from django.http import JsonResponse
 from django.conf import settings
 from waiting_room_param import players_list, configurations_table, read_config
 from .forms import PlayerForm, GameConfigForm
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
+from hand_history.pypokergui.utils.card_utils import _pick_unused_card
 
 def home(request):
     context = {}
@@ -73,7 +75,7 @@ def waiting_room_view(request):
         if form.is_valid():
             player = form.save()
             channel_layer = get_channel_layer()
-            display_id = len(Player.objects.all()) + 1
+            display_id = len(players) + 1
             players.append({
                 'id': display_id,
                 'type': 'Hero',
@@ -110,24 +112,23 @@ def waiting_room_view(request):
 
 def start_game_view(request):
     players = request.session.get('players', [])
+
     round_state = {
-        'round_count': 1,
-        'street': 'preflop',
         'seats': players,
         'community_card': ['AS'],
         'pot': {
             'main': {'amount': 100},
-            'side': [{'amount': 200}, {'amount': 300}]
+            'side': [{'amount': 200}]
         },
         'next_player': 1,  # index of the next player
         'dealer_btn': 0,
         'small_blind_pos': 1,
         'big_blind_pos': 2
     }
-    half_length = len(round_state['seats']) // 2
-    upper_seats = round_state['seats'][:half_length]
-    lower_seats = round_state['seats'][half_length:]
-    hole_card =['2c','2h']
+    # Create the hole_card variable using _pick_unused_card
+    used_cards = []  # You might need to adjust this based on your game's logic
+    hole_card = _pick_unused_card(card_num=2, used_card=used_cards)
+
     if request.method == 'POST':
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
@@ -137,10 +138,10 @@ def start_game_view(request):
             }
         )
         return redirect('start_game')
+    
     return render(request, 'start_game.html', {
         'round_state': round_state,
-        'upper_seats': upper_seats,
-        'lower_seats': lower_seats,
+        'players': players,
         'hole_card': hole_card,
     })
 

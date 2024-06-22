@@ -23,7 +23,6 @@ INSTALLED_APPS = [
     'hand_history',
     'poker_analysis',
     'channels',
-    
 ]
 
 MIDDLEWARE = [
