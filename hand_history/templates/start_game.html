@@ -3,15 +3,17 @@
 <html lang="en">
 <head>
     {% include "index.html" %}
+    <script src="{% static 'django-browser-reload/reload-listener.js' %}"></script>
 </head>
 <body>
+    {% load django_browser_reload %}
     {% include "WebSocket.html" %}
-    <div id="round_state">
-        <div id="round-state-table" class="img-rounded">
+    <div>
+        <div id="round_state">
+            <div id="round-state-table" class="img-rounded">
             {% for player in players %}
                 <div class="seat s{{ forloop.counter }}">
-                    <p>{{ player.name }}</p>
-                    <p>{{ player.stack }}</p>
+                    {% include "player.html" %}
                 </div>
             {% endfor %}
             <div id="community_card" class="community_card">

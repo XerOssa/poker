@@ -12,17 +12,18 @@ ALLOWED_HOSTS = []
 
 
 INSTALLED_APPS = [
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django_browser_reload',
     'django.contrib.staticfiles',
     'debug_toolbar',
     'hand_history',
     'poker_analysis',
     'channels',
+    'django_browser_reload',
 ]
 
 MIDDLEWARE = [
@@ -46,7 +47,7 @@ INTERNAL_IPS = [
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -111,3 +112,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# print('BASE_DIR=',os.path.join(BASE_DIR))

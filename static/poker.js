@@ -1,6 +1,10 @@
 /*
  *  Register callback functions on buttons.
  */
+const chatSocket = new WebSocket(
+  'ws://' + window.location.host + '/ws/pokersocket/'
+);
+
 $(document).ready(function() {
     if (!window.console) window.console = {};
     if (!window.console.log) window.console.log = function() {};

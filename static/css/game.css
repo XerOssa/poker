@@ -1,14 +1,15 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #98ec70;
-    margin: 0;
-    padding: 0;
-  }
-  
+  font-family: Arial, sans-serif;
+  background-color: #98ec70;
+  margin: 0;
+  padding: 0;
+}
   .text-center {
     text-align: center;
   }
+
   
+
   .round {
     height: 35px;
     font-size: 2em;
@@ -24,21 +25,8 @@ body {
     margin: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   }
-  
-  .row {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-    
-  .card {
-    width: 65px;
-    height: 100px;
-    margin: 5px;
-  }
-
   #round-state-table {
-
+    position: relative;
     width: 1000px; /* ustalona szerokość */
     height: 740px;
     margin: 0px auto;
@@ -47,69 +35,65 @@ body {
     border-radius: 310px;
   }
 
-  .round-state-table-text {
-    font-size: 1.2em;
-    margin: 10px 0;
+    
+
+
+  .player-cards {
+    display: flex; /* Ustawia karty w linii */
+    align-items: center; /* Wyrównuje karty w pionie, jeśli mają różne wysokości */
+    justify-content: flex-start;
+    position: relative; /* Ustawia karty od lewej do prawej */
+    top: -100%;
+    left: 95%;
+  }
+
+  .card {
+    width: 70px;
+    height: 110px;
+    margin: 3px;
+  }
+
+  .player-folded,
+  .player-active {
+    text-align: center;
+    width: 120px; /* ustalona szerokość */
+    height: 120px;
+/* zmiana na flex */
+    flex-direction: column; /* układ kolumnowy */
+ /* wyrównanie w pionie */
+    justify-content: center; /* wyrównanie w poziomie */
+  }
+
+  .player-info {
+    text-align: center;
+    width: 120px; /* ustalona szerokość */
+    height: 60px;
+    display: flex; /* zmiana na flex */
+    flex-direction: column; /* układ kolumnowy */
+    align-items: center; /* wyrównanie w pionie */
+    justify-content: center; /* wyrównanie w poziomie */
   }
   
-  #pot img {
-    display: block;
-    margin: 0 auto;
-  }
-  
-  .col-xs-3, .col-xs-2 {
-    flex: 1;
-    padding: 10px;
-    box-sizing: border-box;
-  }
-  
-  /* Stylowanie dla przycisków */
-  .button {
-    display: inline-block;
-    padding: 10px 20px;
-    font-size: 1em;
-    color: #fff;
-    background-color: #007bff;
-    border: none;
-    border-radius: 5px;
-    text-decoration: none;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .button:hover {
-    background-color: #0056b3;
-  }
-/* Move down content because we have a fixed navbar that is 50px tall */
+
 body {
   padding-top: 0px;
   padding-bottom: 50px;
 }
 
-.sub-header {
-  padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
-}
 
 .community_card {
   text-align:center;
   vertical-align:center;
-  line-height: 600px;
+  line-height: 570px;
 
 }
-/*e default border to pxove 1px line.
- */
-.navbar-fixed-top {
-  border: 0;
-}
 
-.card-small {
-  width: 20%
-}
+
+
 
 .pot {
-  top: 380px; 
-  left: 850px;
+  top: 50%;
+  left: 45%;
   position: absolute;
   width: 100px;
   height: 100px;
@@ -128,18 +112,7 @@ body {
   color: #fff; /* Kolor tekstu wartości */
 }
 
-.info-box {
-  background-color: #f9f9f9;
-  padding: 10px;       /* margines wewnętrzny */
-  margin-top: 0px;
-  margin-left: 0;
-  width: 40%;
-  max-width: 35%;      /* maksymalna szerokość */
-}
 
-#event_content {
-  padding: 10px;
-}
 
 /* option class for icon size*/
 .material-icons.md-18 { font-size: 18px; }
@@ -166,6 +139,79 @@ body {
 .material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.3); }
 
 
+
+.seat {
+  position: absolute;
+  width: 15%;
+  height: 18%;
+  border-radius: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  font-size: 18px;
+}
+
+.seat .seat-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 5px 10px;
+  height: 100%; /* Dodane, aby zajmować całe dostępne miejsce */
+}
+
+.seat-body .player-name,
+.seat-body .player-bank {
+  color: #ffffff;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.seat .seat-action {
+  font-size: 1.2em;
+  color: #fff;
+}
+
+/* Pozycjonowanie miejsc względem kontenera stołu */
+.seat.s1 {
+  top: 78%;
+  left: 30%;
+  transform: translate(-50%, -50%);
+}
+
+.seat.s2 {
+  top: 50%;
+  left: 15%;
+  transform: translate(-50%, -50%);
+}
+
+.seat.s3 {
+  top: 10%;
+  left: 30%;
+  transform: translate(-50%, -50%);
+}
+
+.seat.s4 {
+  top: 10%;
+  left: 69%;
+  transform: translate(-50%, -50%);
+}
+
+.seat.s5 {
+  top: 50%;
+  left: 84%;
+  transform: translate(-50%, -50%);
+}
+
+.seat.s6 {
+  top: 78%;
+  left: 69%;
+  transform: translate(-50%, -50%);
+}
+
 .custom-button {
   background-color: #4CAF50; /* Zielony kolor tła */
   border: none;
@@ -184,7 +230,8 @@ body {
   flex-direction: row; /* Ustawienie kierunku na wiersz */
   justify-content: flex-end; /* Wyrównanie przycisków do prawej */
   align-items: center; /* Wyrównanie przycisków do środka w pionie */
-  width: 83%; /* Dodanie szerokości 100% dla kontenera */
+  width: 83%;
+  line-height: 220px; /* Dodanie szerokości 100% dla kontenera */
 }
 .button {
   justify-content: right;
@@ -205,65 +252,3 @@ body {
 }
 
 
-.player-cards {
-  width: 150px;
-  padding-top: 10px;
-/* Adjust as needed */
-
-}
-
-
-.seat {
-  position: absolute;
-  width: 153px;
-  height: 133px;
-  border-radius: 60px;
-  top: 300px;
-  left: 300px;
-  text-align: center;
-  background-color: rgba(0, 0, 0, 0.5);
-  color: #fff;
-  font-size: 18px;
-  line-height: 50px; /* Ustawienie wysokości linii na wysokość siedzenia */
-}
-
-.seat .seat-body {
-  padding: 5px 10px; /* Zmniejszenie wcięcia */
-}
-
-.seat-body .player-name,
-.seat-body .player-bank {
-  color: #ffffff;
-  white-space: nowrap;
-  text-overflow: ellipsis; /* Wyświetlanie elipsy dla nadmiarowego tekstu */
-}
-
-.seat .seat-action {
-  font-size: 1.2em;
-  color: #fff;
-}
-
-.seat.s1 {
-  top: 325px;
-  left: 450px;
-}
-.seat.s2 {
-  top: 70px;
-  left: 650px;
-}
-.seat.s3 {
-  top: 70px;
-  left: 1000px;
-}
-.seat.s4 {
-  top: 325px;
-  left: 1200px;
-}
-.seat.s5 {
-  top: 525px;
-  left: 1000px;
-}
-.seat.s6 {
-  top: 525px;
-  left: 650px;
-}

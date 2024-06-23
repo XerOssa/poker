@@ -1,4 +1,32 @@
-<tr>
-  <td>{{ player["type"] }}</td>
-  <td>{{ player["name"] }}</td>
-</tr>
+{% load static %}
+<div class="player-{% if player.state == 'participating' %}active{% else %}folded{% endif %}">
+  <i class="material-icons md-48
+  {% if player.state == 'folded' %}inactive{% endif %}
+  {% if player.name == 'Jacek' %}color-human {% else %}color-ai{% endif %}
+  {% if round_state.next_player == idx %}color-decision{% endif %}">
+  {% if player.name == 'Jacek' %}face{% else %}android{% endif %}
+  </i>
+  <div class="player-info">
+      <span>{{ player.name }}</span>
+      <span>${{ player.stack }}</span>
+      {% if round_state.dealer_btn == idx %}
+          <span class="label label-warning">D</span>
+      {% endif %}
+      {% if round_state.small_blind_pos == idx %}
+          <span class="label label-success">SB</span>
+      {% endif %}
+      {% if round_state.big_blind_pos == idx %}
+          <span class="label label-info">BB</span>
+      {% endif %}
+  </div>
+  <div class="player-cards">
+    {% if player.name == 'Jacek' %}
+
+        {% for card in hole_card %}
+            <img class="card" src="{% static 'images/card_' %}{{ card }}.png" >
+        {% endfor %}
+
+    {% endif %}
+  </div>
+</div>
+

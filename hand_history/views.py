@@ -54,7 +54,6 @@ def charts(request):
     # return render(request, 'charts.html', {'plot_path': plot_path})
 
 
-
 def waiting_room_view(request):
     config_table = configurations_table({})
     config_form = GameConfigForm(initial=config_table)
@@ -118,15 +117,14 @@ def start_game_view(request):
         'community_card': ['AS'],
         'pot': {
             'main': {'amount': 100},
-            'side': [{'amount': 200}]
         },
-        'next_player': 1,  # index of the next player
+        'next_player': 1,
         'dealer_btn': 0,
         'small_blind_pos': 1,
         'big_blind_pos': 2
     }
-    # Create the hole_card variable using _pick_unused_card
-    used_cards = []  # You might need to adjust this based on your game's logic
+
+    used_cards = [] 
     hole_card = _pick_unused_card(card_num=2, used_card=used_cards)
 
     if request.method == 'POST':
