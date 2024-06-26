@@ -1,0 +1,45 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static  'css/poker_app.css' %}">
+    <title>Poker Hands</title>
+</head>
+<body>
+  <a href="/" class="button">Powrót do strony głównej</a>
+  <div class="title">
+    <h1>Poker Hands</h1>
+    <table>
+        <thead>
+          <tr>
+            <th>Hand ID</th>
+            <th>Stakes</th>
+            <th>Date</th>
+            <th>Hand</th>
+            <th>Position</th>
+            <th>Line</th>
+            <th>Win/loss</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for hand in poker_hands %}
+          <tr>
+            <td>{{ hand.Hand_ID }}</td>
+            <td>{{ hand.stakes }}</td>
+            <td>{{ hand.date }}</td>
+            <td>{{ hand.my_hand }}</td>
+            <td>{{ hand.position }}</td>
+            <td>{{ hand.line }}</td>
+            <td>{{ hand.win_loss }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+  </div>    
+</body>
+</html>
+
+

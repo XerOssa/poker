@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div class="button-panel">
+  <form action="/a/declare_action" method="post" id="declare_action_form">
+
+  <fieldset class="button-action">
+    <div class="form-check">
+      <label class="form-check-label">
+        <input class="button" name="action" id="r1" value="fold" checked></input>
+      </label>
+    </div>
+    <div class="form-check">
+      <label class="form-check-label">
+        <input class="button" name="action" id="r1" value="check" checked></input>
+      </label>
+    </div>
+    <div class="form-check">
+      <label class="form-check-label">
+        <input  class="button" name="action" id="r1" value="call" checked></input>
+      </label>
+    </div>
+    <div class="form-check">
+      <label class="form-check-label">
+        <input  class="button" name="action" id="r1" value="raise" checked></input>
+      </label>
+    </div>
+    <div class="form-group" style="display: inline-block;">
+      <input type="text" class="form-control" name="amount" id="raiseAmoutInput" placeholder="amount" style="width:70px">
+    </div>
+
+    {% comment %} <button type="submit" class="btn btn-primary">delcare action</button>
+    <input type="hidden" name="next" value="{{ request.path }}"> {% endcomment %}
+  </fieldset>
+</div>
+</form>
+
+</body>
+</html>
+
+
+
+
+

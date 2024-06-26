@@ -1,6 +1,6 @@
 import ast
 from django import forms
-from hand_history.models import Player
+from poker_app.models import Hero
 
 
 
@@ -14,7 +14,7 @@ def read_config(file_path):
     return config_players
 
 
-file_path = 'D:/ROBOTA/python/poker/hand_history/config_players.txt'
+file_path = 'poker_app/config_players.txt'
 
 
 def configurations_table(config_table):
@@ -32,7 +32,7 @@ def players_list(config_players):
         players.append({'idx': idx, 'type': player_info['type'], 'name': player_info['name'], 'path': player_info['path']})
 
     # Add players from the database to the players list with sequential display_id
-    db_players = Player.objects.all()
+    db_players = Hero.objects.all()
     for idx, player in enumerate(db_players, start=len(config_players)):
         players.append({'idx': idx, 'type': 'Hero', 'name': player.name, 'stack': player.stack})
     return players
