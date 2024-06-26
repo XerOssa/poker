@@ -9,9 +9,6 @@
   <div class="player-info">
       <span>{{ player.name }}</span>
       <span>${{ player.stack }}</span>
-      {% if round_state.dealer_btn == idx %}
-          <span class="label label-warning">D</span>
-      {% endif %}
       {% if round_state.small_blind_pos == idx %}
           <span class="label label-success">SB</span>
       {% endif %}
@@ -19,6 +16,11 @@
           <span class="label label-info">BB</span>
       {% endif %}
   </div>
+
+  {% if round_state.dealer_btn == idx %}
+      <span class="label label-default">D</span>
+  {% endif %}
+
   <div class="player-cards">
     {% if player.name == 'Jacek' %}
 

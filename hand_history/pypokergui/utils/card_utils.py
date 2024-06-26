@@ -1,8 +1,8 @@
 import random
 
-from pypokerengine.engine.card import Card
-from pypokerengine.engine.deck import Deck
-from pypokerengine.engine.hand_evaluator import HandEvaluator
+from hand_history.pypokergui.engine.card import Card
+from hand_history.pypokergui.engine.deck import Deck
+from hand_history.pypokergui.engine.hand_evaluator import HandEvaluator
 
 def gen_cards(cards_str):
     return [Card.from_str(s) for s in cards_str]

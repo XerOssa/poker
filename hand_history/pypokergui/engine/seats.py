@@ -1,5 +1,5 @@
-from pypokerengine.engine.pay_info import PayInfo
-from pypokerengine.engine.player import Player
+from hand_history.pypokergui.engine.pay_info import PayInfo
+from hand_history.pypokergui.engine.player import Player
 import random
 
 
@@ -8,9 +8,6 @@ class Seats:
   def __init__(self):
     self.players = []
 
-  # def sitdown(self, player):
-  #   self.players.append(player)
-  #   random.shuffle(self.players)
   def sitdown(self, player):
     self.players.append(player)
     random.shuffle(self.players)

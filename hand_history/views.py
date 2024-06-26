@@ -11,6 +11,11 @@ from .forms import PlayerForm, GameConfigForm
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from hand_history.pypokergui.utils.card_utils import _pick_unused_card
+from hand_history.pypokergui.engine.table import Table
+import hand_history.pypokergui.server.game_manager as GM
+
+
+
 
 def home(request):
     context = {}
@@ -63,9 +68,8 @@ def waiting_room_view(request):
     players = players_list(config_players)
 
     for player in players:
-            if 'stack' not in player:
-                player['stack'] = 100 
-
+        if 'stack' not in player:
+            player['stack'] = 100 
     if request.method == 'POST':
         config_form = GameConfigForm(request.POST)
         form = PlayerForm(request.POST)
@@ -74,12 +78,19 @@ def waiting_room_view(request):
         if form.is_valid():
             player = form.save()
             channel_layer = get_channel_layer()
-            display_id = len(players) + 1
+            display_id = len(players)
+            for player in players:
+                if 'path' not in player:
+                    player['path'] = 'default/path/for/ai'  # Ustawienie domyślnej ścieżki dla gracza AI
+                global_game_manager = GM.GameManager()
+                global_game_manager.join_ai_player(player['name'], player['path'])
+            print('players pypokergui:', players)
+
             players.append({
-                'id': display_id,
+                'idx': display_id,
                 'type': 'Hero',
-                'name': player.name,
-                'stack': player.stack,
+                'name': player['name'],  # Access 'name' using dictionary key
+                'stack': player['stack'],
                 })
 
             # Zapisz listę graczy w sesji
@@ -88,8 +99,8 @@ def waiting_room_view(request):
                 'poker', {
                     'type': 'register_player',
                     'message': {
-                        'name': player.name,
-                        'stack': player.stack,
+                        'name': player['name'],  # Access 'name' using dictionary key
+                        'stack': player['stack'],
                     }
                 }
             )
@@ -109,8 +120,18 @@ def waiting_room_view(request):
     })
 
 
+
+
+
 def start_game_view(request):
+    
     players = request.session.get('players', [])
+
+    table = Table()
+    print(table.__dict__)
+    print(f"Before shift_dealer_btn(): {table.dealer_btn}")
+    table.shift_dealer_btn()
+    print(f"After shift_dealer_btn(): {table.dealer_btn}")
 
     round_state = {
         'seats': players,
@@ -119,7 +140,7 @@ def start_game_view(request):
             'main': {'amount': 100},
         },
         'next_player': 1,
-        'dealer_btn': 0,
+        'dealer_btn': table.dealer_btn,
         'small_blind_pos': 1,
         'big_blind_pos': 2
     }
@@ -142,6 +163,7 @@ def start_game_view(request):
         'players': players,
         'hole_card': hole_card,
     })
+
 
 
 

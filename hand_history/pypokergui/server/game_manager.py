@@ -1,5 +1,5 @@
-import pypokergui.engine_wrapper as Engine
-import pypokergui.ai_generator as AG
+import hand_history.pypokergui.engine_wrapper as Engine
+import hand_history.pypokergui.ai_generator as AG
 
 class GameManager(object):
 
@@ -12,12 +12,12 @@ class GameManager(object):
         self.latest_messages = []
         self.next_player_uuid = None
 
-    def define_rule(self, max_round, initial_stack, small_blind, ante, blind_structure):
-        self.rule = Engine.gen_game_config(max_round, initial_stack, small_blind, ante, blind_structure)
+    # def define_rule(self, max_round, initial_stack, small_blind, ante, blind_structure):
+    #     self.rule = Engine.gen_game_config(max_round, initial_stack, small_blind, ante, blind_structure)
 
-    def join_ai_player(self, name, setup_script_path):
+    def join_ai_player(self, name, setup_script_path):                              # 1 AI
         ai_uuid = str(len(self.members_info))
-        self.members_info.append(gen_ai_player_info(name, ai_uuid, setup_script_path))
+        self.members_info.append(gen_ai_player_info(name, ai_uuid, setup_script_path)) 
 
 
     def join_human_player(self, name, uuid):                                        # 1 human
@@ -91,8 +91,8 @@ def _build_ai_player(setup_script_path):
     setup_method = AG._import_setup_method(setup_script_path)
     return setup_method()
 
-def gen_ai_player_info(name, uuid, setup_script_path):
-    info = _gen_base_player_info("ai", name, uuid)
+def gen_ai_player_info(name, uuid, setup_script_path):                  # 2 AI
+    info = _gen_base_player_info("ai", name, uuid)                       # 4 AI
     info["setup_script_path"] = setup_script_path
     return info
 
@@ -101,7 +101,7 @@ def gen_human_player_info(name, uuid):                                  # 2 huma
 
 def _gen_base_player_info(player_type, name, uuid):
     return {
-            "type": player_type,                                        # 3 human
+            "type": player_type,                                        # 3 human i AI
             "name": name,
             "uuid": uuid
             }

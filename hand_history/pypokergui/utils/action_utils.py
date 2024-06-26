@@ -1,4 +1,4 @@
-from pypokerengine.engine.action_checker import ActionChecker
+from hand_history.pypokergui.engine.action_checker import ActionChecker
 
 ACTION_CALL = "call"
 ACTION_FOLD = "fold"

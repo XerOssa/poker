@@ -1,5 +1,5 @@
-from pypokerengine.engine.dealer import Dealer
-from pypokerengine.players import BasePokerPlayer
+from hand_history.pypokergui.engine.dealer import Dealer
+from hand_history.pypokergui.players import BasePokerPlayer
 
 def setup_config(max_round, initial_stack, small_blind_amount, ante=0):
     return Config(max_round, initial_stack, small_blind_amount, ante)

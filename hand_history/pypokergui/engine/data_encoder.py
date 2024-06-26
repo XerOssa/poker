@@ -1,9 +1,9 @@
 from functools import reduce
 
-from pypokerengine.engine.pay_info import PayInfo
-from pypokerengine.engine.poker_constants import PokerConstants as Const
-from pypokerengine.engine.game_evaluator import GameEvaluator
-from pypokerengine.engine.action_checker import ActionChecker
+from hand_history.pypokergui.engine.pay_info import PayInfo
+from hand_history.pypokergui.engine.poker_constants import PokerConstants as Const
+from hand_history.pypokergui.engine.game_evaluator import GameEvaluator
+from hand_history.pypokergui.engine.action_checker import ActionChecker
 
 class DataEncoder:
 

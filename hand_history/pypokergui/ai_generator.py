@@ -2,11 +2,11 @@ import os
 import sys
 import importlib
 
-from pypokerengine.players import BasePokerPlayer
+from hand_history.pypokergui.players import BasePokerPlayer
 
 """Assert passed script satisfies requirements for PyPokerGUI
     ai-generator script must implement "setup_ai()" method which
-    returns child instance of pypokerengine.players.BasePokerPlayer.
+    returns child instance of hand_history.pypokergui.players.BasePokerPlayer.
 """
 def healthcheck(script_path, quiet=False):
     status = True

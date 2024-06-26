@@ -1,12 +1,12 @@
 from functools import reduce
 
-from pypokerengine.engine.table import Table
-from pypokerengine.engine.player import Player
-from pypokerengine.engine.pay_info import PayInfo
-from pypokerengine.engine.poker_constants import PokerConstants as Const
-from pypokerengine.engine.action_checker import ActionChecker
-from pypokerengine.engine.game_evaluator import GameEvaluator
-from pypokerengine.engine.message_builder import MessageBuilder
+from hand_history.pypokergui.engine.table import Table
+from hand_history.pypokergui.engine.player import Player
+from hand_history.pypokergui.engine.pay_info import PayInfo
+from hand_history.pypokergui.engine.poker_constants import PokerConstants as Const
+from hand_history.pypokergui.engine.action_checker import ActionChecker
+from hand_history.pypokergui.engine.game_evaluator import GameEvaluator
+from hand_history.pypokergui.engine.message_builder import MessageBuilder
 
 class RoundManager:
 

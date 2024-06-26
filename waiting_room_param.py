@@ -28,12 +28,12 @@ def configurations_table(config_table):
 
 def players_list(config_players):
     players = []
-    for idx, player_info in enumerate(config_players, start=1):
-        players.append({'id': idx, 'type': player_info['type'], 'name': player_info['name'], 'path': player_info['path']})
+    for idx, player_info in enumerate(config_players, start=0):
+        players.append({'idx': idx, 'type': player_info['type'], 'name': player_info['name'], 'path': player_info['path']})
 
     # Add players from the database to the players list with sequential display_id
     db_players = Player.objects.all()
-    for idx, player in enumerate(db_players, start=len(config_players) + 1):
-        players.append({'id': idx, 'type': 'Hero', 'name': player.name, 'stack': player.stack})
+    for idx, player in enumerate(db_players, start=len(config_players)):
+        players.append({'idx': idx, 'type': 'Hero', 'name': player.name, 'stack': player.stack})
     return players
 

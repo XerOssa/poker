@@ -9,8 +9,8 @@ sys.path.append(src)
 
 import webbrowser
 
-from pypokergui.server.poker import start_server
-from pypokergui.config_builder import build_config
+from hand_history.pypokergui.server.poker import start_server
+from hand_history.pypokergui.config_builder import build_config
 
 
 def serve_command(config: str = "poker_conf.yaml", port: int = 8000, speed: str = "moderate"):

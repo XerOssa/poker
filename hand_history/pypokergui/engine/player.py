@@ -1,7 +1,7 @@
 from re import S
-from pypokerengine.engine.pay_info import PayInfo
-from pypokerengine.engine.card import Card
-from pypokerengine.engine.poker_constants import PokerConstants as Const
+from hand_history.pypokergui.engine.pay_info import PayInfo
+from hand_history.pypokergui.engine.card import Card
+from hand_history.pypokergui.engine.poker_constants import PokerConstants as Const
 
 
 class Player:
@@ -44,6 +44,7 @@ class Player:
     self.stack -= amount
 
   def is_active(self):
+    print(f"Checking if player {self.uuid} is active: Status = {self.pay_info.status}, Stack = {self.stack}")
     return self.pay_info.status != PayInfo.FOLDED
 
   def is_waiting_ask(self):

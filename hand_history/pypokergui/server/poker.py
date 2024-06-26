@@ -14,10 +14,10 @@ import tornado.web
 import tornado.websocket
 from tornado.options import define, options
 
-import pypokerengine.utils.action_utils as AU
+import hand_history.pypokergui.utils.action_utils as AU
 
-import pypokergui.server.game_manager as GM
-import pypokergui.server.message_manager as MM
+import hand_history.pypokergui.server.game_manager as GM
+import hand_history.pypokergui.server.message_manager as MM
 
 define("port", default='8888', help="run on the given port", type=int)
 define("config", default=None, help="path to game config", type=str)

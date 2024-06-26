@@ -1,11 +1,11 @@
 import random
 from collections import OrderedDict
 
-from pypokerengine.engine.poker_constants import PokerConstants as Const
-from pypokerengine.engine.table import Table
-from pypokerengine.engine.player import Player
-from pypokerengine.engine.round_manager import RoundManager
-from pypokerengine.engine.message_builder import MessageBuilder
+from hand_history.pypokergui.engine.poker_constants import PokerConstants as Const
+from hand_history.pypokergui.engine.table import Table
+from hand_history.pypokergui.engine.player import Player
+from hand_history.pypokergui.engine.round_manager import RoundManager
+from hand_history.pypokergui.engine.message_builder import MessageBuilder
 
 class Dealer:
 

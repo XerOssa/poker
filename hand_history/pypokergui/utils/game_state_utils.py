@@ -1,13 +1,13 @@
 from functools import reduce
 
-from pypokerengine.engine.table import Table
-from pypokerengine.engine.seats import Seats
-from pypokerengine.engine.card import Card
-from pypokerengine.engine.deck import Deck
-from pypokerengine.engine.player import Player
-from pypokerengine.engine.pay_info import PayInfo
-from pypokerengine.engine.data_encoder import DataEncoder
-from pypokerengine.engine.poker_constants import PokerConstants as Const
+from hand_history.pypokergui.engine.table import Table
+from hand_history.pypokergui.engine.seats import Seats
+from hand_history.pypokergui.engine.card import Card
+from hand_history.pypokergui.engine.deck import Deck
+from hand_history.pypokergui.engine.player import Player
+from hand_history.pypokergui.engine.pay_info import PayInfo
+from hand_history.pypokergui.engine.data_encoder import DataEncoder
+from hand_history.pypokergui.engine.poker_constants import PokerConstants as Const
 
 def restore_game_state(round_state):
     return {

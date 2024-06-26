@@ -1,16 +1,16 @@
-from pypokerengine.engine.table import Table
-from pypokerengine.engine.seats import Seats
-from pypokerengine.engine.card import Card
-from pypokerengine.engine.deck import Deck
-from pypokerengine.engine.player import Player
-from pypokerengine.engine.pay_info import PayInfo
-from pypokerengine.engine.data_encoder import DataEncoder
-from pypokerengine.engine.poker_constants import PokerConstants as Const
-from pypokerengine.engine.round_manager import RoundManager
-from pypokerengine.engine.action_checker import ActionChecker
-from pypokerengine.engine.message_builder import MessageBuilder
-from pypokerengine.players import BasePokerPlayer
-from pypokerengine.utils.game_state_utils import deepcopy_game_state
+from hand_history.pypokergui.engine.table import Table
+from hand_history.pypokergui.engine.seats import Seats
+from hand_history.pypokergui.engine.card import Card
+from hand_history.pypokergui.engine.deck import Deck
+from hand_history.pypokergui.engine.player import Player
+from hand_history.pypokergui.engine.pay_info import PayInfo
+from hand_history.pypokergui.engine.data_encoder import DataEncoder
+from hand_history.pypokergui.engine.poker_constants import PokerConstants as Const
+from hand_history.pypokergui.engine.round_manager import RoundManager
+from hand_history.pypokergui.engine.action_checker import ActionChecker
+from hand_history.pypokergui.engine.message_builder import MessageBuilder
+from hand_history.pypokergui.players import BasePokerPlayer
+from hand_history.pypokergui.utils.game_state_utils import deepcopy_game_state
 
 class Emulator(object):
 
