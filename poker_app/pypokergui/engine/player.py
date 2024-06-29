@@ -22,6 +22,7 @@ class Player:
     self.round_action_histories = self.__init_round_action_histories()
     self.action_histories = []
     self.pay_info = PayInfo()
+    self.pay_info.status = PayInfo.PAY_TILL_END
 
   def add_holecard(self, cards):
     if len(self.hole_card) != 0:
@@ -45,7 +46,7 @@ class Player:
 
   def is_active(self):
     print(f"Checking if player {self.uuid} is active: Status = {self.pay_info.status}, Stack = {self.stack}")
-    return self.pay_info.status != PayInfo.FOLDED
+    return self.pay_info.status != PayInfo.FOLDED and self.stack > 0
 
   def is_waiting_ask(self):
     return self.pay_info.status == PayInfo.PAY_TILL_END

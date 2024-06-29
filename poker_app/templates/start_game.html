@@ -12,6 +12,9 @@
         <div id="round_state">
             <div id="round-state-table" class="img-rounded">
             {% for player in players %}
+                {% if player.idx == round_state.dealer_btn %}
+                    <span class="label-default dealer-position-{{5}}">D</span>
+                {% endif %}
                 <div class="seat s{{ forloop.counter }}">
                     {% include "player.html" %}
                 </div>

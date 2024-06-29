@@ -13,7 +13,8 @@ from asgiref.sync import async_to_sync
 from poker_app.pypokergui.utils.card_utils import _pick_unused_card
 from poker_app.pypokergui.engine.table import Table
 import poker_app.pypokergui.server.game_manager as GM
-
+from poker_app.pypokergui.engine_wrapper import EngineWrapper
+from uuid import uuid4
 
 
 
@@ -60,6 +61,7 @@ def charts(request):
 
 
 def waiting_room_view(request):
+    # Load configurations
     config_table = configurations_table({})
     config_form = GameConfigForm(initial=config_table)
 
@@ -67,49 +69,52 @@ def waiting_room_view(request):
     config_players = read_config(file_path)
     players = players_list(config_players)
 
+    # Set default stack if not present
     for player in players:
         if 'stack' not in player:
-            player['stack'] = 100 
+            player['stack'] = 100
+
     if request.method == 'POST':
         config_form = GameConfigForm(request.POST)
         form = HeroForm(request.POST)
         if config_form.is_valid():
             config_table = config_form.cleaned_data
-        if form.is_valid():
-            hero = form.save()
-            channel_layer = get_channel_layer()
-            display_id = len(players)
-            for player in players:
-                if 'path' not in player:
-                    player['path'] = 'config_players.txt'  # Ustawienie domyślnej ścieżki dla gracza AI
-                global_game_manager = GM.GameManager()
-                global_game_manager.join_ai_player(player['name'], player['path'])
-            print('players pypokergui:', players)
 
+        if form.is_valid():
+            hero = form.save(commit=False)
+            hero.stack = 100  # Set default stack or use form data if available
+            hero.save()
+
+            hero_name = hero.name
+            display_id = len(players)
+
+            # Append hero to players list
             players.append({
                 'idx': display_id,
                 'type': 'Hero',
-                'name': player['name'],  # Access 'name' using dictionary key
-                'stack': player['stack'],
-                })
-            
-            global_game_manager.join_human_player(player['name'],str(display_id))
-            # Zapisz listę graczy w sesji
+                'name': hero.name,
+                'stack': hero.stack,
+            })
+
+            # Save players list to session
             request.session['players'] = players
+
+            # Send message to channel layer
+            channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
                 'poker', {
                     'type': 'register_player',
                     'message': {
-                        'name': player['name'],  # Access 'name' using dictionary key
-                        'stack': player['stack'],
+                        'name': hero.name,
+                        'stack': hero.stack,
                     }
                 }
             )
-            
-            return redirect('waiting_room')  # Przekierowanie z powrotem do 'waiting_room'
+
+            return redirect('waiting_room')
         else:
-            print("Form is not valid")  # Debugging
-            print(form.errors)  # Debugging
+            print("Form is not valid")
+            print(form.errors)
     else:
         form = HeroForm()
 
@@ -125,15 +130,32 @@ def waiting_room_view(request):
 
 
 def start_game_view(request):
-    
     players = request.session.get('players', [])
+    for player in players:
+        if 'uuid' not in player:
+            player['uuid'] = str(uuid4())
+        if 'state' not in player:
+            player['state'] = 'participating'
+            
+    players_info = {player['uuid']: player['name'] for player in players}
+
+    # Konfiguracja gry (ustawienia przykładowe, dostosuj według potrzeb)
+    game_config = {
+        'ante': 0,
+        'blind_structure': {
+            1: {'small_blind': 10, 'big_blind': 20, 'ante': 0},
+            2: {'small_blind': 15, 'big_blind': 30, 'ante': 0},
+            },
+        'max_round': 100,
+        'initial_stack': 1000,
+        
+    }
+    
 
     table = Table()
-    print(table.__dict__)
-    print(f"Before shift_dealer_btn(): {table.dealer_btn}")
-    table.shift_dealer_btn()
-    print(f"After shift_dealer_btn(): {table.dealer_btn}")
-
+    engine = EngineWrapper()
+    latest_messages = engine.start_game(players_info, game_config)
+    dealer_pos = table.dealer_btn
     round_state = {
         'seats': players,
         'community_card': ['AS'],
@@ -141,7 +163,7 @@ def start_game_view(request):
             'main': {'amount': 100},
         },
         'next_player': 1,
-        'dealer_btn': table.dealer_btn,
+        'dealer_btn': dealer_pos,
         'small_blind_pos': 1,
         'big_blind_pos': 2
     }
@@ -154,7 +176,7 @@ def start_game_view(request):
         async_to_sync(channel_layer.group_send)(
             'poker', {
                 'type': 'start_game',
-                'message': {}
+                'message': latest_messages
             }
         )
         return redirect('start_game')

@@ -19,11 +19,20 @@ class Table:
 
     def shift_dealer_btn(self):
         print(f"Shifting dealer button from {self.dealer_btn}")
-        self.dealer_btn = self.next_active_player_pos(self.dealer_btn)
-        print(f"New dealer button candidate: {self.dealer_btn}")
-        if self.dealer_btn == 0 and any(player.is_active() for player in self.seats.players):
-            self.dealer_btn = random.randint(0, len(self.seats.players) - 1)
-            print(f"Randomized dealer button to: {self.dealer_btn}")
+        next_pos = self.next_active_player_pos(self.dealer_btn)
+        print(f"New dealer button candidate: {next_pos}")
+        if next_pos == self._player_not_found:
+            # Jeśli nie znaleziono aktywnego gracza, losujemy nową pozycję dla dealer_btn
+            active_players = [i for i, player in enumerate(self.seats.players) if player.is_active() and player.stack > 0]
+            if active_players:
+                self.dealer_btn = random.choice(active_players)
+                print(f"Randomized dealer button to: {self.dealer_btn}")
+            else:
+                self.dealer_btn = 0
+                print(f"No active players found. Dealer button set to 0")
+        else:
+            self.dealer_btn = next_pos
+            print(f"New dealer button candidate: {self.dealer_btn}")
 
     def next_active_player_pos(self, start_pos):
         return self.__find_entitled_player_pos(start_pos, lambda player: player.is_active() and player.stack != 0)
@@ -33,15 +42,11 @@ class Table:
 
     def __find_entitled_player_pos(self, start_pos, check_method):
         players = self.seats.players
-        print('players:', players)
         search_targets = players + players
         search_targets = search_targets[start_pos + 1:start_pos + len(players) + 1]
         assert(len(search_targets) == len(players))
-        for player in search_targets:
-            print(f"Checking player: {player} (Active: {player.is_active()}, Stack: {player.stack})")
-        match_player = next((player for player in search_targets if check_method(player)), -1)
-        print(f"Found entitled player: {match_player}")
-        return self._player_not_found if match_player == -1 else players.index(match_player)
+        match_player = next((player for player in search_targets if check_method(player)), None)
+        return self._player_not_found if match_player is None else players.index(match_player)
 
     _player_not_found = "not_found"
 
@@ -91,3 +96,4 @@ class Table:
         table._community_card = community_card
         table._blind_pos = serial[4]
         return table
+

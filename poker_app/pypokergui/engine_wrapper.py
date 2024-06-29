@@ -10,11 +10,11 @@ class EngineWrapper(object):
 
     def start_game(self, players_info, game_config):
         self.config = game_config
-        # setup table
         table = Table()
         for uuid, name in players_info.items():
             player = Player(uuid, game_config['initial_stack'], name)
             table.seats.sitdown(player)
+            print(f"Player {player.uuid} added to table with stack {player.stack} and status {player.pay_info.status}")
         state, msgs = self._start_new_round(1, game_config['blind_structure'], table)
         self.current_state = state
         return _parse_broadcast_destination(msgs, self.current_state['table'])
@@ -74,12 +74,29 @@ def gen_game_config(max_round, initial_stack, small_blind, ante, blind_structure
             }
 
 def _get_forced_bet_amount(round_count, blind_structure):
+    if not blind_structure or not isinstance(blind_structure, dict):
+        raise ValueError("Pusta lub nieprawidłowa struktura blindów.")
+
     level_thresholds = sorted(blind_structure.keys())
+    
+    if not level_thresholds:
+        raise ValueError("Brak progów w strukturze blindów.")
+    
     current_level_pos = [r <= round_count for r in level_thresholds].count(True)-1
-    assert current_level_pos >= 0
+    
     current_level_key = level_thresholds[current_level_pos]
     current_structure = blind_structure[current_level_key]
+    
+    
     return current_structure['small_blind'], current_structure['ante']
+
+
+    # level_thresholds = sorted(blind_structure.keys())
+    # current_level_pos = [r <= round_count for r in level_thresholds].count(True)-1
+    # assert current_level_pos >= 0
+    # current_level_key = level_thresholds[current_level_pos]
+    # current_structure = blind_structure[current_level_key]
+    # return current_structure['small_blind'], current_structure['ante']
 
 def _exclude_short_of_money_players(table, ante, sb_amount):
     sb_pos, bb_pos = _steal_money_from_poor_player(table, ante, sb_amount)
