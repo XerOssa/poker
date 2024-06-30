@@ -1,5 +1,5 @@
 import random
-from pypokerengine.players import BasePokerPlayer
+from poker_app.pypokergui.players import BasePokerPlayer
 # PyPokerEngine-master\pokerAI.\Lib.\site-packages.\
 class RandomPlayer(BasePokerPlayer):  # Do not forget to make parent class as "BasePokerPlayer"
 

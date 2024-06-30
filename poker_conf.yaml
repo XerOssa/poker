@@ -1,0 +1,18 @@
+ante: 0
+blind_structure: null
+initial_stack: 100
+max_round: 10
+small_blind: 5
+ai_players:
+- name: 1_random_player
+  path: D:/ROBOTA/python/poker/poker_app/sample_player/random_player_setupCHECK.py
+- name: 2_random_player
+  path: D:/ROBOTA/python/poker/poker_app/sample_player/fish_player_setupCHECK.py
+- name: 3_Tag
+  path: D:/ROBOTA/python/poker/poker_app/sample_player/random_player_setupCHECK.py
+- name: 4_fish
+  path: D:/ROBOTA/python/poker/poker_app/sample_player/random_player_setupCHECK.py
+- name: 5_Whale
+  path: D:/ROBOTA/python/poker/poker_app/sample_player/random_player_setupCHECK.py
+
+

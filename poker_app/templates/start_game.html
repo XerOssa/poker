@@ -11,24 +11,36 @@
     <div>
         <div id="round_state">
             <div id="round-state-table" class="img-rounded">
-            {% for player in players %}
-                {% if player.idx == round_state.dealer_btn %}
-                    <span class="label-default dealer-position-{{5}}">D</span>
-                {% endif %}
-                <div class="seat s{{ forloop.counter }}">
-                    {% include "player.html" %}
-                </div>
-            {% endfor %}
+                {% for player in players %}
+                    {% if player.idx == round_state.dealer_pos %}
+                        <span class="label-dealer dealer-position-{{round_state.dealer_pos}}">D</span>
+                    {% endif %}
+                    {% if player.idx == round_state.small_blind_pos %}
+                        <span class="label-blind dealer-position-{{round_state.small_blind_pos}}">SB</span>
+                    {% endif %}
+                    {% if player.idx == round_state.big_blind_pos %}
+                        <span class="label-blind dealer-position-{{round_state.big_blind_pos}}">BB</span>
+                    {% endif %}
+                    <div class="seat s{{ forloop.counter }}">
+                            
+                        {% include "player.html" %}
+                    </div>
+                    
+
+                    
+                {% endfor %}
             <div id="community_card" class="community_card">
                 {% if round_state.community_card|length > 0 %}
                     <h4 class="round-state-table-text"></h4>
                     {% for card in round_state.community_card %}
-                      <img class="card" src="{% static 'images/card_B1.png' %}" alt="card">
-                      <img class="card" src="{% static 'images/card_B1.png' %}" alt="card">
-                      <img class="card" src="{% static 'images/card_B1.png' %}" alt="card">
-                      <img class="card" src="{% static 'images/card_B1.png' %}" alt="card">
-                      <img class="card" src="{% static 'images/card_B1.png' %}" alt="card">
+                        <img class="card" src="{% static 'images/card_{{ card }}.png' %}" alt="card">
                     {% endfor %}
+                {% else %}
+                    <img class="card" src="{% static 'images/card_B1.png' %}" alt="card">
+                    <img class="card" src="{% static 'images/card_B1.png' %}" alt="card">
+                    <img class="card" src="{% static 'images/card_B1.png' %}" alt="card">
+                    <img class="card" src="{% static 'images/card_B1.png' %}" alt="card">
+                    <img class="card" src="{% static 'images/card_B1.png' %}" alt="card">
                 {% endif %}
             </div>
             <div class="pot">

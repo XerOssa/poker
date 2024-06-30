@@ -2,9 +2,9 @@ import matplotlib.pyplot as plt
 import os
 import pandas as pd
 from django.shortcuts import render, redirect
+from django.http import HttpResponse
 from poker_analysis import process_poker_hand, save_to_csv
 from .models import Hero
-from django.http import JsonResponse
 from django.conf import settings
 from waiting_room_param import players_list, configurations_table, read_config
 from .forms import HeroForm, GameConfigForm
@@ -12,10 +12,13 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from poker_app.pypokergui.utils.card_utils import _pick_unused_card
 from poker_app.pypokergui.engine.table import Table
-import poker_app.pypokergui.server.game_manager as GM
+from poker_app.pypokergui.engine.pay_info import PayInfo
+from poker_app.pypokergui.engine.player import Player
+from poker_app.pypokergui.engine.data_encoder import DataEncoder
 from poker_app.pypokergui.engine_wrapper import EngineWrapper
+from poker_app.pypokergui.server.poker import setup_config
 from uuid import uuid4
-
+import threading
 
 
 def home(request):
@@ -68,11 +71,14 @@ def waiting_room_view(request):
     file_path = 'poker_app/config_players.txt'
     config_players = read_config(file_path)
     players = players_list(config_players)
-
-    # Set default stack if not present
-    for player in players:
-        if 'stack' not in player:
-            player['stack'] = 100
+    config = {
+        'ante': 0,
+        'blind_structure': '',
+        'max_round': 10,
+        'initial_stack': 50,
+        'small_blind': 1,
+    }
+    setup_config(config)
 
     if request.method == 'POST':
         config_form = GameConfigForm(request.POST)
@@ -126,46 +132,56 @@ def waiting_room_view(request):
     })
 
 
-
-
-
 def start_game_view(request):
-    players = request.session.get('players', [])
-    for player in players:
-        if 'uuid' not in player:
-            player['uuid'] = str(uuid4())
-        if 'state' not in player:
-            player['state'] = 'participating'
-            
-    players_info = {player['uuid']: player['name'] for player in players}
+    players_data = request.session.get('players', [])
+    players = []
+    for player_data in players_data:
+        if 'uuid' not in player_data:
+            player_data['uuid'] = str(uuid4())
+        if 'state' not in player_data:
+            player_data['state'] = 'participating'
+        player = Player(
+            uuid=player_data['uuid'],
+            name=player_data['name'],
+            initial_stack=player_data.get('stack', 1000),  # Ustawienie początkowego stosu
+        )
+        players.append(player)
+
+    players_info = {player.uuid: player.name for player in players}
 
     # Konfiguracja gry (ustawienia przykładowe, dostosuj według potrzeb)
     game_config = {
-        'ante': 0,
-        'blind_structure': {
-            1: {'small_blind': 10, 'big_blind': 20, 'ante': 0},
-            2: {'small_blind': 15, 'big_blind': 30, 'ante': 0},
-            },
-        'max_round': 100,
-        'initial_stack': 1000,
-        
-    }
+    'max_round': 10,
+    'initial_stack': 1000,
+    'small_blind': 10,
+    'ante': 1,
+    'blind_structure': '',
+    'ai_players': [
+        {'name': 'random_player', 'path': 'D:/ROBOTA/python/poker/poker_app/sample_player/random_player_setupCHECK.py'},
+        {'name': 'Tag', 'path': 'D:/ROBOTA/python/poker/poker_app/sample_player/TagCHECK.py'},
+        {'name': 'fish', 'path': 'D:/ROBOTA/python/poker/poker_app/sample_player/fish_player_setupCHECK.py'},
+        {'name': 'Whale', 'path': 'D:/ROBOTA/python/poker/poker_app/sample_player/fish_player_setupCHECK.py'}
+    ]
+}
     
-
+    
     table = Table()
+    community_cards = [str(card) for card in table.get_community_card()]
+    pot = DataEncoder.encode_pot(players)
     engine = EngineWrapper()
     latest_messages = engine.start_game(players_info, game_config)
     dealer_pos = table.dealer_btn
+    small_blind_pos = (table.dealer_btn + 1) % len(players)
+    big_blind_pos = (table.dealer_btn + 2) % len(players)
+    next_player = (big_blind_pos + 1) % len(players)
     round_state = {
-        'seats': players,
-        'community_card': ['AS'],
-        'pot': {
-            'main': {'amount': 100},
-        },
-        'next_player': 1,
-        'dealer_btn': dealer_pos,
-        'small_blind_pos': 1,
-        'big_blind_pos': 2
+        'seats': players_data,
+        'community_card': community_cards,
+        'pot': pot,
+        'next_player': next_player,
+        'dealer_pos': dealer_pos,
+        'small_blind_pos': small_blind_pos,
+        'big_blind_pos': big_blind_pos
     }
 
     used_cards = [] 
@@ -183,10 +199,9 @@ def start_game_view(request):
     
     return render(request, 'start_game.html', {
         'round_state': round_state,
-        'players': players,
+        'players': players_data,
         'hole_card': hole_card,
     })
-
 
 
 

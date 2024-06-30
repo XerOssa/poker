@@ -12,8 +12,8 @@ class GameManager(object):
         self.latest_messages = []
         self.next_player_uuid = None
 
-    # def define_rule(self, max_round, initial_stack, small_blind, ante, blind_structure):
-    #     self.rule = Engine.gen_game_config(max_round, initial_stack, small_blind, ante, blind_structure)
+    def define_rule(self, max_round, initial_stack, small_blind, ante, blind_structure):
+        self.rule = Engine.gen_game_config(max_round, initial_stack, small_blind, ante, blind_structure)
 
     def join_ai_player(self, name, setup_script_path):                              # 1 AI
         ai_uuid = str(len(self.members_info))

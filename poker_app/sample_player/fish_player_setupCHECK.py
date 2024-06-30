@@ -1,5 +1,5 @@
 import random
-from pypokerengine.players import BasePokerPlayer
+from poker_app.pypokergui.players import BasePokerPlayer
 
 class FishPlayer(BasePokerPlayer):  # Do not forget to make parent class as "BasePokerPlayer"
 

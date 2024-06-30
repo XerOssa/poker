@@ -171,6 +171,20 @@ MODE_SPEED = "moderate"
 global_game_manager = GM.GameManager()
 
 def setup_config(config):
+    config = {
+    'max_round': 10,
+    'initial_stack': 1000,
+    'small_blind': 10,
+    'ante': 1,
+    'blind_structure': '',
+    'ai_players': [
+        {'name': 'random_player', 'path': 'D:/ROBOTA/python/poker/poker_app/sample_player/random_player_setupCHECK.py'},
+        {'name': 'Tag', 'path': 'D:/ROBOTA/python/poker/poker_app/sample_player/TagCHECK.py'},
+        {'name': 'fish', 'path': 'D:/ROBOTA/python/poker/poker_app/sample_player/fish_player_setupCHECK.py'},
+        {'name': 'Whale', 'path': 'D:/ROBOTA/python/poker/poker_app/sample_player/fish_player_setupCHECK.py'}
+    ]
+}
+
     global_game_manager.define_rule(
             config['max_round'], config['initial_stack'], config['small_blind'],
             config['ante'], config['blind_structure']

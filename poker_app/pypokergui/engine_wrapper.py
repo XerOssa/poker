@@ -74,29 +74,17 @@ def gen_game_config(max_round, initial_stack, small_blind, ante, blind_structure
             }
 
 def _get_forced_bet_amount(round_count, blind_structure):
-    if not blind_structure or not isinstance(blind_structure, dict):
-        raise ValueError("Pusta lub nieprawidłowa struktura blindów.")
-
+    if not isinstance(blind_structure, dict):
+        # Tutaj możesz ustawić wartość domyślną lub obsłużyć ten przypadek inaczej
+        # Na przykład:
+        print("Warning: blind_structure is not a dictionary. Using default values.")
+        return 10, 0  # Domyślne wartości dla small_blind i ante
     level_thresholds = sorted(blind_structure.keys())
-    
-    if not level_thresholds:
-        raise ValueError("Brak progów w strukturze blindów.")
-    
     current_level_pos = [r <= round_count for r in level_thresholds].count(True)-1
-    
+    assert current_level_pos >= 0
     current_level_key = level_thresholds[current_level_pos]
     current_structure = blind_structure[current_level_key]
-    
-    
     return current_structure['small_blind'], current_structure['ante']
-
-
-    # level_thresholds = sorted(blind_structure.keys())
-    # current_level_pos = [r <= round_count for r in level_thresholds].count(True)-1
-    # assert current_level_pos >= 0
-    # current_level_key = level_thresholds[current_level_pos]
-    # current_structure = blind_structure[current_level_key]
-    # return current_structure['small_blind'], current_structure['ante']
 
 def _exclude_short_of_money_players(table, ante, sb_amount):
     sb_pos, bb_pos = _steal_money_from_poor_player(table, ante, sb_amount)

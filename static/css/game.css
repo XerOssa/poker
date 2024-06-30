@@ -123,7 +123,7 @@ body {
 .material-icons.color-ai.inactive { color: #212121; }
 .material-icons.color-ai.dark { color: #43A047; }
 .material-icons.color-ai.dark.inactive { color: #212121; }
-.material-icons.color-human { color: #FAFAFA; }
+.material-icons.color-human { color: #a32121; }
 .material-icons.color-human.inactive { color: #212121; }
 .material-icons.color-human.dark { color: #757575; }
 .material-icons.color-human.dark.inactive { color: #212121; }
@@ -261,8 +261,8 @@ body {
 
 
 
-.label-default {
-  position: relative;
+.label-dealer {
+  position: absolute;
   width: 24px; /* Szerokość okręgu */
   height: 24px; /* Wysokość okręgu */
   background-color: #2196F3; /* Kolor niebieskiego żetonu */
@@ -271,36 +271,27 @@ body {
   justify-content: center;
   align-items: center;
 }
+
+.label-blind {
+  position: absolute;
+  width: 24px; /* Szerokość okręgu */
+  height: 24px; /* Wysokość okręgu */
+  background-color: #f321a3; /* Kolor niebieskiego żetonu */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
 .dealer-token {
   color: #FFF; /* Kolor biały tekstu wewnątrz */
   font-size: 16px; /* Rozmiar tekstu */
   font-weight: bold; /* Pogrubienie tekstu */
 }
 
-.dealer-position-0 {
-  top: 65%;
-  left: 34%;
-}
-
-.dealer-position-1 {
-  top: 49%;
-  left: 21%;
-}
-.dealer-position-2 {
-  top: 20%;
-  left: 34%;
-}
-
-.dealer-position-3 {
-  top: 20%;
-  left: 64%;
-}
-.dealer-position-4 {
-  top: 49%;
-  left: 76%;
-}
-
-.dealer-position-5 {
-  top: 65%;
-  left: 64%;
-}
+.dealer-position-0 { top: 65%; left: 34%; }
+.dealer-position-1 { top: 49%; left: 21%; }
+.dealer-position-2 { top: 20%; left: 34%; }
+.dealer-position-3 { top: 20%; left: 64%; }
+.dealer-position-4 { top: 49%; left: 76%; }
+.dealer-position-5 { top: 65%; left: 64%; }
