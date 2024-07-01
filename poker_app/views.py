@@ -18,7 +18,6 @@ from poker_app.pypokergui.engine.data_encoder import DataEncoder
 from poker_app.pypokergui.engine_wrapper import EngineWrapper
 from poker_app.pypokergui.server.poker import setup_config
 from uuid import uuid4
-import threading
 
 
 def home(request):
@@ -65,71 +64,77 @@ def charts(request):
 
 def waiting_room_view(request):
     # Load configurations
-    config_table = configurations_table({})
-    config_form = GameConfigForm(initial=config_table)
+    default_config_table = configurations_table({})
+
 
     file_path = 'poker_app/config_players.txt'
     config_players = read_config(file_path)
     players = players_list(config_players)
-    config = {
-        'ante': 0,
-        'blind_structure': '',
-        'max_round': 10,
-        'initial_stack': 50,
-        'small_blind': 1,
-    }
-    setup_config(config)
+
+    new_form_initial_stack = None
+    new_form_small_blind = None
+    new_form_ante = None
+    hero_name = None
+
+    form = GameConfigForm()
+    form_hero = HeroForm()
 
     if request.method == 'POST':
-        config_form = GameConfigForm(request.POST)
-        form = HeroForm(request.POST)
-        if config_form.is_valid():
-            config_table = config_form.cleaned_data
+        form = GameConfigForm(request.POST)
+        form_hero = HeroForm(request.POST)
 
-        if form.is_valid():
-            hero = form.save(commit=False)
-            hero.stack = 100  # Set default stack or use form data if available
-            hero.save()
+        if form.is_valid(): 
+            form_initial_stack = request.POST.get('initial_stack')
+            form_small_blind = request.POST.get('small_blind')  # Use 'small_blind' as intended
+            form_ante = request.POST.get('ante')
 
-            hero_name = hero.name
+            new_form_initial_stack = form_initial_stack
+            new_form_small_blind = form_small_blind
+            new_form_ante = form_ante
+
+        if form_hero.is_valid():
+            hero_name = form_hero.save(commit=False)
+            hero_name.stack = 100
+            hero_name.save()
+
             display_id = len(players)
 
-            # Append hero to players list
             players.append({
                 'idx': display_id,
                 'type': 'Hero',
-                'name': hero.name,
-                'stack': hero.stack,
+                'name': hero_name.name,
+                'stack': hero_name.stack,
             })
 
-            # Save players list to session
             request.session['players'] = players
 
-            # Send message to channel layer
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
                 'poker', {
                     'type': 'register_player',
                     'message': {
-                        'name': hero.name,
-                        'stack': hero.stack,
+                        'name': hero_name.name,
+                        'stack': hero_name.stack,
                     }
                 }
             )
 
             return redirect('waiting_room')
-        else:
-            print("Form is not valid")
-            print(form.errors)
-    else:
-        form = HeroForm()
-
+        if not form.is_valid():
+            print(form.errors)  # Print errors for debugging
+            return render(request, 'waiting_room.html', {
+                'form': form,  # Pass the form with errors to the template
+            })
+        
+    # setup_config(config_table)
     return render(request, 'waiting_room.html', {
-        'config': config_table,
-        'form': form,
+        'config': default_config_table,
         'players': players,
-        'config_form': config_form,
-    })
+        'new_form_initial_stack': new_form_initial_stack,
+        'new_form_big_blind': new_form_small_blind,
+        'new_form_ante': new_form_ante,
+        'form': form,  # Pass the form object to the template context
+  })
 
 
 def start_game_view(request):

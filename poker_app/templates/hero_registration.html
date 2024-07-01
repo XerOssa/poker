@@ -1,4 +1,4 @@
-{% comment %} <form action="{% url 'waiting_room' %}" method="post" id="registration_form" class="form-inline">
+<form action="{% url 'waiting_room' %}" method="post" id="registration_form" class="form-inline">
     {% csrf_token %}
     <div class="form-group">
         <label for="name">Register Me</label>
@@ -6,14 +6,4 @@
     </div>
     <input type="submit" value="Register" class="btn btn-primary">
     <input type="hidden" name="next" value="{{ request.path }}">
-</form> {% endcomment %}
-
-
-<div id="player_registration">
-    <h2 class="sub-header">Player Registration</h2>
-    <form method="post" action="{% url 'waiting_room' %}">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Register Player</button>
-    </form>
-</div>
+</form>

@@ -192,21 +192,21 @@ def setup_config(config):
     for player in config['ai_players']:
         global_game_manager.join_ai_player(player['name'], player['path'])
 
-def start_server(config_path, port, speed):
-    global MODE_SPEED
-    with open(config_path, "rb") as f:
-        config = yaml.load(f)
-    setup_config(config)
-    MODE_SPEED = speed
-    app = Application()
-    app.listen(port)
+# def start_server(config_path, port, speed):
+#     global MODE_SPEED
+#     with open(config_path, "rb") as f:
+#         config = yaml.load(f)
+#     setup_config(config)
+#     MODE_SPEED = speed
+#     app = Application()
+#     app.listen(port)
 
-    tornado.ioloop.IOLoop.current().start()
+#     tornado.ioloop.IOLoop.current().start()
 
-def main():
-    tornado.options.parse_command_line()
-    start_server(options.config, options.port, options.speed)
+# def main():
+#     tornado.options.parse_command_line()
+#     start_server(options.config, options.port, options.speed)
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()
 

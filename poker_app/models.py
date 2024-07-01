@@ -6,3 +6,9 @@ class Hero(models.Model):
     
     def __str__(self):
         return self.name
+
+
+class GameConfig(models.Model):
+    initial_stack = models.IntegerField(default=100)
+    small_blind = models.IntegerField(default=1)
+    ante = models.IntegerField(default=0)

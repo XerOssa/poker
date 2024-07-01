@@ -3,8 +3,8 @@ from django import forms
 from poker_app.models import Hero
 
 
-
 def read_config(file_path):
+    file_path = 'poker_app/config_players.txt'
     config_players = []
     with open(file_path, 'r') as file:
         for line in file:
@@ -14,16 +14,16 @@ def read_config(file_path):
     return config_players
 
 
-file_path = 'poker_app/config_players.txt'
 
 
-def configurations_table(config_table):
-    config_table = {
+
+def configurations_table(default_config_table):
+    default_config_table = {
             'initial_stack': 100,
             'small_blind': 5,
             'ante': 0,
         }
-    return config_table    
+    return default_config_table    
 
 
 def players_list(config_players):
