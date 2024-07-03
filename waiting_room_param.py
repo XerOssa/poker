@@ -19,7 +19,7 @@ def read_config(file_path):
 
 def configurations_table(default_config_table):
     default_config_table = {
-            'initial_stack': 100,
+            'initial_stack': 150,
             'small_blind': 5,
             'ante': 0,
         }
@@ -35,5 +35,5 @@ def players_list(config_players):
     db_players = Hero.objects.all()
     for idx, player in enumerate(db_players, start=len(config_players)):
         players.append({'idx': idx, 'type': 'Hero', 'name': player.name, 'stack': player.stack})
-    return players
 
+    return players

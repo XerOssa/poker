@@ -2,10 +2,11 @@ import matplotlib.pyplot as plt
 import os
 import pandas as pd
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.core.cache import cache
+from django.conf import settings
 from poker_analysis import process_poker_hand, save_to_csv
 from .models import Hero
-from django.conf import settings
+
 from waiting_room_param import players_list, configurations_table, read_config
 from .forms import HeroForm, GameConfigForm
 from channels.layers import get_channel_layer
@@ -62,82 +63,75 @@ def charts(request):
     # return render(request, 'charts.html', {'plot_path': plot_path})
 
 
+
 def waiting_room_view(request):
+    # Remove all players from the database before starting a new game
     # Load configurations
-    default_config_table = configurations_table({})
-
-
+    config_table = configurations_table({})
     file_path = 'poker_app/config_players.txt'
     config_players = read_config(file_path)
     players = players_list(config_players)
 
-    new_form_initial_stack = None
-    new_form_small_blind = None
-    new_form_ante = None
-    hero_name = None
+    # Set default stack if not present
+    for player in players:
+        if 'stack' not in player:
+            player['stack'] = 100
 
-    form = GameConfigForm()
-    form_hero = HeroForm()
+    config = {
+        'ante': 0,
+        'blind_structure': '',
+        'max_round': 10,
+        'initial_stack': 50,
+        'small_blind': 1,
+    }
+    # setup_config(config)
 
     if request.method == 'POST':
-        form = GameConfigForm(request.POST)
-        form_hero = HeroForm(request.POST)
-
-        if form.is_valid(): 
-            form_initial_stack = request.POST.get('initial_stack')
-            form_small_blind = request.POST.get('small_blind')  # Use 'small_blind' as intended
-            form_ante = request.POST.get('ante')
-
-            new_form_initial_stack = form_initial_stack
-            new_form_small_blind = form_small_blind
-            new_form_ante = form_ante
-
-        if form_hero.is_valid():
-            hero_name = form_hero.save(commit=False)
-            hero_name.stack = 100
-            hero_name.save()
-
+        cache.clear()
+        form = HeroForm(request.POST)
+        if form.is_valid():
+            hero = form.save(commit=False)
+            hero.stack = 100  # Set default stack or use form data if available
+            hero.save()
             display_id = len(players)
-
+            # Append hero to players list
             players.append({
                 'idx': display_id,
                 'type': 'Hero',
-                'name': hero_name.name,
-                'stack': hero_name.stack,
+                'name': hero.name,
+                'stack': hero.stack,
             })
-
+            # Save players list to session
             request.session['players'] = players
-
+            # Send message to channel layer
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
                 'poker', {
                     'type': 'register_player',
                     'message': {
-                        'name': hero_name.name,
-                        'stack': hero_name.stack,
+                        'name': hero.name,
+                        'stack': hero.stack,
                     }
                 }
             )
+            return redirect('hero_registration')
+        else:
+            print("Form is not valid")
+            print(form.errors)
+    else:
+        form = HeroForm()
 
-            return redirect('waiting_room')
-        if not form.is_valid():
-            print(form.errors)  # Print errors for debugging
-            return render(request, 'waiting_room.html', {
-                'form': form,  # Pass the form with errors to the template
-            })
-        
-    # setup_config(config_table)
+
+
     return render(request, 'waiting_room.html', {
-        'config': default_config_table,
+        'config': config_table,
+        'form': form,
         'players': players,
-        'new_form_initial_stack': new_form_initial_stack,
-        'new_form_big_blind': new_form_small_blind,
-        'new_form_ante': new_form_ante,
-        'form': form,  # Pass the form object to the template context
-  })
+    })
 
 
 def start_game_view(request):
+
     players_data = request.session.get('players', [])
     players = []
     for player_data in players_data:

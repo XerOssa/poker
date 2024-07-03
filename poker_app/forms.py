@@ -3,21 +3,16 @@ from .models import Hero, GameConfig
 
 
 class GameConfigForm(forms.ModelForm):
-    class Meta:
-        model = GameConfig  # Replace with your actual model name
-        fields = ['initial_stack', 'small_blind', 'ante']
-
-
+       class Meta:
+           model = GameConfig
+           fields = ['initial_stack', 'small_blind', 'ante']
+           widgets = {
+            'initial_stack': forms.NumberInput(attrs={'value': 200}),  # Set default value
+            'small_blind': forms.NumberInput(attrs={'value': 5}),
+            'ante': forms.NumberInput(attrs={'value': 0}),
+            }
 
 class HeroForm(forms.ModelForm):
     class Meta:
         model = Hero
         fields = ['name']
-        widgets = {  # Optional: customize widget for name field
-            'name': forms.TextInput(attrs={'required': True}),
-        }
-# class GameConfigForm(forms.ModelForm):
-#     class Meta:
-#         initial_stack = forms.IntegerField(label='Initial Stack', initial=150, widget=forms.TextInput(attrs={'style': 'text-align: center;'}))
-#         small_blind = forms.IntegerField(label='Small Blind', initial=5, widget=forms.TextInput(attrs={'style': 'text-align: center;'}))
-#         ante = forms.IntegerField(label='Ante', initial=0, widget=forms.TextInput(attrs={'style': 'text-align: center;'}))

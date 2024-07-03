@@ -9,6 +9,6 @@ class Hero(models.Model):
 
 
 class GameConfig(models.Model):
-    initial_stack = models.IntegerField(default=100)
+    initial_stack = models.IntegerField(default=160)
     small_blind = models.IntegerField(default=1)
     ante = models.IntegerField(default=0)

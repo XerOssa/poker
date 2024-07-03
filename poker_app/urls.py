@@ -11,7 +11,7 @@ urlpatterns = [
     path('charts/', views.charts, name='charts'),
     path('poker_app/', views.handhistory, name='handhistory'),
     path('waiting_room/', views.waiting_room_view, name='waiting_room'),
-    path('register', views.waiting_room_view, name='register'),
+    path('hero_registration', views.waiting_room_view, name='hero_registration'),
     path('start_game', views.start_game_view, name='start_game'),
     path('__debug__/', include(debug_toolbar.urls)),
     path('', views.home, name='home'),
