@@ -10,28 +10,7 @@
     <div id="rule_box">
         <h2 class="sub-header">Rule</h2>
         <div id="game_rule">
-            <form method="post" action="{% url 'waiting_room' %}">
-                {% csrf_token %}
-                <table class="table table-striped table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Stack</th>
-                            <th>Big Blind</th>
-                            <th>Ante</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><input type="number" name="initial_stack" id="initial_stack" value="100" style="text-align: center;"></td>
-                            <td><input type="number" name="small_blind" id="small_blind" value="1" style="text-align: center;"></td>
-                            <td><input type="number" name="ante" id="ante" value="0" style="text-align: center;"></td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="form-group" style="text-align: center;">
-                    <button type="submit" value="Confirm Change" class="btn btn-primary">
-                </div>
-            </form>
+            {% include "config_table.html" %}
         </div>
         <h2 class="sub-header">Players</h2>
         <div class="table-responsive">

@@ -65,45 +65,29 @@ def charts(request):
 
 
 def waiting_room_view(request):
-    # Remove all players from the database before starting a new game
-    # Load configurations
-    config_table = configurations_table({})
+    default_config_table = configurations_table({})
+    form_config_table_data = {}
     file_path = 'poker_app/config_players.txt'
     config_players = read_config(file_path)
     players = players_list(config_players)
 
-    # Set default stack if not present
-    for player in players:
-        if 'stack' not in player:
-            player['stack'] = 100
-
-    config = {
-        'ante': 0,
-        'blind_structure': '',
-        'max_round': 10,
-        'initial_stack': 50,
-        'small_blind': 1,
-    }
-    # setup_config(config)
-
     if request.method == 'POST':
         cache.clear()
         form = HeroForm(request.POST)
+        form_config_table = GameConfigForm(request.POST)
+
         if form.is_valid():
             hero = form.save(commit=False)
-            hero.stack = 100  # Set default stack or use form data if available
+            hero.stack = 100
             hero.save()
             display_id = len(players)
-            # Append hero to players list
             players.append({
                 'idx': display_id,
                 'type': 'Hero',
                 'name': hero.name,
                 'stack': hero.stack,
             })
-            # Save players list to session
             request.session['players'] = players
-            # Send message to channel layer
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
                 'poker', {
@@ -115,60 +99,74 @@ def waiting_room_view(request):
                 }
             )
             return redirect('hero_registration')
+        
+        if form_config_table.is_valid():
+            config_data = form_config_table.cleaned_data
+            initial_stack = config_data.get('initial_stack')
+            small_blind = config_data.get('small_blind')
+            ante = config_data.get('ante')
+            
+            form_config_table_data = {
+                'initial_stack': initial_stack,
+                'small_blind': small_blind,
+                'ante': ante,
+            }
+
+            request.session['form_config_table'] = form_config_table_data
         else:
             print("Form is not valid")
-            print(form.errors)
+            print(form_config_table.errors)
     else:
         form = HeroForm()
-
-
+        form_config_table = GameConfigForm()
 
     return render(request, 'waiting_room.html', {
-        'config': config_table,
+        'default_config_table': default_config_table,
         'form': form,
+        'form_config_table': form_config_table,
         'players': players,
     })
 
 
+
 def start_game_view(request):
-
+    form_config_table = request.session['form_config_table']
     players_data = request.session.get('players', [])
-    players = []
-    for player_data in players_data:
-        if 'uuid' not in player_data:
-            player_data['uuid'] = str(uuid4())
-        if 'state' not in player_data:
-            player_data['state'] = 'participating'
-        player = Player(
-            uuid=player_data['uuid'],
-            name=player_data['name'],
-            initial_stack=player_data.get('stack', 1000),  # Ustawienie początkowego stosu
-        )
-        players.append(player)
+    players = players_data
+    # for player_data in players_data:
+    #     if 'uuid' not in player_data:
+    #         player_data['uuid'] = str(uuid4())
+    #     if 'state' not in player_data:
+    #         player_data['state'] = 'participating'
+    #     player = Player(
+    #         uuid=player_data['uuid'],
+    #         name=player_data['name'],
+    #         initial_stack=player_data.get('stack', 1000),  # Ustawienie początkowego stosu
+        # )
+        # players.append(player)
 
-    players_info = {player.uuid: player.name for player in players}
-
+    # players = {player.uuid: player.name for player in players}
     # Konfiguracja gry (ustawienia przykładowe, dostosuj według potrzeb)
     game_config = {
-    'max_round': 10,
-    'initial_stack': 1000,
-    'small_blind': 10,
-    'ante': 1,
-    'blind_structure': '',
-    'ai_players': [
-        {'name': 'random_player', 'path': 'D:/ROBOTA/python/poker/poker_app/sample_player/random_player_setupCHECK.py'},
-        {'name': 'Tag', 'path': 'D:/ROBOTA/python/poker/poker_app/sample_player/TagCHECK.py'},
-        {'name': 'fish', 'path': 'D:/ROBOTA/python/poker/poker_app/sample_player/fish_player_setupCHECK.py'},
-        {'name': 'Whale', 'path': 'D:/ROBOTA/python/poker/poker_app/sample_player/fish_player_setupCHECK.py'}
-    ]
-}
+        'max_round': 10,
+        'initial_stack': form_config_table.get('initial_stack', 1000),
+        'small_blind': form_config_table.get('small_blind', 10),
+        'ante': form_config_table.get('ante', 1),
+        'blind_structure': '',
+        'ai_players': [
+            {'name': 'random_player', 'path': 'D:/ROBOTA/python/poker/poker_app/sample_player/random_player_setupCHECK.py'},
+            {'name': 'Tag', 'path': 'D:/ROBOTA/python/poker/poker_app/sample_player/TagCHECK.py'},
+            {'name': 'fish', 'path': 'D:/ROBOTA/python/poker/poker_app/sample_player/fish_player_setupCHECK.py'},
+            {'name': 'Whale', 'path': 'D:/ROBOTA/python/poker/poker_app/sample_player/fish_player_setupCHECK.py'}
+        ]
+    }
     
     
     table = Table()
     community_cards = [str(card) for card in table.get_community_card()]
-    pot = DataEncoder.encode_pot(players)
-    engine = EngineWrapper()
-    latest_messages = engine.start_game(players_info, game_config)
+    pot = 0 # DataEncoder.encode_pot(players)
+    # engine = EngineWrapper()
+    # latest_messages = engine.start_game(players, game_config)
     dealer_pos = table.dealer_btn
     small_blind_pos = (table.dealer_btn + 1) % len(players)
     big_blind_pos = (table.dealer_btn + 2) % len(players)
@@ -191,14 +189,14 @@ def start_game_view(request):
         async_to_sync(channel_layer.group_send)(
             'poker', {
                 'type': 'start_game',
-                'message': latest_messages
+                # 'message': latest_messages
             }
         )
         return redirect('start_game')
     
     return render(request, 'start_game.html', {
         'round_state': round_state,
-        'players': players_data,
+        'players': players,
         'hole_card': hole_card,
     })
 
