@@ -89,7 +89,6 @@ def waiting_room_view(request):
                 'ante': ante,
             }
 
-            # request.session['form_config_table'] = form_config_table_data
         else:
             print("Form is not valid")
             print(form_config_table.errors)
@@ -109,14 +108,12 @@ def waiting_room_view(request):
 
         if form.is_valid():
             hero = form.save(commit=False)
-            hero.stack = 100
             hero.save()
             display_id = len(players)
             players.append({
                 'idx': display_id,
-                'type': 'Hero',
+                'type': 'human',
                 'name': hero.name,
-                'stack': hero.stack,
             })
             request.session['players'] = players
             global_game_manager.join_human_player(hero.name, 5)
@@ -126,12 +123,12 @@ def waiting_room_view(request):
                     'type': 'register_player',
                     'message': {
                         'name': hero.name,
-                        'stack': hero.stack,
                     }
                 }
             )
             return redirect('hero_registration')
-        
+        # engine = EngineWrapper()
+        # latest_messages = engine.start_game(players, game_config)
 
     else:
         form = HeroForm()
@@ -147,21 +144,7 @@ def waiting_room_view(request):
 
 def start_game_view(request):
     cache.clear()
-    # default_config_table = configurations_table({})
-    # form_config_table = request.session['form_config_table']
     players = request.session.get('players', [])
-
-    # players = {player.uuid: player.name for player in players}
-    # Konfiguracja gry (ustawienia przykładowe, dostosuj według potrzeb)
-    # game_config = {
-    #     'max_round': 10,
-    #     'initial_stack': form_config_table.get('initial_stack', default_config_table['initial_stack']),
-    #     'small_blind': form_config_table.get('small_blind', default_config_table['small_blind']),
-    #     'ante': form_config_table.get('ante', default_config_table['ante']),
-    #     'blind_structure': '',
-    #     'ai_players': players
-    # }
-    # setup_config(game_config)
     
     table = Table()
     community_cards = [str(card) for card in table.get_community_card()]
@@ -199,14 +182,3 @@ def start_game_view(request):
         'players': players,
         'hole_card': hole_card,
     })
-
-
-# def setup_config(config):
-
-
-#     global_game_manager.define_rule(
-#             config['max_round'], config['initial_stack'], config['small_blind'],
-#             config['ante'], config['blind_structure']
-#     )
-#     for player in config['ai_players']:
-#         global_game_manager.join_ai_player(player['name'], player['path'])
