@@ -12,7 +12,8 @@ ALLOWED_HOSTS = []
 
 
 INSTALLED_APPS = [
-    
+    "daphne",
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -22,7 +23,6 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'poker_app',
     'poker_analysis',
-    'channels',
     'django_browser_reload',
 ]
 
@@ -60,7 +60,6 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'poker_app.wsgi.application'
 ASGI_APPLICATION = 'poker_app.asgi.application'
 
 
@@ -69,7 +68,7 @@ CHANNEL_LAYERS = {
         'BACKEND': 'channels.layers.InMemoryChannelLayer',
     },
 }
-
+#daphne -b 0.0.0.0 -p 8000 poker_app.asgi:application
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',

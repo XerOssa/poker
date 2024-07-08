@@ -13,9 +13,7 @@ import tornado.options
 import tornado.web
 import tornado.websocket
 from tornado.options import define, options
-
 import poker_app.pypokergui.utils.action_utils as AU
-
 import poker_app.pypokergui.server.game_manager as GM
 import poker_app.pypokergui.server.message_manager as MM
 
@@ -92,31 +90,6 @@ class PokerWebSocketHandler(tornado.websocket.WebSocketHandler):
         else:
             raise Exception("Unexpected message [ %r ] received" % message)
 
-    # def _correct_action(self, data):
-    #     try:
-    #         data["amount"] = int(data["amount"])
-    #     except:
-    #         data["amount"] = -1
-    #     players = global_game_manager.engine.current_state["table"].seats.players
-    #     next_player_pos = global_game_manager.engine.current_state["next_player"]
-    #     sb_amount = global_game_manager.engine.current_state["small_blind_amount"]
-    #     actions = AU.generate_legal_actions(players, next_player_pos, sb_amount)
-
-    #     if data["action"] == "fold":
-    #         data["amount"] = 0
-    #     elif data["action"] == "call":
-    #         data["amount"] = actions[1]["amount"]
-    #     elif data["action"] == "check":
-    #     # Nie ustawiaj kwoty na 0 dla akcji "check"
-    #         pass
-    #     else:
-    #         legal = actions[2]["amount"]
-    #         if legal["min"] <= data["amount"] <= legal["max"]:
-    #             data["amount"] = data["amount"]
-    #         else:
-    #             data["action"] = "fold"
-    #             data["amount"] = 0
-    #     return data["action"], data["amount"]
 
 
     def _correct_action(self, data):
@@ -171,19 +144,7 @@ MODE_SPEED = "moderate"
 global_game_manager = GM.GameManager()
 
 def setup_config(config):
-    config = {
-    'max_round': 10,
-    'initial_stack': 1000,
-    'small_blind': 10,
-    'ante': 1,
-    'blind_structure': '',
-    'ai_players': [
-        {'name': 'random_player', 'path': 'D:/ROBOTA/python/poker/poker_app/sample_player/random_player_setupCHECK.py'},
-        {'name': 'Tag', 'path': 'D:/ROBOTA/python/poker/poker_app/sample_player/TagCHECK.py'},
-        {'name': 'fish', 'path': 'D:/ROBOTA/python/poker/poker_app/sample_player/fish_player_setupCHECK.py'},
-        {'name': 'Whale', 'path': 'D:/ROBOTA/python/poker/poker_app/sample_player/fish_player_setupCHECK.py'}
-    ]
-}
+
 
     global_game_manager.define_rule(
             config['max_round'], config['initial_stack'], config['small_blind'],

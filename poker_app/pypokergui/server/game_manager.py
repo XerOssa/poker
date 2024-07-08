@@ -22,7 +22,6 @@ class GameManager(object):
 
     def join_human_player(self, name, uuid):                                        # 1 human
         uuid = str(len(self.members_info))
-        # print(uuid)
         self.members_info.append(gen_human_player_info(name, uuid))
 
     def get_human_player_info(self, uuid):

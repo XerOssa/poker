@@ -17,6 +17,7 @@ from poker_app.pypokergui.engine.pay_info import PayInfo
 from poker_app.pypokergui.engine.player import Player
 from poker_app.pypokergui.engine.data_encoder import DataEncoder
 from poker_app.pypokergui.engine_wrapper import EngineWrapper
+import poker_app.pypokergui.server.game_manager as GM
 from poker_app.pypokergui.server.poker import setup_config
 from uuid import uuid4
 
@@ -63,9 +64,9 @@ def charts(request):
     # return render(request, 'charts.html', {'plot_path': plot_path})
 
 
-
+global_game_manager = GM.GameManager()
 def waiting_room_view(request):
-    default_config_table = configurations_table({})
+    
     form_config_table_data = {}
     file_path = 'poker_app/config_players.txt'
     config_players = read_config(file_path)
@@ -75,30 +76,6 @@ def waiting_room_view(request):
         cache.clear()
         form = HeroForm(request.POST)
         form_config_table = GameConfigForm(request.POST)
-
-        if form.is_valid():
-            hero = form.save(commit=False)
-            hero.stack = 100
-            hero.save()
-            display_id = len(players)
-            players.append({
-                'idx': display_id,
-                'type': 'Hero',
-                'name': hero.name,
-                'stack': hero.stack,
-            })
-            request.session['players'] = players
-            channel_layer = get_channel_layer()
-            async_to_sync(channel_layer.group_send)(
-                'poker', {
-                    'type': 'register_player',
-                    'message': {
-                        'name': hero.name,
-                        'stack': hero.stack,
-                    }
-                }
-            )
-            return redirect('hero_registration')
         
         if form_config_table.is_valid():
             config_data = form_config_table.cleaned_data
@@ -112,16 +89,55 @@ def waiting_room_view(request):
                 'ante': ante,
             }
 
-            request.session['form_config_table'] = form_config_table_data
+            # request.session['form_config_table'] = form_config_table_data
         else:
             print("Form is not valid")
             print(form_config_table.errors)
+
+        default_config_table = configurations_table({})
+        form_config_table = request.session['form_config_table']
+
+        game_config = {
+    'max_round': 10,
+    'initial_stack': form_config_table_data.get('initial_stack', default_config_table['initial_stack']),
+    'small_blind': form_config_table_data.get('small_blind', default_config_table['small_blind']),
+    'ante': form_config_table_data.get('ante', default_config_table['ante']),
+    'blind_structure': '',
+    'ai_players': players
+}
+        setup_config(game_config)
+
+        if form.is_valid():
+            hero = form.save(commit=False)
+            hero.stack = 100
+            hero.save()
+            display_id = len(players)
+            players.append({
+                'idx': display_id,
+                'type': 'Hero',
+                'name': hero.name,
+                'stack': hero.stack,
+            })
+            request.session['players'] = players
+            global_game_manager.join_human_player(hero.name, 5)
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                'poker', {
+                    'type': 'register_player',
+                    'message': {
+                        'name': hero.name,
+                        'stack': hero.stack,
+                    }
+                }
+            )
+            return redirect('hero_registration')
+        
+
     else:
         form = HeroForm()
         form_config_table = GameConfigForm()
 
     return render(request, 'waiting_room.html', {
-        'default_config_table': default_config_table,
         'form': form,
         'form_config_table': form_config_table,
         'players': players,
@@ -130,37 +146,22 @@ def waiting_room_view(request):
 
 
 def start_game_view(request):
-    form_config_table = request.session['form_config_table']
-    players_data = request.session.get('players', [])
-    players = players_data
-    # for player_data in players_data:
-    #     if 'uuid' not in player_data:
-    #         player_data['uuid'] = str(uuid4())
-    #     if 'state' not in player_data:
-    #         player_data['state'] = 'participating'
-    #     player = Player(
-    #         uuid=player_data['uuid'],
-    #         name=player_data['name'],
-    #         initial_stack=player_data.get('stack', 1000),  # Ustawienie początkowego stosu
-        # )
-        # players.append(player)
+    cache.clear()
+    # default_config_table = configurations_table({})
+    # form_config_table = request.session['form_config_table']
+    players = request.session.get('players', [])
 
     # players = {player.uuid: player.name for player in players}
     # Konfiguracja gry (ustawienia przykładowe, dostosuj według potrzeb)
-    game_config = {
-        'max_round': 10,
-        'initial_stack': form_config_table.get('initial_stack', 1000),
-        'small_blind': form_config_table.get('small_blind', 10),
-        'ante': form_config_table.get('ante', 1),
-        'blind_structure': '',
-        'ai_players': [
-            {'name': 'random_player', 'path': 'D:/ROBOTA/python/poker/poker_app/sample_player/random_player_setupCHECK.py'},
-            {'name': 'Tag', 'path': 'D:/ROBOTA/python/poker/poker_app/sample_player/TagCHECK.py'},
-            {'name': 'fish', 'path': 'D:/ROBOTA/python/poker/poker_app/sample_player/fish_player_setupCHECK.py'},
-            {'name': 'Whale', 'path': 'D:/ROBOTA/python/poker/poker_app/sample_player/fish_player_setupCHECK.py'}
-        ]
-    }
-    
+    # game_config = {
+    #     'max_round': 10,
+    #     'initial_stack': form_config_table.get('initial_stack', default_config_table['initial_stack']),
+    #     'small_blind': form_config_table.get('small_blind', default_config_table['small_blind']),
+    #     'ante': form_config_table.get('ante', default_config_table['ante']),
+    #     'blind_structure': '',
+    #     'ai_players': players
+    # }
+    # setup_config(game_config)
     
     table = Table()
     community_cards = [str(card) for card in table.get_community_card()]
@@ -172,7 +173,7 @@ def start_game_view(request):
     big_blind_pos = (table.dealer_btn + 2) % len(players)
     next_player = (big_blind_pos + 1) % len(players)
     round_state = {
-        'seats': players_data,
+        'seats': players,
         'community_card': community_cards,
         'pot': pot,
         'next_player': next_player,
@@ -180,7 +181,6 @@ def start_game_view(request):
         'small_blind_pos': small_blind_pos,
         'big_blind_pos': big_blind_pos
     }
-
     used_cards = [] 
     hole_card = _pick_unused_card(card_num=2, used_card=used_cards)
 
@@ -201,4 +201,12 @@ def start_game_view(request):
     })
 
 
+# def setup_config(config):
 
+
+#     global_game_manager.define_rule(
+#             config['max_round'], config['initial_stack'], config['small_blind'],
+#             config['ante'], config['blind_structure']
+#     )
+#     for player in config['ai_players']:
+#         global_game_manager.join_ai_player(player['name'], player['path'])
