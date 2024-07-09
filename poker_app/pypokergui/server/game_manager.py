@@ -15,19 +15,19 @@ class GameManager(object):
     def define_rule(self, max_round, initial_stack, small_blind, ante, blind_structure):
         self.rule = Engine.gen_game_config(max_round, initial_stack, small_blind, ante, blind_structure)
 
-    def join_ai_player(self, name, setup_script_path):                              # 1 AI
+    def join_ai_player(self, name, setup_script_path):                             
         ai_uuid = str(len(self.members_info))
         self.members_info.append(gen_ai_player_info(name, ai_uuid, setup_script_path)) 
 
 
-    def join_human_player(self, name, uuid):                                        # 1 human
+    def join_human_player(self, name, uuid):                                       
         uuid = str(len(self.members_info))
         self.members_info.append(gen_human_player_info(name, uuid))
 
     def get_human_player_info(self, uuid):
         
         for info in self.members_info:    
-                                                                                 # 4 human
+                                                                                 
             if info["type"] == "human" and info["uuid"] == uuid:
                 return info
 
@@ -37,6 +37,7 @@ class GameManager(object):
         self.members_info.remove(member_info)
 
     def start_game(self):
+
         # assert self.rule and len(self.members_info) >= 2 and not self.is_playing_poker
         uuid_list = [member["uuid"] for member in self.members_info]
         name_list = [member["name"] for member in self.members_info]
@@ -90,17 +91,17 @@ def _build_ai_player(setup_script_path):
     setup_method = AG._import_setup_method(setup_script_path)
     return setup_method()
 
-def gen_ai_player_info(name, uuid, setup_script_path):                  # 2 AI
-    info = _gen_base_player_info("ai", name, uuid)                       # 4 AI
+def gen_ai_player_info(name, uuid, setup_script_path):                  
+    info = _gen_base_player_info("ai", name, uuid)                      
     info["setup_script_path"] = setup_script_path
     return info
 
-def gen_human_player_info(name, uuid):                                  # 2 human
+def gen_human_player_info(name, uuid):                                  
     return _gen_base_player_info("human", name, uuid)
 
 def _gen_base_player_info(player_type, name, uuid):
     return {
-            "type": player_type,                                        # 3 human i AI
+            "type": player_type,                                       
             "name": name,
             "uuid": uuid
             }

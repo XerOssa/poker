@@ -19,7 +19,6 @@ from poker_app.pypokergui.engine.data_encoder import DataEncoder
 from poker_app.pypokergui.engine_wrapper import EngineWrapper
 import poker_app.pypokergui.server.game_manager as GM
 from poker_app.pypokergui.server.poker import setup_config
-from uuid import uuid4
 
 
 def home(request):
@@ -89,21 +88,17 @@ def waiting_room_view(request):
                 'ante': ante,
             }
 
-        else:
-            print("Form is not valid")
-            print(form_config_table.errors)
-
         default_config_table = configurations_table({})
         form_config_table = request.session['form_config_table']
 
         game_config = {
-    'max_round': 10,
-    'initial_stack': form_config_table_data.get('initial_stack', default_config_table['initial_stack']),
-    'small_blind': form_config_table_data.get('small_blind', default_config_table['small_blind']),
-    'ante': form_config_table_data.get('ante', default_config_table['ante']),
-    'blind_structure': '',
-    'ai_players': players
-}
+            'max_round': 10,
+            'initial_stack': form_config_table_data.get('initial_stack', default_config_table['initial_stack']),
+            'small_blind': form_config_table_data.get('small_blind', default_config_table['small_blind']),
+            'ante': form_config_table_data.get('ante', default_config_table['ante']),
+            'blind_structure': None,
+            'ai_players': players
+        }
         setup_config(game_config)
 
         if form.is_valid():
@@ -127,13 +122,12 @@ def waiting_room_view(request):
                 }
             )
             return redirect('hero_registration')
-        # engine = EngineWrapper()
-        # latest_messages = engine.start_game(players, game_config)
+        
 
     else:
         form = HeroForm()
         form_config_table = GameConfigForm()
-
+    # EngineWrapper.start_game(players, game_config)
     return render(request, 'waiting_room.html', {
         'form': form,
         'form_config_table': form_config_table,

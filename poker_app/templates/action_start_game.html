@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Poker Game</title>
+    <script src="http://127.0.0.1:8000//__reload__/reload.js"></script>
+</head>
+<body>
+    <div id="messages"></div>
+    <button id="start-game">Start Game</button>
+
+    <script>
+        const chatSocket = new WebSocket(
+            'ws://' + window.location.host + '/ws/pokersocket/'
+        );
+
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            document.querySelector('#messages').innerHTML += '<p>' + data.message + '</p>';
+        };
+
+        chatSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+
+        // Function to send a message for testing purposes
+        function sendMessage(message) {
+            chatSocket.send(JSON.stringify(message));
+        }
+
+        // Event listener for the Start Game button
+        document.querySelector('#start-game').addEventListener('click', () => {
+            sendMessage({
+                'type': 'action_start_game'
+            });
+        });
+    </script>
+</body>
+</html>

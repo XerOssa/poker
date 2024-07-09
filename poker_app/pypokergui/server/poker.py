@@ -62,10 +62,10 @@ class PokerWebSocketHandler(tornado.websocket.WebSocketHandler):
     def on_message(self, message):
         js = escape.json_decode(message)
         message_type = js['type']
-        if 'action_new_member' == message_type:
-            global_game_manager.join_human_player(js['name'], self.uuid)
-            MM.broadcast_config_update(self, global_game_manager, self.sockets)
-        elif 'action_start_game' == message_type:
+        # if 'action_new_member' == message_type:
+        global_game_manager.join_human_player(js['name'], self.uuid)
+        MM.broadcast_config_update(self, global_game_manager, self.sockets)
+        if 'action_start_game' == message_type:
             if global_game_manager.is_playing_poker:
                 MM.alert_server_restart(self, self.uuid, self.sockets)
             else:

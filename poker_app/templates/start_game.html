@@ -7,9 +7,10 @@
 </head>
 <body>
     {% load django_browser_reload %}
-    {% include "WebSocket.html" %}
+    
     <div>
         <div id="round_state">
+            {% include "action_start_game.html" %}
             <div id="round-state-table" class="img-rounded">
                 {% for player in players %}
                     {% if player.idx == round_state.dealer_pos %}
@@ -56,6 +57,6 @@
         </div>
     </div>
 
-
+    <script src="http://127.0.0.1:8000//__reload__/reload.js"></script>
 </body>
 </html>

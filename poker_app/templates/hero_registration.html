@@ -7,3 +7,46 @@
     <input type="submit" value="Register" class="btn btn-primary">
     <input type="hidden" name="next" value="{{ request.path }}">
 </form>
+
+<script>
+    const websocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/pokersocket/'
+    );
+    websocket.onopen = function(event) {
+      console.log('WebSocket connected');
+    };
+    
+    document.getElementById('registration_form').addEventListener('submit', (e) => {
+      e.preventDefault(); // Prevent default form submission
+      const name = document.getElementById('name').value;
+      const message = { type: 'action_new_member', name };
+      websocket.send(JSON.stringify(message));
+    });
+</script>
+  
+<script>
+    const chatSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/pokersocket/'
+    );
+
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        document.querySelector('#messages').innerHTML += '<p>' + data.message + '</p>';
+    };
+
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    // Function to send a message for testing purposes
+    function sendMessage(message) {
+        chatSocket.send(JSON.stringify(message));
+    }
+
+    // Event listener for the Start Game button
+    document.querySelector('#start-game').addEventListener('click', () => {
+        sendMessage({
+            'type': 'action_start_game'
+        });
+    });
+</script>
