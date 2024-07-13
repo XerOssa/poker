@@ -4,6 +4,7 @@ import pandas as pd
 from django.shortcuts import render, redirect
 from django.core.cache import cache
 from django.conf import settings
+from django.urls import reverse
 from poker_analysis import process_poker_hand, save_to_csv
 from .models import Hero
 
@@ -65,42 +66,38 @@ def charts(request):
 
 global_game_manager = GM.GameManager()
 def waiting_room_view(request):
-    
     form_config_table_data = {}
     file_path = 'poker_app/config_players.txt'
     config_players = read_config(file_path)
     players = players_list(config_players)
 
     if request.method == 'POST':
-        cache.clear()
         form = HeroForm(request.POST)
         form_config_table = GameConfigForm(request.POST)
-        
+
         if form_config_table.is_valid():
             config_data = form_config_table.cleaned_data
-            initial_stack = config_data.get('initial_stack')
-            small_blind = config_data.get('small_blind')
-            ante = config_data.get('ante')
-            
             form_config_table_data = {
-                'initial_stack': initial_stack,
-                'small_blind': small_blind,
-                'ante': ante,
+                'initial_stack': config_data.get('initial_stack'),
+                'small_blind': config_data.get('small_blind'),
+                'ante': config_data.get('ante'),
             }
+            request.session['form_config_table'] = form_config_table_data
+            default_config_table = configurations_table({})
+            form_config_table_data = request.session.get('form_config_table', {})
 
-        default_config_table = configurations_table({})
-        form_config_table = request.session['form_config_table']
-
-        game_config = {
-            'max_round': 10,
-            'initial_stack': form_config_table_data.get('initial_stack', default_config_table['initial_stack']),
-            'small_blind': form_config_table_data.get('small_blind', default_config_table['small_blind']),
-            'ante': form_config_table_data.get('ante', default_config_table['ante']),
-            'blind_structure': None,
-            'ai_players': players
-        }
-        setup_config(game_config)
-
+            game_config = {
+                'max_round': 10,
+                'initial_stack': form_config_table_data.get('initial_stack', default_config_table['initial_stack']),
+                'small_blind': form_config_table_data.get('small_blind', default_config_table['small_blind']),
+                'ante': form_config_table_data.get('ante', default_config_table['ante']),
+                'blind_structure': None,
+                'ai_players': players
+            }
+            # setup_config(game_config)
+            request.session['game_config'] = game_config  # Store config in session
+            return redirect('waiting_room')
+        
         if form.is_valid():
             hero = form.save(commit=False)
             hero.save()
@@ -111,7 +108,7 @@ def waiting_room_view(request):
                 'name': hero.name,
             })
             request.session['players'] = players
-            global_game_manager.join_human_player(hero.name, 5)
+            # global_game_manager.join_human_player(hero.name)
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
                 'poker', {
@@ -122,12 +119,13 @@ def waiting_room_view(request):
                 }
             )
             return redirect('hero_registration')
-        
 
     else:
         form = HeroForm()
         form_config_table = GameConfigForm()
-    # EngineWrapper.start_game(players, game_config)
+        if 'form_config_table' not in request.session:
+            request.session['form_config_table'] = {}
+
     return render(request, 'waiting_room.html', {
         'form': form,
         'form_config_table': form_config_table,
@@ -135,16 +133,12 @@ def waiting_room_view(request):
     })
 
 
-
 def start_game_view(request):
-    cache.clear()
     players = request.session.get('players', [])
     
     table = Table()
     community_cards = [str(card) for card in table.get_community_card()]
-    pot = 0 # DataEncoder.encode_pot(players)
-    # engine = EngineWrapper()
-    # latest_messages = engine.start_game(players, game_config)
+    pot = 0
     dealer_pos = table.dealer_btn
     small_blind_pos = (table.dealer_btn + 1) % len(players)
     big_blind_pos = (table.dealer_btn + 2) % len(players)
@@ -166,11 +160,10 @@ def start_game_view(request):
         async_to_sync(channel_layer.group_send)(
             'poker', {
                 'type': 'start_game',
-                # 'message': latest_messages
             }
         )
         return redirect('start_game')
-    
+
     return render(request, 'start_game.html', {
         'round_state': round_state,
         'players': players,

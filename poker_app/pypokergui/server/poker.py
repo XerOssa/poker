@@ -147,8 +147,11 @@ def setup_config(config):
 
 
     global_game_manager.define_rule(
-            config['max_round'], config['initial_stack'], config['small_blind'],
-            config['ante'], config['blind_structure']
+            config['max_round'], 
+            config['initial_stack'], 
+            config['small_blind'],
+            config['ante'], 
+            config['blind_structure']
     )
     for player in config['ai_players']:
         global_game_manager.join_ai_player(player['name'], player['path'])
