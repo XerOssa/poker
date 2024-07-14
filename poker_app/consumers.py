@@ -1,66 +1,52 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
+import uuid
 from django.core.cache import cache
 import poker_app.pypokergui.server.game_manager as GM
 import poker_app.pypokergui.server.message_manager as MM
+import poker_app.pypokergui.ai_generator as AG
 # from poker_app.pypokergui.server.poker import setup_config
 
 global_game_manager = GM.GameManager()
 MODE_SPEED = "moderate"
 
 class PokerConsumer(AsyncWebsocketConsumer):
-    async def connect(self):
-        self.group_name = 'poker_group'
-        await self.channel_layer.group_add(
-            self.group_name,
-            self.channel_name
-        )
-        await self.accept()
-
-    async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(
-            self.group_name,
-            self.channel_name
-        )
-
     async def receive(self, text_data):
         try:
             js = json.loads(text_data)
             message_type = js.get('type')
 
-            if message_type == "action_new_member":
-                await self.join_human_player(js.get('name'))
-            elif message_type == 'action_start_game':
-                if global_game_manager.is_playing_poker:
-                    MM.alert_server_restart(self, self.uuid, self.sockets)
-                else:
-                    game_config = self.scope["session"].get("game_config")
-                    if game_config:
-                        print(f"Game config found: {game_config}")  # Debugging
-                        self.setup_config(game_config)
-                        print("Setup config executed")  # Debugging
-                        global_game_manager.start_game()
-                        print("Game started")  # Debugging
-                        MM.broadcast_start_game(self, global_game_manager, self.sockets)
-                        MM.broadcast_update_game(self, global_game_manager, self.sockets, MODE_SPEED)
-                        if self._is_next_player_ai(global_game_manager):
-                            self._progress_the_game_till_human()
-                    else:
-                        print("Game configuration not found in session.")
+            if message_type == 'action_start_game':
+                game_config = self.scope["session"].get("game_config")
+                if not game_config:
+                    # Set up game config if not already set
+                    form_data = js.get('form_data', {})
+                    default_config = self.get_default_config()
+                    game_config = setup_game_config(form_data, default_config)
+                    self.scope["session"]["game_config"] = game_config
+
+                print(f"Game config found: {game_config}")  # Debugging
+                self.setup_config(game_config)
+                global_game_manager.start_game()
         except json.JSONDecodeError as e:
             print(f"Error decoding JSON: {e}")
         except KeyError as e:
             print(f"KeyError accessing message type: {e}")
 
-    async def join_human_player(self, name):
-        global_game_manager.join_human_player(name)
+    def get_default_config(self):
+        return {
+            'initial_stack': 100,
+            'small_blind': 1,
+            'ante': 0,
+            'max_round': 10,
+            'ai_players': [],
+            # 'blind_structure': None
+        }
 
     def setup_config(self, game_config):
-        assert 'initial_stack' in game_config, "Initial stack missing in game config"
-        assert 'small_blind' in game_config, "Small blind missing in game config"
-        assert 'ante' in game_config, "Ante missing in game config"
-        assert 'max_round' in game_config, "Max round missing in game config"
-        assert 'ai_players' in game_config, "AI players missing in game config"
+        required_keys = ['initial_stack', 'small_blind', 'ante', 'max_round', 'ai_players']
+        for key in required_keys:
+            assert key in game_config, f"{key} missing in game config"
 
         global_game_manager.rule = {
             'initial_stack': game_config['initial_stack'],
@@ -70,22 +56,41 @@ class PokerConsumer(AsyncWebsocketConsumer):
         }
 
         human_players = self.scope["session"].get("human_players", [])
+        
+        # Debugging: Print human players and AI players to check their contents
+        print(f"Human players: {human_players}")
+        print(f"AI players: {game_config['ai_players']}")
+
+        # Validate AI players
+        for ai_player in game_config['ai_players']:
+            if 'uuid' not in ai_player:
+                # print(f"Missing 'uuid' in AI player: {ai_player}")
+                ai_player['uuid'] = str(uuid.uuid4())  # Generate a new UUID if missing
+
         global_game_manager.members_info = game_config['ai_players'] + human_players
 
         # Debugging: Print members_info to check for missing 'uuid' keys
         print(f"Members info: {global_game_manager.members_info}")
 
-        # Ensure all members have 'uuid' key, handle missing key
-        for member in global_game_manager.members_info:
-            if 'uuid' not in member:
-                print(f"Missing 'uuid' in member: {member}")
-                # Handle the missing 'uuid' case (e.g., assign a default or raise an error)
-                member['uuid'] = 'default_uuid'  # Example default value
-
         # Proceed with creating uuid_list
         uuid_list = [member["uuid"] for member in global_game_manager.members_info]
-        print(f"UUID list: {uuid_list}")
+        # print(f"UUID list: {uuid_list}")
 
         global_game_manager.is_playing_poker = False
 
         print("Configuration completed")  # Debugging
+
+
+def setup_game_config(form_data, default_config):
+    game_config = {
+        'max_round': 10,
+        'initial_stack': form_data.get('initial_stack', default_config['initial_stack']),
+        'small_blind': form_data.get('small_blind', default_config['small_blind']),
+        'ante': form_data.get('ante', default_config['ante']),
+        # 'blind_structure': form_data.get('blind_structure', default_config.get('blind_structure')),
+        'ai_players': form_data.get('ai_players', default_config['ai_players'])
+    }
+
+
+    print(f"Setup game config: {game_config}")  # Debugging
+    return game_config

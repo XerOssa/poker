@@ -91,7 +91,7 @@ def waiting_room_view(request):
                 'initial_stack': form_config_table_data.get('initial_stack', default_config_table['initial_stack']),
                 'small_blind': form_config_table_data.get('small_blind', default_config_table['small_blind']),
                 'ante': form_config_table_data.get('ante', default_config_table['ante']),
-                'blind_structure': None,
+                # 'blind_structure': None,
                 'ai_players': players
             }
             # setup_config(game_config)

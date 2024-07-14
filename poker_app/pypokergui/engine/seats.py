@@ -15,7 +15,7 @@ class Seats:
     human_index = None
     for idx, p in enumerate(self.players):
         player_name = getattr(p, 'name', None)  # Uzyskanie nazwy gracza z właściwości 'name'
-        if player_name == "Hero":
+        if player_name == "Jacek":
             human_index = idx
             break
     # Jeśli human jest wśród graczy, przesuń go na 4. miejsce w kolejności

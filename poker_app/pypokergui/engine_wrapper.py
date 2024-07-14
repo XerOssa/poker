@@ -8,14 +8,34 @@ from poker_app.pypokergui.engine.poker_constants import PokerConstants as Const
 
 class EngineWrapper(object):
 
+    # def start_game(self, players_info, game_config):
+    #     self.config = game_config
+    #     table = Table()
+    #     for uuid, name in players_info.items():
+    #         player = Player(uuid, game_config['initial_stack'], name)
+    #         table.seats.sitdown(player)
+    #         print(f"Player {player.uuid} added to table with stack {player.stack} and status {player.pay_info.status}")
+    #     state, msgs = self._start_new_round(1, game_config['blind_structure'], table)
+    #     self.current_state = state
+    #     return _parse_broadcast_destination(msgs, self.current_state['table'])
+
+
     def start_game(self, players_info, game_config):
+        # Debugging: Print game_config to ensure it contains the necessary keys
+        print(f"Starting game with config: {game_config}")
+
         self.config = game_config
         table = Table()
         for uuid, name in players_info.items():
             player = Player(uuid, game_config['initial_stack'], name)
             table.seats.sitdown(player)
             print(f"Player {player.uuid} added to table with stack {player.stack} and status {player.pay_info.status}")
-        state, msgs = self._start_new_round(1, game_config['blind_structure'], table)
+        
+        # Ensure blind_structure key exists
+        # if 'blind_structure' not in game_config:
+        #     raise KeyError(f"'blind_structure' missing in game config: {game_config}")
+
+        state, msgs = self._start_new_round(1, table)
         self.current_state = state
         return _parse_broadcast_destination(msgs, self.current_state['table'])
 
@@ -23,20 +43,20 @@ class EngineWrapper(object):
         state, msgs = RoundManager.apply_action(self.current_state, action, bet_amount)
         if state['street'] == Const.Street.FINISHED:
             state, new_msgs = self._start_next_round(
-                    state['round_count']+1, self.config['blind_structure'], state['table'])
+                    state['round_count']+1, state['table'])
             msgs += new_msgs
         self.current_state = state
         return _parse_broadcast_destination(msgs, self.current_state['table'])
 
-    def _start_new_round(self, round_count, blind_structure, table):
+    def _start_new_round(self, round_count, table):
         # adjust btn position to put btn of player-0 after table.shift_dealer_btn()
         # which will be called in self._start_next_round(...)
         table.dealer_btn = len(table.seats.players)-1
-        return self._start_next_round(round_count, blind_structure, table)
+        return self._start_next_round(round_count, table)
 
-    def _start_next_round(self, round_count, blind_structure, table):
+    def _start_next_round(self, round_count, table):
         table.shift_dealer_btn()
-        small_blind, ante = _get_forced_bet_amount(round_count, blind_structure)
+        small_blind, ante = _get_forced_bet_amount(round_count)
         table = _exclude_short_of_money_players(table, ante, small_blind)
         if self._has_game_finished(round_count, table, self.config['max_round']):
             finished_state = { 'table': table }
@@ -56,32 +76,32 @@ def gen_players_info(uuid_list, name_list):
     assert len(uuid_list) == len(name_list)
     return OrderedDict(zip(uuid_list, name_list))
 
-def gen_game_config(max_round, initial_stack, small_blind, ante, blind_structure=None):
+def gen_game_config(max_round, initial_stack, small_blind, ante):
     assert max_round > 0
     assert initial_stack > 0
     assert small_blind > 0
     assert ante >= 0
-    if not blind_structure:
-        blind_structure = { 1 : { 'small_blind': small_blind, 'ante': ante } }
-    if not 1 in blind_structure:
-        blind_structure[1] = { 'small_blind': small_blind, 'ante': ante }
+    # if not blind_structure:
+    #     blind_structure = { 1 : { 'small_blind': small_blind, 'ante': ante } }
+    # if not 1 in blind_structure:
+    #     blind_structure[1] = { 'small_blind': small_blind, 'ante': ante }
     return {
             'max_round': max_round,
             'initial_stack': initial_stack,
             'small_blind': small_blind,
             'ante': ante,
-            'blind_structure': blind_structure
+            # 'blind_structure': blind_structure
             }
 
-def _get_forced_bet_amount(round_count, blind_structure):
+def _get_forced_bet_amount(round_count, blind_structure = None):
     if not isinstance(blind_structure, dict):
-        # Tutaj możesz ustawić wartość domyślną lub obsłużyć ten przypadek inaczej
-        # Na przykład:
-        print("Warning: blind_structure is not a dictionary. Using default values.")
+#         # Tutaj możesz ustawić wartość domyślną lub obsłużyć ten przypadek inaczej
+#         # Na przykład:
+#         print("Warning: blind_structure is not a dictionary. Using default values.")
         return 10, 0  # Domyślne wartości dla small_blind i ante
     level_thresholds = sorted(blind_structure.keys())
     current_level_pos = [r <= round_count for r in level_thresholds].count(True)-1
-    assert current_level_pos >= 0
+#     assert current_level_pos >= 0
     current_level_key = level_thresholds[current_level_pos]
     current_structure = blind_structure[current_level_key]
     return current_structure['small_blind'], current_structure['ante']

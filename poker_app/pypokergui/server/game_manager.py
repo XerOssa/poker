@@ -74,12 +74,27 @@ def has_game_finished(new_messages):
     return "game_result_message" == last_message[1]['message']['message_type']
 
 
+# def build_ai_players(members_info):
+#     holder = {}
+#     for member in members_info:
+#         if member["type"] == "human":
+#             continue
+#         holder[member["uuid"]] = _build_ai_player(member["setup_script_path"])
+#     return holder
+
+
 def build_ai_players(members_info):
     holder = {}
     for member in members_info:
         if member["type"] == "human":
             continue
-        holder[member["uuid"]] = _build_ai_player(member["setup_script_path"])
+        # Debugging: Check if 'setup_script_path' exists in member
+        if "path" not in member:
+            print(f"Missing 'setup_script_path' in AI player: {member}")
+            # You can handle the missing key as needed here, e.g., raise an error or assign a default path
+            raise KeyError(f"'setup_script_path' missing in member: {member}")
+        
+        holder[member["uuid"]] = _build_ai_player(member["path"])
     return holder
 
 
@@ -92,7 +107,7 @@ def _build_ai_player(setup_script_path):
 
 def gen_ai_player_info(name, uuid, setup_script_path):
     info = _gen_base_player_info("ai", name, uuid)
-    info["setup_script_path"] = setup_script_path
+    info["path"] = setup_script_path
     return info
 
 
