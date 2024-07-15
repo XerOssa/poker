@@ -19,19 +19,45 @@ class PokerConsumer(AsyncWebsocketConsumer):
             if message_type == 'action_start_game':
                 game_config = self.scope["session"].get("game_config")
                 if not game_config:
-                    # Set up game config if not already set
                     form_data = js.get('form_data', {})
                     default_config = self.get_default_config()
                     game_config = setup_game_config(form_data, default_config)
                     self.scope["session"]["game_config"] = game_config
 
-                print(f"Game config found: {game_config}")  # Debugging
+                # print(f"Game config found: {game_config}")  # Debugging
                 self.setup_config(game_config)
+                
+                human_player = self.scope["session"].get("human_player")
+                ai_players = game_config['ai_players']
+
+                # Populate members_info with human and AI players
+                members_info = []
+                for ai_player in ai_players:
+                    members_info.append({
+                        "type": 'ai',
+                        "name": ai_player['name'],
+                        "uuid": ai_player.get('uuid', str(uuid.uuid4())),  # Ensure a unique identifier
+                        "path": ai_player['path'],
+                    })
+                if human_player:
+                    members_info.append({
+                        "type": 'human',
+                        "name": human_player['name'],
+                        "uuid": str(uuid.uuid4()),  # Ensure a unique identifier
+                    })
+
+
+
+                global_game_manager.members_info = members_info  # Assign members_info
+                # print(f"Members info: {members_info}")  # Debugging
+
                 global_game_manager.start_game()
+
         except json.JSONDecodeError as e:
             print(f"Error decoding JSON: {e}")
         except KeyError as e:
             print(f"KeyError accessing message type: {e}")
+
 
     def get_default_config(self):
         return {
@@ -40,14 +66,9 @@ class PokerConsumer(AsyncWebsocketConsumer):
             'ante': 0,
             'max_round': 10,
             'ai_players': [],
-            # 'blind_structure': None
         }
 
     def setup_config(self, game_config):
-        required_keys = ['initial_stack', 'small_blind', 'ante', 'max_round', 'ai_players']
-        for key in required_keys:
-            assert key in game_config, f"{key} missing in game config"
-
         global_game_manager.rule = {
             'initial_stack': game_config['initial_stack'],
             'small_blind': game_config['small_blind'],
@@ -55,30 +76,20 @@ class PokerConsumer(AsyncWebsocketConsumer):
             'max_round': game_config['max_round']
         }
 
-        human_players = self.scope["session"].get("human_players", [])
+        human_players = self.scope["session"].get("human_player", [])
         
         # Debugging: Print human players and AI players to check their contents
-        print(f"Human players: {human_players}")
-        print(f"AI players: {game_config['ai_players']}")
+        # print(f"Human players: {human_players}")
 
         # Validate AI players
         for ai_player in game_config['ai_players']:
             if 'uuid' not in ai_player:
-                # print(f"Missing 'uuid' in AI player: {ai_player}")
                 ai_player['uuid'] = str(uuid.uuid4())  # Generate a new UUID if missing
 
-        global_game_manager.members_info = game_config['ai_players'] + human_players
-
-        # Debugging: Print members_info to check for missing 'uuid' keys
-        print(f"Members info: {global_game_manager.members_info}")
-
-        # Proceed with creating uuid_list
-        uuid_list = [member["uuid"] for member in global_game_manager.members_info]
-        # print(f"UUID list: {uuid_list}")
 
         global_game_manager.is_playing_poker = False
 
-        print("Configuration completed")  # Debugging
+        # print("Configuration completed")  # Debugging
 
 
 def setup_game_config(form_data, default_config):
@@ -87,10 +98,9 @@ def setup_game_config(form_data, default_config):
         'initial_stack': form_data.get('initial_stack', default_config['initial_stack']),
         'small_blind': form_data.get('small_blind', default_config['small_blind']),
         'ante': form_data.get('ante', default_config['ante']),
-        # 'blind_structure': form_data.get('blind_structure', default_config.get('blind_structure')),
         'ai_players': form_data.get('ai_players', default_config['ai_players'])
     }
 
 
-    print(f"Setup game config: {game_config}")  # Debugging
+    # print(f"Setup game config: {game_config}")  # Debugging
     return game_config

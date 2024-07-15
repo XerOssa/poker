@@ -15,9 +15,9 @@ class GameManager:
     def define_rule(self, max_round, initial_stack, small_blind, ante, blind_structure):
         self.rule = Engine.gen_game_config(max_round, initial_stack, small_blind, ante, blind_structure)
 
-    def join_ai_player(self, name, setup_script_path):
+    def join_ai_player(self, name, path):
         ai_uuid = str(len(self.members_info))
-        self.members_info.append(gen_ai_player_info(name, ai_uuid, setup_script_path))
+        self.members_info.append(gen_ai_player_info(name, ai_uuid, path))
 
     def join_human_player(self, name):
         uuid = str(len(self.members_info))
@@ -34,7 +34,7 @@ class GameManager:
         self.members_info.remove(member_info)
 
     def start_game(self):
-        assert self.rule and len(self.members_info) >= 2 and not self.is_playing_poker
+        # assert self.rule and len(self.members_info) >= 2 and not self.is_playing_poker
         uuid_list = [member["uuid"] for member in self.members_info]
         name_list = [member["name"] for member in self.members_info]
         players_info = Engine.gen_players_info(uuid_list, name_list)
@@ -79,7 +79,7 @@ def has_game_finished(new_messages):
 #     for member in members_info:
 #         if member["type"] == "human":
 #             continue
-#         holder[member["uuid"]] = _build_ai_player(member["setup_script_path"])
+#         holder[member["uuid"]] = _build_ai_player(member["path"])
 #     return holder
 
 
@@ -88,26 +88,26 @@ def build_ai_players(members_info):
     for member in members_info:
         if member["type"] == "human":
             continue
-        # Debugging: Check if 'setup_script_path' exists in member
+        # Debugging: Check if 'path' exists in member
         if "path" not in member:
-            print(f"Missing 'setup_script_path' in AI player: {member}")
+            print(f"Missing 'path' in AI player: {member}")
             # You can handle the missing key as needed here, e.g., raise an error or assign a default path
-            raise KeyError(f"'setup_script_path' missing in member: {member}")
+            raise KeyError(f"'path' missing in member: {member}")
         
         holder[member["uuid"]] = _build_ai_player(member["path"])
     return holder
 
 
-def _build_ai_player(setup_script_path):
-    if not AG.healthcheck(setup_script_path, quiet=True):
-        raise Exception("Failed to setup AI from [ %s ]" % setup_script_path)
-    setup_method = AG._import_setup_method(setup_script_path)
+def _build_ai_player(path):
+    if not AG.healthcheck(path, quiet=True):
+        raise Exception("Failed to setup AI from [ %s ]" % path)
+    setup_method = AG._import_setup_method(path)
     return setup_method()
 
 
-def gen_ai_player_info(name, uuid, setup_script_path):
+def gen_ai_player_info(name, uuid, path):
     info = _gen_base_player_info("ai", name, uuid)
-    info["path"] = setup_script_path
+    info["path"] = path
     return info
 
 

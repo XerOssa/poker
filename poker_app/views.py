@@ -91,23 +91,30 @@ def waiting_room_view(request):
                 'initial_stack': form_config_table_data.get('initial_stack', default_config_table['initial_stack']),
                 'small_blind': form_config_table_data.get('small_blind', default_config_table['small_blind']),
                 'ante': form_config_table_data.get('ante', default_config_table['ante']),
-                # 'blind_structure': None,
                 'ai_players': players
             }
             # setup_config(game_config)
             request.session['game_config'] = game_config  # Store config in session
+            request.session['players'] = players
             return redirect('waiting_room')
         
         if form.is_valid():
             hero = form.save(commit=False)
             hero.save()
             display_id = len(players)
-            players.append({
+            human_player = {
                 'idx': display_id,
                 'type': 'human',
                 'name': hero.name,
-            })
-            request.session['players'] = players
+            }
+            # players.append({
+            #     'idx': display_id,
+            #     'type': 'human',
+            #     'name': hero.name,
+            # })
+            # players.append(human_player)
+            request.session['human_player'] = human_player
+
             # global_game_manager.join_human_player(hero.name)
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
