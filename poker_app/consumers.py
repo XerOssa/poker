@@ -1,10 +1,12 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
 import uuid
+import logging
 from django.core.cache import cache
 import poker_app.pypokergui.server.game_manager as GM
 import poker_app.pypokergui.server.message_manager as MM
 import poker_app.pypokergui.ai_generator as AG
+
 # from poker_app.pypokergui.server.poker import setup_config
 
 global_game_manager = GM.GameManager()
@@ -24,13 +26,11 @@ class PokerConsumer(AsyncWebsocketConsumer):
                     game_config = setup_game_config(form_data, default_config)
                     self.scope["session"]["game_config"] = game_config
 
-                # print(f"Game config found: {game_config}")  # Debugging
                 self.setup_config(game_config)
                 
                 human_player = self.scope["session"].get("human_player")
                 ai_players = game_config['ai_players']
 
-                # Populate members_info with human and AI players
                 members_info = []
                 for ai_player in ai_players:
                     members_info.append({
@@ -46,18 +46,33 @@ class PokerConsumer(AsyncWebsocketConsumer):
                         "uuid": str(uuid.uuid4()),  # Ensure a unique identifier
                     })
 
-
-
                 global_game_manager.members_info = members_info  # Assign members_info
-                # print(f"Members info: {members_info}")  # Debugging
-
+                
+                # Start the game and broadcast to clients
                 global_game_manager.start_game()
+                await self.broadcast_start_game(global_game_manager, self.scope["session"].get("sockets", []))
 
         except json.JSONDecodeError as e:
             print(f"Error decoding JSON: {e}")
         except KeyError as e:
             print(f"KeyError accessing message type: {e}")
 
+    async def broadcast_start_game(self, game_manager, sockets):
+        # Broadcast message to browser via sockets
+        for soc in sockets:
+            try:
+                message = MM._gen_start_game_message(self, game_manager, soc.uuid)
+                await soc.send(text_data=json.dumps(message))
+            except:
+                logging.error("Error sending message", exc_info=True)
+        
+        # Generate game information for AI players
+        game_info = MM._gen_game_info(game_manager)
+        
+        # Broadcast message to AI by invoking the proper callback method
+        for uuid, player in game_manager.ai_players.items():
+            player.receive_game_start_message(game_info)
+            player.set_uuid(uuid)
 
     def get_default_config(self):
         return {
@@ -76,20 +91,10 @@ class PokerConsumer(AsyncWebsocketConsumer):
             'max_round': game_config['max_round']
         }
 
-        human_players = self.scope["session"].get("human_player", [])
-        
-        # Debugging: Print human players and AI players to check their contents
-        # print(f"Human players: {human_players}")
-
-        # Validate AI players
         for ai_player in game_config['ai_players']:
             if 'uuid' not in ai_player:
                 ai_player['uuid'] = str(uuid.uuid4())  # Generate a new UUID if missing
-
-
         global_game_manager.is_playing_poker = False
-
-        # print("Configuration completed")  # Debugging
 
 
 def setup_game_config(form_data, default_config):
@@ -101,6 +106,4 @@ def setup_game_config(form_data, default_config):
         'ai_players': form_data.get('ai_players', default_config['ai_players'])
     }
 
-
-    # print(f"Setup game config: {game_config}")  # Debugging
     return game_config

@@ -1,7 +1,11 @@
 import poker_app.pypokergui.engine_wrapper as Engine
 import poker_app.pypokergui.ai_generator as AG
 import poker_app.pypokergui.server.message_manager as MM
+
+
 class GameManager:
+
+
     def __init__(self):
         self.config = {}
         self.rule = None
@@ -12,29 +16,34 @@ class GameManager:
         self.latest_messages = []
         self.next_player_uuid = None
 
+
     def define_rule(self, max_round, initial_stack, small_blind, ante, blind_structure):
         self.rule = Engine.gen_game_config(max_round, initial_stack, small_blind, ante, blind_structure)
+
 
     def join_ai_player(self, name, path):
         ai_uuid = str(len(self.members_info))
         self.members_info.append(gen_ai_player_info(name, ai_uuid, path))
 
+
     def join_human_player(self, name):
         uuid = str(len(self.members_info))
         self.members_info.append(gen_human_player_info(name, uuid))
+
 
     def get_human_player_info(self, uuid):
         for info in self.members_info:
             if info["type"] == "human" and info["uuid"] == uuid:
                 return info
 
+
     def remove_human_player_info(self, uuid):
         member_info = self.get_human_player_info(uuid)
         assert member_info
         self.members_info.remove(member_info)
 
+
     def start_game(self):
-        # assert self.rule and len(self.members_info) >= 2 and not self.is_playing_poker
         uuid_list = [member["uuid"] for member in self.members_info]
         name_list = [member["name"] for member in self.members_info]
         players_info = Engine.gen_players_info(uuid_list, name_list)
@@ -44,10 +53,12 @@ class GameManager:
         self.is_playing_poker = True
         self.next_player_uuid = fetch_next_player_uuid(self.latest_messages)
 
+
     def update_game(self, action, amount):
         assert len(self.latest_messages) != 0  # check that start_game has already called
         self.latest_messages = self.engine.update_game(action, amount)
         self.next_player_uuid = fetch_next_player_uuid(self.latest_messages)
+
 
     def ask_action_to_ai_player(self, uuid):
         assert uuid in self.ai_players, "AI player UUID does not match"
@@ -59,8 +70,11 @@ class GameManager:
             ask_message['message']['hole_card'],
             ask_message['message']['round_state']
         )
+    
+
     def configure_game(self, config):
         self.config = config
+
 
 def fetch_next_player_uuid(new_messages):
     if not has_game_finished(new_messages):
@@ -74,26 +88,11 @@ def has_game_finished(new_messages):
     return "game_result_message" == last_message[1]['message']['message_type']
 
 
-# def build_ai_players(members_info):
-#     holder = {}
-#     for member in members_info:
-#         if member["type"] == "human":
-#             continue
-#         holder[member["uuid"]] = _build_ai_player(member["path"])
-#     return holder
-
-
 def build_ai_players(members_info):
     holder = {}
     for member in members_info:
         if member["type"] == "human":
             continue
-        # Debugging: Check if 'path' exists in member
-        if "path" not in member:
-            print(f"Missing 'path' in AI player: {member}")
-            # You can handle the missing key as needed here, e.g., raise an error or assign a default path
-            raise KeyError(f"'path' missing in member: {member}")
-        
         holder[member["uuid"]] = _build_ai_player(member["path"])
     return holder
 

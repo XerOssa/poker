@@ -93,29 +93,20 @@ def waiting_room_view(request):
                 'ante': form_config_table_data.get('ante', default_config_table['ante']),
                 'ai_players': players
             }
-            # setup_config(game_config)
             request.session['game_config'] = game_config  # Store config in session
-            request.session['players'] = players
             return redirect('waiting_room')
         
         if form.is_valid():
             hero = form.save(commit=False)
             hero.save()
             display_id = len(players)
-            human_player = {
+            players.append({
                 'idx': display_id,
                 'type': 'human',
                 'name': hero.name,
-            }
-            # players.append({
-            #     'idx': display_id,
-            #     'type': 'human',
-            #     'name': hero.name,
-            # })
-            # players.append(human_player)
-            request.session['human_player'] = human_player
+            })
+            request.session['players'] = players
 
-            # global_game_manager.join_human_player(hero.name)
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
                 'poker', {
@@ -139,7 +130,6 @@ def waiting_room_view(request):
         'players': players,
     })
 
-
 def start_game_view(request):
     players = request.session.get('players', [])
     
@@ -161,6 +151,11 @@ def start_game_view(request):
     }
     used_cards = [] 
     hole_card = _pick_unused_card(card_num=2, used_card=used_cards)
+    game_config = request.session.get('game_config', {})
+    stack = game_config.get('initial_stack')
+
+    for player in players:
+        player['stack'] = stack
 
     if request.method == 'POST':
         channel_layer = get_channel_layer()
@@ -175,4 +170,5 @@ def start_game_view(request):
         'round_state': round_state,
         'players': players,
         'hole_card': hole_card,
+        'stack': stack
     })

@@ -1,24 +1,12 @@
 from collections import OrderedDict
-
 from poker_app.pypokergui.engine.table import Table
 from poker_app.pypokergui.engine.player import Player
 from poker_app.pypokergui.engine.round_manager import RoundManager
 from poker_app.pypokergui.engine.message_builder import MessageBuilder
 from poker_app.pypokergui.engine.poker_constants import PokerConstants as Const
 
+
 class EngineWrapper(object):
-
-    # def start_game(self, players_info, game_config):
-    #     self.config = game_config
-    #     table = Table()
-    #     for uuid, name in players_info.items():
-    #         player = Player(uuid, game_config['initial_stack'], name)
-    #         table.seats.sitdown(player)
-    #         print(f"Player {player.uuid} added to table with stack {player.stack} and status {player.pay_info.status}")
-    #     state, msgs = self._start_new_round(1, game_config['blind_structure'], table)
-    #     self.current_state = state
-    #     return _parse_broadcast_destination(msgs, self.current_state['table'])
-
 
     def start_game(self, players_info, game_config):
         # Debugging: Print game_config to ensure it contains the necessary keys
@@ -29,15 +17,10 @@ class EngineWrapper(object):
         for uuid, name in players_info.items():
             player = Player(uuid, game_config['initial_stack'], name)
             table.seats.sitdown(player)
-            print(f"Player {player.uuid} added to table with stack {player.stack} and status {player.pay_info.status}")
-        
-        # Ensure blind_structure key exists
-        # if 'blind_structure' not in game_config:
-        #     raise KeyError(f"'blind_structure' missing in game config: {game_config}")
-
         state, msgs = self._start_new_round(1, table)
         self.current_state = state
         return _parse_broadcast_destination(msgs, self.current_state['table'])
+
 
     def update_game(self, action, bet_amount):
         state, msgs = RoundManager.apply_action(self.current_state, action, bet_amount)
@@ -48,11 +31,11 @@ class EngineWrapper(object):
         self.current_state = state
         return _parse_broadcast_destination(msgs, self.current_state['table'])
 
+
     def _start_new_round(self, round_count, table):
-        # adjust btn position to put btn of player-0 after table.shift_dealer_btn()
-        # which will be called in self._start_next_round(...)
         table.dealer_btn = len(table.seats.players)-1
         return self._start_next_round(round_count, table)
+
 
     def _start_next_round(self, round_count, table):
         table.shift_dealer_btn()
@@ -66,6 +49,7 @@ class EngineWrapper(object):
         else:
             return RoundManager.start_new_round(round_count, small_blind, ante, table)
 
+
     def _has_game_finished(self, round_count, table, max_round):
         is_final_round = round_count == max_round
         is_winner_decided = len([1 for p in table.seats.players if p.stack!=0])==1
@@ -76,35 +60,29 @@ def gen_players_info(uuid_list, name_list):
     assert len(uuid_list) == len(name_list)
     return OrderedDict(zip(uuid_list, name_list))
 
+
 def gen_game_config(max_round, initial_stack, small_blind, ante):
     assert max_round > 0
     assert initial_stack > 0
     assert small_blind > 0
     assert ante >= 0
-    # if not blind_structure:
-    #     blind_structure = { 1 : { 'small_blind': small_blind, 'ante': ante } }
-    # if not 1 in blind_structure:
-    #     blind_structure[1] = { 'small_blind': small_blind, 'ante': ante }
     return {
             'max_round': max_round,
             'initial_stack': initial_stack,
             'small_blind': small_blind,
             'ante': ante,
-            # 'blind_structure': blind_structure
             }
+
 
 def _get_forced_bet_amount(round_count, blind_structure = None):
     if not isinstance(blind_structure, dict):
-#         # Tutaj możesz ustawić wartość domyślną lub obsłużyć ten przypadek inaczej
-#         # Na przykład:
-#         print("Warning: blind_structure is not a dictionary. Using default values.")
-        return 10, 0  # Domyślne wartości dla small_blind i ante
+        return 10, 0
     level_thresholds = sorted(blind_structure.keys())
     current_level_pos = [r <= round_count for r in level_thresholds].count(True)-1
-#     assert current_level_pos >= 0
     current_level_key = level_thresholds[current_level_pos]
     current_structure = blind_structure[current_level_key]
     return current_structure['small_blind'], current_structure['ante']
+
 
 def _exclude_short_of_money_players(table, ante, sb_amount):
     sb_pos, bb_pos = _steal_money_from_poor_player(table, ante, sb_amount)
@@ -113,12 +91,12 @@ def _exclude_short_of_money_players(table, ante, sb_amount):
     if table.seats.players[table.dealer_btn].stack == 3: table.shift_dealer_btn()
     return table
 
+
 def _steal_money_from_poor_player(table, ante, sb_amount):
     players = table.seats.players
     # exclude player who cannot pay ante
     for player in [p for p in players if p.stack < ante]: player.stack = 0
     if players[table.dealer_btn].stack == 0: table.shift_dealer_btn()
-
     search_targets = players + players + players
     search_targets = search_targets[table.dealer_btn+1:table.dealer_btn+len(players)]
     # exclude player who cannot pay small blind
@@ -127,7 +105,7 @@ def _steal_money_from_poor_player(table, ante, sb_amount):
     for player in search_targets[:sb_relative_pos]: player.stack = 0
     # exclude player who cannot pay big blind
     search_targets = search_targets[sb_relative_pos+1:sb_relative_pos+len(players)]
-    bb_player = _find_first_elligible_player(search_targets, sb_amount*2 + ante, sb_player)
+    bb_player = _find_first_elligible_player(search_targets, sb_amount + ante, sb_player)
     if sb_player == bb_player:  # no one can pay big blind. So steal money from all players except small blind
         for player in [p for p in players if p!=bb_player]: player.stack = 0
     else:
@@ -141,22 +119,20 @@ def _find_first_elligible_player(players, need_amount, default=None):
     if default: return next((player for player in players if player.stack >= need_amount), default)
     return next((player for player in players if player.stack >= need_amount))
 
+
 def _disable_no_money_player(players):
     no_money_players = [player for player in players if player.stack == 0]
     for player in no_money_players:
         player.pay_info.update_to_fold()
 
+
 def _parse_broadcast_destination(messages, table):
-    uuid_list = [player.uuid for player in table.seats.players]
+    # uuid_list = [player.uuid for player in table.seats.players]
     parsed_msgs = []
     for message in messages:
         parsed_msgs.append(message)
-        #if -1 == message[0]:  # -1 destination indicates broadcast
-        #    message = [(uuid, message[1]) for uuid in uuid_list]
-        #    parsed_msgs += message
-        #else:
-        #    parsed_msgs.append(message)
     return parsed_msgs
+
 
 def _gen_game_result_message(table, config):
     compat_config = {
@@ -164,7 +140,6 @@ def _gen_game_result_message(table, config):
             'max_round': config['max_round'],
             'small_blind_amount': config['small_blind'],  # fill an interface gap
             'ante': config['ante'],
-            'blind_structure': config['blind_structure']
             }
     msg = MessageBuilder.build_game_result_message(compat_config, table.seats)
     destination = -1

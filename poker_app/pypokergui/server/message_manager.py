@@ -14,25 +14,7 @@ def _gen_alert_server_restart_message(handler):
             'message': message
             }
 
-def broadcast_config_update(handler, game_manager, sockets):
-    for soc in sockets:
-        try:
-            soc.write_message(_gen_config_update_message(handler, game_manager, soc.uuid))
-        except:
-            logging.error("Error sending message", exc_info=True)
 
-def _gen_config_update_message(handler, game_manager, uuid):
-    
-    registered = game_manager.get_human_player_info(uuid)
-    html_str = handler.render_string(
-            "game_config.html", config=game_manager, registered=registered)
-    html = tornado.escape.to_basestring(html_str)
-
-    return {
-            'message_type': 'config_update',
-            'html': html,
-            'registered': registered
-            }
 
 def broadcast_start_game(handler, game_manager, sockets):
     # broadcast message to browser bia sockets
@@ -71,8 +53,6 @@ def _gen_start_game_message(handler, game_manager, uuid):
             'message_type': 'start_game',
             'html': html
             }
-
-
 
 
 def broadcast_update_game(handler, game_manager, sockets, mode="moderate"):

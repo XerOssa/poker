@@ -82,8 +82,11 @@ class Table:
     def serialize(self):
         community_card = [card.to_id() for card in self._community_card]
         return [
-            self.dealer_btn, Seats.serialize(self.seats),
-            Deck.serialize(self.deck), community_card, self._blind_pos
+            self.dealer_btn, 
+            Seats.serialize(self.seats),
+            Deck.serialize(self.deck), 
+            community_card, 
+            self._blind_pos
         ]
 
     @classmethod
