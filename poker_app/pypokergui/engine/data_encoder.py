@@ -48,7 +48,6 @@ class DataEncoder:
           "max_round": config["max_round"],
           "small_blind_amount": config["small_blind_amount"],
           "ante": config["ante"],
-          "blind_structure": config["blind_structure"]
         }
     }
     hsh.update(self.encode_seats(seats))

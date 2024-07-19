@@ -131,7 +131,9 @@ def waiting_room_view(request):
     })
 
 def start_game_view(request):
+    print("start_game_view called")
     players = request.session.get('players', [])
+    print(f"Players: {players}")
     
     table = Table()
     community_cards = [str(card) for card in table.get_community_card()]
@@ -157,18 +159,28 @@ def start_game_view(request):
     for player in players:
         player['stack'] = stack
 
-    if request.method == 'POST':
-        channel_layer = get_channel_layer()
-        async_to_sync(channel_layer.group_send)(
-            'poker', {
-                'type': 'start_game',
-            }
-        )
-        return redirect('start_game')
+    # if request.method == 'POST':
+    #     channel_layer = get_channel_layer()
+    #     async_to_sync(channel_layer.group_send)(
+    #         'poker', {
+    #             'type': 'start_game',
+    #         }
+    #     )
+    #     return redirect('start_game')
 
     return render(request, 'start_game.html', {
         'round_state': round_state,
         'players': players,
         'hole_card': hole_card,
         'stack': stack
+    })
+
+def my_view(request):
+    # Lista rang i kolorów (przykład dynamicznego generowania)
+    ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"]
+    suits = ["s", "d", "h", "c"]
+
+    return render(request, 'index.html', {
+        'ranks': ranks,
+        'suits': suits,
     })

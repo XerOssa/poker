@@ -3,11 +3,10 @@
 <html lang="en">
 <head>
     {% include "index.html" %}
-    <script src="{% static 'django-browser-reload/reload-listener.js' %}"></script>
+
 </head>
 <body>
-    {% load django_browser_reload %}
-    
+   
     <div>
         <div id="round_state">
             {% include "action_start_game.html" %}
@@ -57,6 +56,6 @@
         </div>
     </div>
 
-    <script src="http://127.0.0.1:8000//__reload__/reload.js"></script>
+
 </body>
 </html>

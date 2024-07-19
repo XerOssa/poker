@@ -1,10 +1,13 @@
 {% load static %}
+{% load django_browser_reload %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Game Rules</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/waiting_room.css' %}">
+
+    <script src="{% static 'poker.js' %}"></script>
 </head>
 <body>
     <div id="rule_box">
@@ -43,7 +46,6 @@
             </div>
         </form>
     </div>
-    <script src="http://127.0.0.1:8000//__reload__/reload.js"></script>
-    <script src="{% static 'poker.js' %}"></script>
+    {% django_browser_reload_script %}
 </body>
 </html>

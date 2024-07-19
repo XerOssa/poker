@@ -7,6 +7,7 @@ from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('__reload__/', include('django_browser_reload.urls')),
     path('charts/', views.charts, name='charts'),
     path('poker_app/', views.handhistory, name='handhistory'),
     path('waiting_room/', views.waiting_room_view, name='waiting_room'),
@@ -14,7 +15,7 @@ urlpatterns = [
     path('start_game/', views.start_game_view, name='start_game'),
     path('__debug__/', include(debug_toolbar.urls)),
     path('', views.home, name='home'),
-    path("__reload__/", include("django_browser_reload.urls")),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:

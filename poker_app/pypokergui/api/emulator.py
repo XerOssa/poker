@@ -16,7 +16,6 @@ class Emulator(object):
 
     def __init__(self):
         self.game_rule = {}
-        self.blind_structure = {}
         self.players_holder = {}
 
     def set_game_rule(self, player_num, max_round, small_blind_amount, ante_amount):
@@ -25,8 +24,6 @@ class Emulator(object):
         self.game_rule["sb_amount"] = small_blind_amount
         self.game_rule["ante"] = ante_amount
 
-    def set_blind_structure(self, blind_structure):
-        self.blind_structure = blind_structure
 
     def register_player(self, uuid, player):
         if not isinstance(player, BasePokerPlayer):
@@ -147,7 +144,6 @@ class Emulator(object):
                 "max_round": None,
                 "small_blind_amount": None,
                 "ante": None,
-                "blind_structure": None
                 }
         message = MessageBuilder.build_game_result_message(dummy_config, game_state["table"].seats)["message"]
         return [self.create_event(message)]

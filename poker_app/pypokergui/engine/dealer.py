@@ -17,7 +17,6 @@ class Dealer:
     self.message_handler = MessageHandler()
     self.message_summarizer = MessageSummarizer(verbose=0)
     self.table = Table()
-    self.blind_structure = {}
 
   def register_player(self, player_name, algorithm):
     self.__config_check()
@@ -33,7 +32,7 @@ class Dealer:
     self.__notify_game_start(max_round)
     ante, sb_amount = self.ante, self.small_blind_amount
     for round_count in range(1, max_round+1):
-      ante, sb_amount = self.__update_forced_bet_amount(ante, sb_amount, round_count, self.blind_structure)
+      ante, sb_amount = self.__update_forced_bet_amount(ante, sb_amount, round_count)
       table = self.__exclude_short_of_money_players(table, ante, sb_amount)
       if self.__is_game_finished(table): break
       table = self.play_round(round_count, sb_amount, ante, table)
@@ -59,8 +58,6 @@ class Dealer:
   def set_initial_stack(self, amount):
     self.initial_stack = amount
 
-  def set_blind_structure(self, blind_structure):
-    self.blind_structure = blind_structure
 
   def __update_forced_bet_amount(self, ante, sb_amount, round_count, blind_structure):
     if round_count in blind_structure:
@@ -153,7 +150,6 @@ class Dealer:
         "max_round": max_round,
         "small_blind_amount": self.small_blind_amount,
         "ante": self.ante,
-        "blind_structure": self.blind_structure
     }
 
 

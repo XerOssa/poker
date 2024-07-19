@@ -10,13 +10,6 @@ def visualize_game_start(game_info, uuid=None):
     ls.append(_visualize_item("start stack = %s" % game_info["rule"]["initial_stack"]))
     ls.append(_visualize_item("       ante = %s" % game_info["rule"]["ante"]))
     ls.append(_visualize_item("small blind = %s" % game_info["rule"]["small_blind_amount"]))
-    if len(game_info["rule"]["blind_structure"]) != 0:
-        ls.append(_visualize_item("blind structure"))
-        for round_count in game_info["rule"]["blind_structure"]:
-            level_info = game_info["rule"]["blind_structure"][round_count]
-            ante, sb_amount = level_info["ante"], level_info["small_blind"]
-            ls.append(_visualize_sub_item("after %d round : ante = %s, sb_amount = %s" %(
-                round_count, ante, sb_amount)))
     ls.append(DIVIDER)
     return "\n".join(ls)
 

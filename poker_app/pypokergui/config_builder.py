@@ -6,7 +6,6 @@ def build_config(max_round=None, initial_stack=None, small_blind=None, ante=None
             "initial_stack": initial_stack,
             "small_blind": small_blind,
             "ante": ante,
-            # "blind_structure": blind_structure,
             "ai_players": [
                 { "name": "FIXME:your-ai-name", "path": "FIXME:your-setup-script-path" },
             ]
