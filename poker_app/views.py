@@ -2,9 +2,7 @@ import matplotlib.pyplot as plt
 import os
 import pandas as pd
 from django.shortcuts import render, redirect
-from django.core.cache import cache
 from django.conf import settings
-from django.urls import reverse
 from poker_analysis import process_poker_hand, save_to_csv
 from .models import Hero
 
@@ -14,12 +12,7 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from poker_app.pypokergui.utils.card_utils import _pick_unused_card
 from poker_app.pypokergui.engine.table import Table
-from poker_app.pypokergui.engine.pay_info import PayInfo
-from poker_app.pypokergui.engine.player import Player
-from poker_app.pypokergui.engine.data_encoder import DataEncoder
-from poker_app.pypokergui.engine_wrapper import EngineWrapper
 import poker_app.pypokergui.server.game_manager as GM
-from poker_app.pypokergui.server.poker import setup_config
 
 
 def home(request):
@@ -87,7 +80,6 @@ def waiting_room_view(request):
             form_config_table_data = request.session.get('form_config_table', {})
 
             game_config = {
-                'max_round': 10,
                 'initial_stack': form_config_table_data.get('initial_stack', default_config_table['initial_stack']),
                 'small_blind': form_config_table_data.get('small_blind', default_config_table['small_blind']),
                 'ante': form_config_table_data.get('ante', default_config_table['ante']),

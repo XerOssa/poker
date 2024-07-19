@@ -1,6 +1,5 @@
 ante: 0
 initial_stack: 100
-max_round: 10
 small_blind: 10
 ai_players:
 - name: 1_random_player

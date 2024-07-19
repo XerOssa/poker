@@ -59,15 +59,6 @@ class Dealer:
     self.initial_stack = amount
 
 
-  def __update_forced_bet_amount(self, ante, sb_amount, round_count, blind_structure):
-    if round_count in blind_structure:
-      update_info = blind_structure[round_count]
-      msg = self.message_summarizer.summairze_blind_level_update(\
-              round_count, ante, update_info["ante"], sb_amount, update_info["small_blind"])
-      self.message_summarizer.print_message(msg)
-      ante, sb_amount = update_info["ante"], update_info["small_blind"]
-    return ante, sb_amount
-
   def __register_algorithm_to_message_handler(self, uuid, algorithm):
     self.message_handler.register_algorithm(uuid, algorithm)
 

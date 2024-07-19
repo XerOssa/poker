@@ -111,7 +111,6 @@ class Emulator(object):
         deepcopy_table = deepcopy["table"]
         deepcopy_table.shift_dealer_btn()
 
-        ante, sb_amount = update_blind_level(ante, sb_amount, round_count, self.blind_structure)
         deepcopy_table = exclude_short_of_money_players(deepcopy_table, ante, sb_amount)
         is_game_finished = len([1 for p in deepcopy_table.seats.players if p.is_active()])==1
         if is_game_finished: return deepcopy, self._generate_game_result_event(deepcopy)
@@ -148,15 +147,6 @@ class Emulator(object):
         message = MessageBuilder.build_game_result_message(dummy_config, game_state["table"].seats)["message"]
         return [self.create_event(message)]
 
-
-def update_blind_level(ante, sb_amount, round_count, blind_structure):
-    level_thresholds = sorted(blind_structure.keys())
-    current_level_pos = [r <= round_count for r in level_thresholds].count(True)-1
-    if current_level_pos != -1:
-        current_level_key = level_thresholds[current_level_pos]
-        update_info = blind_structure[current_level_key]
-        ante, sb_amount = update_info["ante"], update_info["small_blind"]
-    return ante, sb_amount
 
 def exclude_short_of_money_players(table, ante, sb_amount):
     sb_pos, bb_pos = _steal_money_from_poor_player(table, ante, sb_amount)

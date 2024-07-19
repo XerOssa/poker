@@ -15,7 +15,7 @@ body {
     font-size: 2em;
     text-align: center;
     padding: 3px;
-    /* margin-top: 10px; */
+    
   }
 
 
@@ -24,9 +24,9 @@ body {
     box-sizing: border-box;
     width: 70vw; /* Use viewport width for full-screen */
     height: 92vh; /* Calculate height based on viewport height */
-    margin-top: 1%;
     margin-left: auto; /* Automatyczne wycentrowanie w poziomie */
-    margin-right: auto; /* Automatyczne wycentrowanie w poziomie */
+    margin-right: auto;
+    margin-bottom: 0; /* Automatyczne wycentrowanie w poziomie */
     background-color: #2E7D32;
     border-radius: 350px;
   }
@@ -295,3 +295,7 @@ body {
 .dealer-position-3 { top: 20%; left: 64%; }
 .dealer-position-4 { top: 49%; left: 76%; }
 .dealer-position-5 { top: 65%; left: 64%; }
+
+.button-GO {
+  margin: 1% 1%;
+}

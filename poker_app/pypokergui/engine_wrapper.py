@@ -39,7 +39,8 @@ class EngineWrapper(object):
 
     def _start_next_round(self, round_count, table):
         table.shift_dealer_btn()
-        small_blind, ante = _get_forced_bet_amount(round_count)
+        small_blind = self.config['small_blind']
+        ante = self.config['ante']
         table = _exclude_short_of_money_players(table, ante, small_blind)
         if self._has_game_finished(round_count, table, self.config['max_round']):
             finished_state = { 'table': table }
@@ -72,16 +73,6 @@ def gen_game_config(max_round, initial_stack, small_blind, ante):
             'small_blind': small_blind,
             'ante': ante,
             }
-
-
-def _get_forced_bet_amount(round_count, blind_structure = None):
-    if not isinstance(blind_structure, dict):
-        return 10, 0
-    level_thresholds = sorted(blind_structure.keys())
-    current_level_pos = [r <= round_count for r in level_thresholds].count(True)-1
-    current_level_key = level_thresholds[current_level_pos]
-    current_structure = blind_structure[current_level_key]
-    return current_structure['small_blind'], current_structure['ante']
 
 
 def _exclude_short_of_money_players(table, ante, sb_amount):

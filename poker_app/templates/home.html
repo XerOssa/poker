@@ -1,10 +1,12 @@
 {% load static %}
+{% load django_browser_reload %}
 <!DOCTYPE html>
 <html>
     <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{% static  'css/home.css' %}">
+
     <link rel="icon" type="image/png" href="{% static 'favicon.png' %}">
     </head>
     <body>
@@ -13,5 +15,6 @@
             <a href="/charts/" class="button">Winnings graphs</a>
             <a href="/waiting_room/" class="button">Game</a>
         </div>
+        {% django_browser_reload_script %}
     </body>
 </html>
