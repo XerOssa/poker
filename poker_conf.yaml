@@ -1,8 +1,7 @@
 ante: 0
-blind_structure: null
 initial_stack: 100
 max_round: 10
-small_blind: 5
+small_blind: 10
 ai_players:
 - name: 1_random_player
   path: D:/ROBOTA/python/poker/poker_app/sample_player/random_player_setupCHECK.py
