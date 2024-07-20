@@ -138,7 +138,8 @@ class PokerWebSocketHandler(tornado.websocket.WebSocketHandler):
 
     def _is_next_player_ai(self, game_manager):
         uuid = game_manager.next_player_uuid
-        return uuid and len(uuid) <= 2 and uuid != '5'
+        print("UUID nastepnego gracza:", uuid)
+        return uuid and len(uuid) <= 2
 
 MODE_SPEED = "moderate"
 global_game_manager = GM.GameManager()

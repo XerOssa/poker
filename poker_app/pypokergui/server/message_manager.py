@@ -1,6 +1,7 @@
 import time
 import logging
-
+from django.template.loader import render_to_string
+from django.utils.safestring import mark_safe
 import tornado.escape
 
 def alert_server_restart(handler, uuid, sockets):
@@ -18,7 +19,9 @@ def _gen_alert_server_restart_message(handler):
 
 def broadcast_start_game(handler, game_manager, sockets):
     # broadcast message to browser bia sockets
+    print('sockets:', sockets)
     for soc in sockets:
+
         try:
             soc.write_message(_gen_start_game_message(handler, game_manager, soc.uuid))
         except:
@@ -47,12 +50,12 @@ def broadcast_start_game(handler, game_manager, sockets):
 def _gen_game_info(game_manager):
     try:
         latest_message = game_manager.latest_messages[0][1]["message"]
-        print("DEBUG: latest_message =", latest_message)  # Dodano print do debugowania
+        # print("DEBUG: latest_message =", latest_message)  # Dodano print do debugowania
         game_information = latest_message.get("game_information", {})
         seats = game_information["seats"]
     except KeyError as e:
         print(f"KeyError in _gen_game_info: {e}")
-        print("DEBUG: latest_message =", latest_message)
+        # print("DEBUG: latest_message =", latest_message)
         logging.error("KeyError accessing 'seats' in _gen_game_info", exc_info=True)
         raise
 
@@ -69,16 +72,31 @@ def _gen_game_info(game_manager):
     }
 
 
+# def _gen_start_game_message(handler, game_manager, uuid):
+#     registered = game_manager.get_human_player_info(uuid)
+#     html_str = handler.render_string(
+#             "poker_game.html", config=game_manager, registered=registered)
+#     html = tornado.escape.to_basestring(html_str)
+
+#     return {
+#             'message_type': 'start_game',
+#             'html': html
+#             }
+
+
 def _gen_start_game_message(handler, game_manager, uuid):
     registered = game_manager.get_human_player_info(uuid)
-    html_str = handler.render_string(
-            "poker_game.html", config=game_manager, registered=registered)
-    html = tornado.escape.to_basestring(html_str)
+    context = {
+        'config': game_manager,
+        'registered': registered
+    }
+    html_str = render_to_string('start_game.html', context)
+    html = mark_safe(html_str)
 
     return {
-            'message_type': 'start_game',
-            'html': html
-            }
+        'message_type': 'start_game',
+        'html': html
+    }
 
 
 def broadcast_update_game(handler, game_manager, sockets, mode="moderate"):

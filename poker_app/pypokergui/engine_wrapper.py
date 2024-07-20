@@ -5,12 +5,9 @@ from poker_app.pypokergui.engine.round_manager import RoundManager
 from poker_app.pypokergui.engine.message_builder import MessageBuilder
 from poker_app.pypokergui.engine.poker_constants import PokerConstants as Const
 
-
 class EngineWrapper(object):
 
     def start_game(self, players_info, game_config):
-        print(f"Starting game with config: {game_config}")
-
         self.config = game_config
         table = Table()
         for uuid, name in players_info.items():
@@ -53,9 +50,9 @@ class EngineWrapper(object):
 
 
     def _has_game_finished(self, round_count, table):
-        is_final_round = round_count
+        # is_final_round = round_count
         is_winner_decided = len([1 for p in table.seats.players if p.stack!=0])==1
-        return is_final_round or is_winner_decided
+        return is_winner_decided
 
 
 def gen_players_info(uuid_list, name_list):
@@ -119,7 +116,7 @@ def _disable_no_money_player(players):
 def _parse_broadcast_destination(messages, table):
     parsed_msgs = []
     for message in messages:
-        print(f"DEBUG: Parsing message = {message}")
+        # print(f"DEBUG: Parsing message = {message}")
         parsed_msgs.append(message)
     return parsed_msgs
 

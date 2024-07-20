@@ -125,7 +125,7 @@ def waiting_room_view(request):
 def start_game_view(request):
     print("start_game_view called")
     players = request.session.get('players', [])
-    print(f"Players: {players}")
+    # print(f"Players: {players}")
     
     table = Table()
     community_cards = [str(card) for card in table.get_community_card()]

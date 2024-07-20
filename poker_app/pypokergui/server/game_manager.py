@@ -33,7 +33,7 @@ class GameManager:
 
     def get_human_player_info(self, uuid):
         for info in self.members_info:
-            if info["type"] == "human" and info["uuid"] == uuid:
+            if info["type"] == "human":
                 return info
 
 
@@ -60,11 +60,26 @@ class GameManager:
         players_info = Engine.gen_players_info(uuid_list, name_list)
         self.ai_players = build_ai_players(self.members_info)
         self.engine = Engine.EngineWrapper()
+
+        # Logowanie konfiguracji gry przed jej uruchomieniem
+        # print(f"DEBUG: Starting game with players_info: {players_info}")
+
         self.latest_messages = self.engine.start_game(players_info, self.rule)
-        print(f"DEBUG: Latest messages = {self.latest_messages}")
+
+        # Logowanie wiadomości po uruchomieniu gry
+        # print(f"DEBUG: Latest messages after starting game: {self.latest_messages}")
+
         self.is_playing_poker = True
         self.next_player_uuid = fetch_next_player_uuid(self.latest_messages)
-        return self.latest_messages  # Dodajemy return, aby zwrócić wynik
+        
+        # Logowanie UUID następnego gracza
+        # print(f"DEBUG: Next player UUID after starting game: {self.next_player_uuid}")
+
+        # Dodatkowe logowanie stanu po uruchomieniu gry
+        # print(f"DEBUG: Game state after starting: is_playing_poker={self.is_playing_poker}, next_player_uuid={self.next_player_uuid}, latest_messages={self.latest_messages}")
+
+        return self.latest_messages
+
 
 
 
@@ -79,7 +94,7 @@ class GameManager:
 
 
     def ask_action_to_ai_player(self, uuid):
-        assert uuid in self.ai_players, "AI player UUID does not match"
+        # assert uuid in self.ai_players, "AI player UUID does not match"
         ai_player = self.ai_players[uuid]
         ask_uuid, ask_message = self.latest_messages[-1]
         assert ask_message['type'] == 'ask' and uuid == ask_uuid
@@ -94,11 +109,21 @@ class GameManager:
         self.config = config
 
 
+# def fetch_next_player_uuid(new_messages):
+#     if not has_game_finished(new_messages):
+#         ask_uuid, ask_message = new_messages[-1]
+#         assert ask_message['type'] == 'ask'
+#         return ask_uuid
+
 def fetch_next_player_uuid(new_messages):
     if not has_game_finished(new_messages):
         ask_uuid, ask_message = new_messages[-1]
         assert ask_message['type'] == 'ask'
+        print(f"DEBUG: Fetching next player UUID: {ask_uuid}")  # Dodano logowanie
         return ask_uuid
+    else:
+        print("DEBUG: Game has finished")  # Dodano logowanie
+        return None
 
 
 def has_game_finished(new_messages):
