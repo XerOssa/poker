@@ -18,9 +18,8 @@ class Emulator(object):
         self.game_rule = {}
         self.players_holder = {}
 
-    def set_game_rule(self, player_num, max_round, small_blind_amount, ante_amount):
+    def set_game_rule(self, player_num, small_blind_amount, ante_amount):
         self.game_rule["player_num"] = player_num
-        self.game_rule["max_round"] = max_round
         self.game_rule["sb_amount"] = small_blind_amount
         self.game_rule["ante"] = ante_amount
 
@@ -64,7 +63,7 @@ class Emulator(object):
         return updated_state, events
 
     def _start_next_round(self, game_state):
-        game_finished = game_state["round_count"] == self.game_rule["max_round"]
+        game_finished = game_state["round_count"]
         game_state, events = self.start_new_round(game_state)
         if Event.GAME_FINISH == events[-1]["type"] or game_finished:
             raise Exception("Failed to apply action. Because game is already finished.")
@@ -131,16 +130,15 @@ class Emulator(object):
         if MessageBuilder.ROUND_RESULT_MESSAGE == message_type:
             return Event.create_round_finish_event(message)
 
-    def _is_last_round(self, game_state, game_rule):
+    def _is_last_round(self, game_state):
         is_round_finished = game_state["street"] == Const.Street.FINISHED
-        is_final_round = game_state["round_count"] == game_rule["max_round"]
+        is_final_round = game_state["round_count"]
         is_winner_decided = len([1 for p in game_state["table"].seats.players if p.stack!=0])==1
         return is_round_finished and (is_final_round or is_winner_decided)
 
     def _generate_game_result_event(self, game_state):
         dummy_config = {
                 "initial_stack": None,
-                "max_round": None,
                 "small_blind_amount": None,
                 "ante": None,
                 }

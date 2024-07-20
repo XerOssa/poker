@@ -1,8 +1,8 @@
 from poker_app.pypokergui.engine.dealer import Dealer
 from poker_app.pypokergui.players import BasePokerPlayer
 
-def setup_config(max_round, initial_stack, small_blind_amount, ante=0):
-    return Config(max_round, initial_stack, small_blind_amount, ante)
+def setup_config(initial_stack, small_blind_amount, ante=0):
+    return Config(initial_stack, small_blind_amount, ante)
 
 def start_poker(config, verbose=2):
     config.validation()
@@ -10,7 +10,8 @@ def start_poker(config, verbose=2):
     dealer.set_verbose(verbose)
     for info in config.players_info:
         dealer.register_player(info["name"], info["algorithm"])
-    result_message = dealer.start_game(config.max_round)
+    result_message = dealer.start_game()
+    print("DEBUG: result_message =", result_message)
     return _format_result(result_message)
 
 def _format_result(result_message):
@@ -21,9 +22,8 @@ def _format_result(result_message):
 
 class Config(object):
 
-    def __init__(self, max_round, initial_stack, sb_amount, ante):
+    def __init__(self,initial_stack, sb_amount, ante):
         self.players_info = []
-        self.max_round = max_round
         self.initial_stack = initial_stack
         self.sb_amount = sb_amount
         self.ante = ante

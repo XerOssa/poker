@@ -17,8 +17,8 @@ class GameManager:
         self.next_player_uuid = None
 
 
-    def define_rule(self, max_round, initial_stack, small_blind, ante):
-        self.rule = Engine.gen_game_config(max_round, initial_stack, small_blind, ante)
+    def define_rule(self, initial_stack, small_blind, ante):
+        self.rule = Engine.gen_game_config(initial_stack, small_blind, ante)
 
 
     def join_ai_player(self, name, path):
@@ -43,6 +43,17 @@ class GameManager:
         self.members_info.remove(member_info)
 
 
+    # def start_game(self):
+    #     uuid_list = [member["uuid"] for member in self.members_info]
+    #     name_list = [member["name"] for member in self.members_info]
+    #     players_info = Engine.gen_players_info(uuid_list, name_list)
+    #     self.ai_players = build_ai_players(self.members_info)
+    #     self.engine = Engine.EngineWrapper()
+    #     self.latest_messages = self.engine.start_game(players_info, self.rule)
+    #     print(f"DEBUG: Latest messages = {self.latest_messages}")
+    #     self.is_playing_poker = True
+    #     self.next_player_uuid = fetch_next_player_uuid(self.latest_messages)
+
     def start_game(self):
         uuid_list = [member["uuid"] for member in self.members_info]
         name_list = [member["name"] for member in self.members_info]
@@ -50,8 +61,11 @@ class GameManager:
         self.ai_players = build_ai_players(self.members_info)
         self.engine = Engine.EngineWrapper()
         self.latest_messages = self.engine.start_game(players_info, self.rule)
+        print(f"DEBUG: Latest messages = {self.latest_messages}")
         self.is_playing_poker = True
         self.next_player_uuid = fetch_next_player_uuid(self.latest_messages)
+        return self.latest_messages  # Dodajemy return, aby zwrócić wynik
+
 
 
     def get_next_player(self):

@@ -9,7 +9,6 @@ from poker_app.pypokergui.engine.poker_constants import PokerConstants as Const
 class EngineWrapper(object):
 
     def start_game(self, players_info, game_config):
-        # Debugging: Print game_config to ensure it contains the necessary keys
         print(f"Starting game with config: {game_config}")
 
         self.config = game_config
@@ -19,7 +18,9 @@ class EngineWrapper(object):
             table.seats.sitdown(player)
         state, msgs = self._start_new_round(1, table)
         self.current_state = state
-        return _parse_broadcast_destination(msgs, self.current_state['table'])
+        result = _parse_broadcast_destination(msgs, self.current_state['table'])
+        print(f"DEBUG: Game start result = {result}")
+        return result
 
 
     def update_game(self, action, bet_amount):
@@ -42,7 +43,7 @@ class EngineWrapper(object):
         small_blind = self.config['small_blind']
         ante = self.config['ante']
         table = _exclude_short_of_money_players(table, ante, small_blind)
-        if self._has_game_finished(round_count, table, self.config['max_round']):
+        if self._has_game_finished(round_count, table):
             finished_state = { 'table': table }
             game_result_msg = _gen_game_result_message(table, self.config)
             msgs = _parse_broadcast_destination([game_result_msg], table)
@@ -51,8 +52,8 @@ class EngineWrapper(object):
             return RoundManager.start_new_round(round_count, small_blind, ante, table)
 
 
-    def _has_game_finished(self, round_count, table, max_round):
-        is_final_round = round_count == max_round
+    def _has_game_finished(self, round_count, table):
+        is_final_round = round_count
         is_winner_decided = len([1 for p in table.seats.players if p.stack!=0])==1
         return is_final_round or is_winner_decided
 
@@ -62,13 +63,11 @@ def gen_players_info(uuid_list, name_list):
     return OrderedDict(zip(uuid_list, name_list))
 
 
-def gen_game_config(max_round, initial_stack, small_blind, ante):
-    assert max_round > 0
+def gen_game_config(initial_stack, small_blind, ante):
     assert initial_stack > 0
     assert small_blind > 0
     assert ante >= 0
     return {
-            'max_round': max_round,
             'initial_stack': initial_stack,
             'small_blind': small_blind,
             'ante': ante,
@@ -118,9 +117,9 @@ def _disable_no_money_player(players):
 
 
 def _parse_broadcast_destination(messages, table):
-    # uuid_list = [player.uuid for player in table.seats.players]
     parsed_msgs = []
     for message in messages:
+        print(f"DEBUG: Parsing message = {message}")
         parsed_msgs.append(message)
     return parsed_msgs
 
@@ -128,7 +127,6 @@ def _parse_broadcast_destination(messages, table):
 def _gen_game_result_message(table, config):
     compat_config = {
             'initial_stack': config['initial_stack'],
-            'max_round': config['max_round'],
             'small_blind_amount': config['small_blind'],  # fill an interface gap
             'ante': config['ante'],
             }

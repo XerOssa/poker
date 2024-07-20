@@ -27,17 +27,16 @@ class Dealer:
   def set_verbose(self, verbose):
       self.message_summarizer.verbose = verbose
 
-  def start_game(self, max_round):
+  def start_game(self):
     table = self.table
-    self.__notify_game_start(max_round)
     ante, sb_amount = self.ante, self.small_blind_amount
-    for round_count in range(1, max_round+1):
+    for round_count in range(1):
       ante, sb_amount = self.__update_forced_bet_amount(ante, sb_amount, round_count)
       table = self.__exclude_short_of_money_players(table, ante, sb_amount)
       if self.__is_game_finished(table): break
       table = self.play_round(round_count, sb_amount, ante, table)
       table.shift_dealer_btn()
-    return self.__generate_game_result(max_round, table.seats)
+    return self.__generate_game_result(table.seats)
 
   def play_round(self, round_count, blind_amount, ante, table):
     state, msgs = RoundManager.start_new_round(round_count, blind_amount, ante, table)
@@ -68,11 +67,10 @@ class Dealer:
     self.table.seats.sitdown(player)
     return uuid
 
-  def __notify_game_start(self, max_round):
-    config = self.__gen_config(max_round)
-    start_msg = MessageBuilder.build_game_start_message(config, self.table.seats)
-    self.message_handler.process_message(-1, start_msg)
-    self.message_summarizer.summarize(start_msg)
+  # def __notify_game_start(self):
+  #   start_msg = MessageBuilder.build_game_start_message(self.table.seats)
+  #   self.message_handler.process_message(-1, start_msg)
+  #   self.message_summarizer.summarize(start_msg)
 
   def __is_game_finished(self, table):
     return len([player for player in  table.seats.players if player.is_active()]) == 1
@@ -129,19 +127,10 @@ class Dealer:
     for player in no_money_players:
       player.pay_info.update_to_fold()
 
-  def __generate_game_result(self, max_round, seats):
-    config = self.__gen_config(max_round)
-    result_message = MessageBuilder.build_game_result_message(config, seats)
+  def __generate_game_result(self, seats):
+    result_message = MessageBuilder.build_game_result_message(seats)
     self.message_summarizer.summarize(result_message)
     return result_message
-
-  def __gen_config(self, max_round):
-    return {
-        "initial_stack": self.initial_stack,
-        "max_round": max_round,
-        "small_blind_amount": self.small_blind_amount,
-        "ante": self.ante,
-    }
 
 
   def __config_check(self):
@@ -228,7 +217,7 @@ class MessageSummarizer(object):
         base = "Started the game with player %s for %d round. (start stack=%s, small blind=%s)"
         names = [player["name"] for player in message["game_information"]["seats"]]
         rule = message["game_information"]["rule"]
-        return base % (names, rule["max_round"], rule["initial_stack"], rule["small_blind_amount"])
+        return base % (names, rule["initial_stack"], rule["small_blind_amount"])
 
     def summarize_round_start(self, message):
         base = "Started the round %d"

@@ -147,7 +147,6 @@ def setup_config(config):
 
 
     global_game_manager.define_rule(
-            config['max_round'], 
             config['initial_stack'], 
             config['small_blind'],
             config['ante'], 

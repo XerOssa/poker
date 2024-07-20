@@ -1,8 +1,7 @@
 import yaml
 
-def build_config(max_round=None, initial_stack=None, small_blind=None, ante=None):
+def build_config(initial_stack=None, small_blind=None, ante=None):
     config = {
-            "max_round": max_round,
             "initial_stack": initial_stack,
             "small_blind": small_blind,
             "ante": ante,

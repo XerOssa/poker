@@ -6,7 +6,6 @@ def visualize_game_start(game_info, uuid=None):
     ls.append(DIVIDER)
     ls.append(_visualize_sub_title("rule"))
     ls.append(_visualize_item("%d players game" % game_info["player_num"]))
-    ls.append(_visualize_item("%d round" % game_info["rule"]["max_round"]))
     ls.append(_visualize_item("start stack = %s" % game_info["rule"]["initial_stack"]))
     ls.append(_visualize_item("       ante = %s" % game_info["rule"]["ante"]))
     ls.append(_visualize_item("small blind = %s" % game_info["rule"]["small_blind_amount"]))
