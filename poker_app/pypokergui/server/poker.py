@@ -59,36 +59,36 @@ class PokerWebSocketHandler(tornado.websocket.WebSocketHandler):
             global_game_manager.remove_human_player_info(self.uuid)
             MM.broadcast_config_update(self, global_game_manager, self.sockets)
 
-    def on_message(self, message):
-        js = escape.json_decode(message)
-        message_type = js['type']
-        # if 'action_new_member' == message_type:
-        global_game_manager.join_human_player(js['name'], self.uuid)
-        MM.broadcast_config_update(self, global_game_manager, self.sockets)
-        if 'action_start_game' == message_type:
-            if global_game_manager.is_playing_poker:
-                MM.alert_server_restart(self, self.uuid, self.sockets)
-            else:
-                global_game_manager.start_game()
-                MM.broadcast_start_game(self, global_game_manager, self.sockets)
-                MM.broadcast_update_game(self, global_game_manager, self.sockets, MODE_SPEED)
-                if self._is_next_player_ai(global_game_manager):
-                    self._progress_the_game_till_human()
-        elif message_type == 'action_reset_game':
-            global_game_manager.start_game()
-            MM.broadcast_start_game(self, global_game_manager, self.sockets)
-            MM.broadcast_update_game(self, global_game_manager, self.sockets, MODE_SPEED)
-            if self._is_next_player_ai(global_game_manager):
-                self._progress_the_game_till_human()
-        elif 'action_declare_action' == message_type:
-            if self.uuid == global_game_manager.next_player_uuid:
-                action, amount = self._correct_action(js)
-                global_game_manager.update_game(action, amount)
-                MM.broadcast_update_game(self, global_game_manager, self.sockets, MODE_SPEED)
-                if self._is_next_player_ai(global_game_manager):
-                    self._progress_the_game_till_human()
-        else:
-            raise Exception("Unexpected message [ %r ] received" % message)
+    # def on_message(self, message):
+    #     js = escape.json_decode(message)
+    #     message_type = js['type']
+    #     # if 'action_new_member' == message_type:
+    #     global_game_manager.join_human_player(js['name'], self.uuid)
+    #     MM.broadcast_config_update(self, global_game_manager, self.sockets)
+    #     if 'action_start_game' == message_type:
+    #         if global_game_manager.is_playing_poker:
+    #             MM.alert_server_restart(self, self.uuid, self.sockets)
+    #         else:
+    #             global_game_manager.start_game()
+    #             MM.broadcast_start_game(self, global_game_manager, self.sockets)
+    #             MM.broadcast_update_game(self, global_game_manager, self.sockets, MODE_SPEED)
+    #             if self._is_next_player_ai(global_game_manager):
+    #                 self._progress_the_game_till_human()
+    #     elif message_type == 'action_reset_game':
+    #         global_game_manager.start_game()
+    #         MM.broadcast_start_game(self, global_game_manager, self.sockets)
+    #         MM.broadcast_update_game(self, global_game_manager, self.sockets, MODE_SPEED)
+    #         if self._is_next_player_ai(global_game_manager):
+    #             self._progress_the_game_till_human()
+    #     elif 'action_declare_action' == message_type:
+    #         if self.uuid == global_game_manager.next_player_uuid:
+    #             action, amount = self._correct_action(js)
+    #             global_game_manager.update_game(action, amount)
+    #             MM.broadcast_update_game(self, global_game_manager, self.sockets, MODE_SPEED)
+    #             if self._is_next_player_ai(global_game_manager):
+    #                 self._progress_the_game_till_human()
+    #     else:
+    #         raise Exception("Unexpected message [ %r ] received" % message)
 
 
 

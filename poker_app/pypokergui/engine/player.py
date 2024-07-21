@@ -45,7 +45,6 @@ class Player:
     self.stack -= amount
 
   def is_active(self):
-    print(f"Checking if player {self.uuid} is active: Status = {self.pay_info.status}, Stack = {self.stack}")
     return self.pay_info.status != PayInfo.FOLDED and self.stack > 0
 
   def is_waiting_ask(self):

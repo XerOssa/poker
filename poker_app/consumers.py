@@ -1,13 +1,11 @@
-from channels.generic.websocket import AsyncWebsocketConsumer
+import asyncio
 import json
-import uuid
 import logging
-from django.core.cache import cache
 import poker_app.pypokergui.server.game_manager as GM
-import poker_app.pypokergui.server.message_manager as MM
 import poker_app.pypokergui.utils.action_utils as AU
-from poker_app.utils import _gen_game_update_message
 from channels.generic.websocket import AsyncWebsocketConsumer
+from django.core.cache import cache
+from poker_app.utils import _gen_game_update_message, _gen_start_game_message
 
 # from poker_app.pypokergui.server.poker import setup_config
 
@@ -16,6 +14,7 @@ MODE_SPEED = "moderate"
 
 class PokerConsumer(AsyncWebsocketConsumer):
 
+    sockets = set()
     async def connect(self):
         await self.accept()
         if "sockets" not in self.scope["session"]:
@@ -61,7 +60,7 @@ class PokerConsumer(AsyncWebsocketConsumer):
             result_message = global_game_manager.start_game()  # Zmienna do przechowywania wyniku
             await self.broadcast_start_game(global_game_manager, self.scope["session"].get("sockets", []))
             if _is_next_player_ai(global_game_manager):
-                await _progress_the_game_till_human(global_game_manager)
+                await self._progress_the_game_till_human(global_game_manager)
             
         elif message_type == 'action_declare_action':
             if self.uuid == global_game_manager.next_player_uuid:
@@ -69,25 +68,23 @@ class PokerConsumer(AsyncWebsocketConsumer):
                 global_game_manager.update_game(action, amount)
                 await self.broadcast_update_game(global_game_manager, self.scope["session"]["sockets"], MODE_SPEED)
                 if _is_next_player_ai(global_game_manager):
-                    await _progress_the_game_till_human(global_game_manager)
-
+                    await self._progress_the_game_till_human(global_game_manager)
 
 
     async def broadcast_start_game(self, game_manager, sockets):
-        print('DEBUG: Broadcasting start game')
-        print('DEBUG: sockets:', sockets)
         for soc in sockets:
             try:
-                message = MM._gen_start_game_message(self, game_manager, soc.uuid)
+                message = _gen_start_game_message(self, game_manager, soc.uuid)
                 await soc.send(text_data=json.dumps(message))
             except Exception as e:
                 logging.error("Error sending message", exc_info=True)
 
-        game_info = MM._gen_game_info(game_manager)
+        game_info = _gen_game_info(game_manager)
         
         for uuid, player in game_manager.ai_players.items():
             player.receive_game_start_message(game_info)
             player.set_uuid(uuid)
+
 
     async def broadcast_update_game(self, game_manager, sockets, mode="moderate"):
         for destination, update in game_manager.latest_messages:
@@ -107,6 +104,18 @@ class PokerConsumer(AsyncWebsocketConsumer):
                             except:
                                 logging.error("Error sending message", exc_info=True)
                             await asyncio.sleep(_calc_wait_interval(mode, update))
+
+
+    async def _progress_the_game_till_human(self, game_manager):
+        while _is_next_player_ai(game_manager):
+            if GM.has_game_finished(game_manager.latest_messages):
+                break
+            action_and_amount = game_manager.ask_action_to_ai_player(game_manager.next_player_uuid)
+            if action_and_amount is not None:
+                action, amount = action_and_amount[:2]
+                game_manager.update_game(action, amount)
+            await self.broadcast_update_game(game_manager, self.scope["session"]["sockets"], MODE_SPEED)
+
 
     def get_default_config(self):
         return {
@@ -145,6 +154,7 @@ class PokerConsumer(AsyncWebsocketConsumer):
                 data["amount"] = 0
         return data["action"], data["amount"]
     
+
 def setup_game_config(form_data, default_config):
     game_config = {
         'initial_stack': form_data.get('initial_stack', default_config['initial_stack']),
@@ -158,33 +168,26 @@ def setup_game_config(form_data, default_config):
     )
     return game_config
 
+
 def setup_config_player(game_config_ai):
     members_info = []
     for ai_player in game_config_ai['ai_players']:
         global_game_manager.join_ai_player(ai_player['name'], ai_player['path'])
-        player_info = gen_ai_player_info(ai_player['name'], len(members_info), ai_player['path'])
+        player_info = gen_ai_player_info(ai_player['name'], str(len(members_info)), ai_player['path'])
         members_info.append(player_info)
     return members_info
 
+
 def _is_next_player_ai(game_manager):
     uuid = game_manager.next_player_uuid
-    print("UUID nastepnego gracza:", uuid)
     return uuid and len(uuid) <= 2 and uuid != '5'
 
-async def _progress_the_game_till_human(game_manager):
-    while _is_next_player_ai(game_manager):
-        if GM.has_game_finished(game_manager.latest_messages):
-            break
-        action_and_amount = game_manager.ask_action_to_ai_player(game_manager.next_player_uuid)
-        if action_and_amount is not None:
-            action, amount = action_and_amount[:2]
-            game_manager.update_game(action, amount)
-        await MM.broadcast_update_game(game_manager, game_manager.scope["session"]["sockets"], MODE_SPEED)
 
 def gen_ai_player_info(name, uuid, path):
     info = _gen_base_player_info("ai", name, uuid)
     info["path"] = path
     return info
+
 
 def _gen_base_player_info(player_type, name, uuid):
     return {
@@ -192,6 +195,22 @@ def _gen_base_player_info(player_type, name, uuid):
         "name": name,
         "uuid": uuid
     }
+
+
+
+def _gen_game_info(game_manager):
+    seats = game_manager.latest_messages[0][1]["message"]["seats"]
+    copy_seats = [{k:v for k,v in player.items()} for player in seats]
+    for player in copy_seats:
+        player["stack"] = game_manager.rule["initial_stack"]
+    player_num = len(seats)
+    rule = {k:v for k,v in game_manager.rule.items()}
+    rule["small_blind_amount"] = rule.pop("small_blind")
+    return {
+            "seats": copy_seats,
+            "player_num": player_num,
+            "rule": rule,
+            }
 
 def _calc_wait_interval(mode, update):
     message_type = update["message"]["message_type"]
@@ -232,88 +251,6 @@ FAST_WAIT_INTERVAL = {
         'round_result_message': 5,
         'game_result_message': 0
 }
-
-# def _gen_game_update_message(handler, message):
-#     message_type = message['message']['message_type']
-#     if 'round_start_message' == message_type:
-#         round_count = message['message']['round_count']
-#         hole_card = message['message']['hole_card']
-#         event_html_str = handler.render_string(
-#             "event_round_start.html",
-#             round_count=round_count,
-#             hole_card=hole_card
-#             )
-#         content = {
-#                 'update_type': message_type,
-#                 # 'event_html': tornado.escape.to_basestring(event_html_str)
-#                 }
-#     elif 'street_start_message' == message_type:
-#         round_state = message['message']['round_state']
-#         street = message['message']['street']
-#         table_html_str = handler.render_string("start_game.html", round_state=round_state)
-#         event_html_str = handler.render_string("event_street_start.html", street=street)
-#         content = {
-#                 'update_type': message_type,
-#                 # 'table_html': tornado.escape.to_basestring(table_html_str),
-#                 # 'event_html': tornado.escape.to_basestring(event_html_str)
-#                 }
-#     elif 'game_update_message' == message_type:
-#         round_state = message['message']['round_state']
-#         action = message['message']['action']
-#         action_histories = message['message']['action_histories']
-#         table_html_str = handler.render("start_game.html", round_state=round_state)
-#         event_html_str = handler.render(
-#                 "start_game.html", action=action, round_state=round_state)
-#         content = {
-#                 'update_type': message_type,
-#                 # 'table_html': tornado.escape.to_basestring(table_html_str),
-#                 # 'event_html': tornado.escape.to_basestring(event_html_str)
-#                 }
-        
-
-
-#     elif 'round_result_message' == message_type:
-#         round_state = message['message']['round_state']
-#         hand_info = message['message']['hand_info']
-#         winners = message['message']['winners']
-#         round_count = message['message']['round_count']
-#         table_html_str = handler.render_string("round_state.html", round_state=round_state)
-#         event_html_str = handler.render_string("event_round_result.html",
-#                 round_state=round_state, hand_info=hand_info, winners=winners, round_count=round_count)
-#         content = {
-#                 'update_type': message_type,
-#                 # 'table_html': tornado.escape.to_basestring(table_html_str),
-#                 # 'event_html': tornado.escape.to_basestring(event_html_str)
-#                 }
-#     elif 'game_result_message' == message_type:
-#         game_info = message['message']['game_information']
-#         event_html_str = handler.render_string("event_game_result.html", game_information=game_info)
-#         content = {
-#                 'update_type': message_type,
-#                 # 'event_html' : tornado.escape.to_basestring(event_html_str)
-#                 }
-#     elif 'ask_message' == message_type:
-#         round_state = message['message']['round_state']
-#         hole_card = message['message']['hole_card']
-#         valid_actions = message['message']['valid_actions']
-#         action_histories = message['message']['action_histories']
-#         table_html_str = handler.render_string("round_state.html", round_state=round_state)
-#         event_html_str = handler.render_string("event_ask_action.html",
-#                 hole_card=hole_card, valid_actions=valid_actions,
-#                 action_histories=action_histories)
-        
-#         content = {
-#                 'update_type': message_type,
-#                 # 'table_html': tornado.escape.to_basestring(table_html_str),
-#                 # 'event_html': tornado.escape.to_basestring(event_html_str)
-#                 }
-#     else:
-#         raise Exception("Unexpected message received : %r" % message)
-
-#     return {
-#             'message_type': 'update_game',
-#             'content': content
-#             }
 
 def _find_socket_by_uuid(sockets, uuid):
     target = [sock for sock in sockets if sock.uuid == uuid]

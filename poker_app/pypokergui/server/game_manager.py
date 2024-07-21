@@ -70,7 +70,6 @@ class GameManager:
 
     def ask_action_to_ai_player(self, uuid):
         print(f"uuid: {uuid}")  # Debugowanie wartości uuid
-        print(f"self.ai_players keys: {list(self.ai_players.keys())}") 
         if uuid != '5':
             ai_player = self.ai_players[uuid]
         ask_uuid, ask_message = self.latest_messages[-1]
