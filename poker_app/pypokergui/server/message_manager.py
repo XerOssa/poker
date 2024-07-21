@@ -48,17 +48,7 @@ def broadcast_start_game(handler, game_manager, sockets):
 
 
 def _gen_game_info(game_manager):
-    try:
-        latest_message = game_manager.latest_messages[0][1]["message"]
-        # print("DEBUG: latest_message =", latest_message)  # Dodano print do debugowania
-        game_information = latest_message.get("game_information", {})
-        seats = game_information["seats"]
-    except KeyError as e:
-        print(f"KeyError in _gen_game_info: {e}")
-        # print("DEBUG: latest_message =", latest_message)
-        logging.error("KeyError accessing 'seats' in _gen_game_info", exc_info=True)
-        raise
-
+    seats = game_manager.latest_messages[0][1]["message"]["seats"]
     copy_seats = [{k:v for k,v in player.items()} for player in seats]
     for player in copy_seats:
         player["stack"] = game_manager.rule["initial_stack"]
@@ -66,10 +56,10 @@ def _gen_game_info(game_manager):
     rule = {k:v for k,v in game_manager.rule.items()}
     rule["small_blind_amount"] = rule.pop("small_blind")
     return {
-        "seats": copy_seats,
-        "player_num": player_num,
-        "rule": rule,
-    }
+            "seats": copy_seats,
+            "player_num": player_num,
+            "rule": rule,
+            }
 
 
 # def _gen_start_game_message(handler, game_manager, uuid):

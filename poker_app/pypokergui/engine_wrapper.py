@@ -16,7 +16,7 @@ class EngineWrapper(object):
         state, msgs = self._start_new_round(1, table)
         self.current_state = state
         result = _parse_broadcast_destination(msgs, self.current_state['table'])
-        print(f"DEBUG: Game start result = {result}")
+        # print(f"DEBUG: Game start result = {result}")
         return result
 
 

@@ -43,17 +43,6 @@ class GameManager:
         self.members_info.remove(member_info)
 
 
-    # def start_game(self):
-    #     uuid_list = [member["uuid"] for member in self.members_info]
-    #     name_list = [member["name"] for member in self.members_info]
-    #     players_info = Engine.gen_players_info(uuid_list, name_list)
-    #     self.ai_players = build_ai_players(self.members_info)
-    #     self.engine = Engine.EngineWrapper()
-    #     self.latest_messages = self.engine.start_game(players_info, self.rule)
-    #     print(f"DEBUG: Latest messages = {self.latest_messages}")
-    #     self.is_playing_poker = True
-    #     self.next_player_uuid = fetch_next_player_uuid(self.latest_messages)
-
     def start_game(self):
         uuid_list = [member["uuid"] for member in self.members_info]
         name_list = [member["name"] for member in self.members_info]
@@ -61,26 +50,12 @@ class GameManager:
         self.ai_players = build_ai_players(self.members_info)
         self.engine = Engine.EngineWrapper()
 
-        # Logowanie konfiguracji gry przed jej uruchomieniem
-        # print(f"DEBUG: Starting game with players_info: {players_info}")
-
         self.latest_messages = self.engine.start_game(players_info, self.rule)
-
-        # Logowanie wiadomości po uruchomieniu gry
-        # print(f"DEBUG: Latest messages after starting game: {self.latest_messages}")
 
         self.is_playing_poker = True
         self.next_player_uuid = fetch_next_player_uuid(self.latest_messages)
-        
-        # Logowanie UUID następnego gracza
-        # print(f"DEBUG: Next player UUID after starting game: {self.next_player_uuid}")
-
-        # Dodatkowe logowanie stanu po uruchomieniu gry
-        # print(f"DEBUG: Game state after starting: is_playing_poker={self.is_playing_poker}, next_player_uuid={self.next_player_uuid}, latest_messages={self.latest_messages}")
 
         return self.latest_messages
-
-
 
 
     def get_next_player(self):
@@ -94,8 +69,10 @@ class GameManager:
 
 
     def ask_action_to_ai_player(self, uuid):
-        # assert uuid in self.ai_players, "AI player UUID does not match"
-        ai_player = self.ai_players[uuid]
+        print(f"uuid: {uuid}")  # Debugowanie wartości uuid
+        print(f"self.ai_players keys: {list(self.ai_players.keys())}") 
+        if uuid != '5':
+            ai_player = self.ai_players[uuid]
         ask_uuid, ask_message = self.latest_messages[-1]
         assert ask_message['type'] == 'ask' and uuid == ask_uuid
         return ai_player.declare_action(
@@ -108,12 +85,6 @@ class GameManager:
     def configure_game(self, config):
         self.config = config
 
-
-# def fetch_next_player_uuid(new_messages):
-#     if not has_game_finished(new_messages):
-#         ask_uuid, ask_message = new_messages[-1]
-#         assert ask_message['type'] == 'ask'
-#         return ask_uuid
 
 def fetch_next_player_uuid(new_messages):
     if not has_game_finished(new_messages):

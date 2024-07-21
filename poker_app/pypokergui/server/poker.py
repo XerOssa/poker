@@ -121,25 +121,25 @@ class PokerWebSocketHandler(tornado.websocket.WebSocketHandler):
         return data["action"], data["amount"]
 
 
-    def _progress_the_game_till_human(self):
-        while self._is_next_player_ai(global_game_manager):
-            if GM.has_game_finished(global_game_manager.latest_messages):
-                break
-            # Wywołaj funkcję ask_action_to_ai_player()
-            # i przypisz zwracane wartości do jednej zmiennej lub tuple
-            action_and_amount = global_game_manager.ask_action_to_ai_player(
-                global_game_manager.next_player_uuid)
-            # Jeśli potrzebujesz tylko pierwszych dwóch wartości, możesz je wyodrębnić z tupli
-            if action_and_amount is not None:
-                action, amount = action_and_amount[:2]
-                global_game_manager.update_game(action, amount)
-            MM.broadcast_update_game(self, global_game_manager, self.sockets, MODE_SPEED)
+    # def _progress_the_game_till_human(self):
+    #     while self._is_next_player_ai(global_game_manager):
+    #         if GM.has_game_finished(global_game_manager.latest_messages):
+    #             break
+    #         # Wywołaj funkcję ask_action_to_ai_player()
+    #         # i przypisz zwracane wartości do jednej zmiennej lub tuple
+    #         action_and_amount = global_game_manager.ask_action_to_ai_player(
+    #             global_game_manager.next_player_uuid)
+    #         # Jeśli potrzebujesz tylko pierwszych dwóch wartości, możesz je wyodrębnić z tupli
+    #         if action_and_amount is not None:
+    #             action, amount = action_and_amount[:2]
+    #             global_game_manager.update_game(action, amount)
+    #         MM.broadcast_update_game(self, global_game_manager, self.sockets, MODE_SPEED)
 
 
-    def _is_next_player_ai(self, game_manager):
-        uuid = game_manager.next_player_uuid
-        print("UUID nastepnego gracza:", uuid)
-        return uuid and len(uuid) <= 2
+    # def _is_next_player_ai(self, game_manager):
+    #     uuid = game_manager.next_player_uuid
+    #     print("UUID nastepnego gracza:", uuid)
+    #     return uuid 
 
 MODE_SPEED = "moderate"
 global_game_manager = GM.GameManager()

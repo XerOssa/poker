@@ -37,9 +37,9 @@ function resetGame() {
 
 function declareAction(form) {
     var message = form.formToDict();
-    message['type'] = "action_declare_action";
-    updater.socket.send(JSON.stringify(message));
-}
+    message['type'] = "action_declare_action"
+    updater.socket.send(JSON.stringify(message))
+  }
 
 jQuery.fn.formToDict = function() {
     var fields = this.serializeArray();
