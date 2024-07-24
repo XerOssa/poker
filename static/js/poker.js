@@ -7,11 +7,19 @@ $(document).ready(function() {
         registerPlayer($(this));
         return false;
     });
+
     $("#start_game_form").on("submit", function(event) {
         event.preventDefault();  // Prevent the default form submission
         startGame();
         return false;
     });
+
+    $("#declare_action_form").on("submit", function(event) {
+        event.preventDefault();  // Prevent the default form submission
+        declareAction($(this));
+        return false;
+    });
+
     updater.start();
 });
 
@@ -37,9 +45,9 @@ function resetGame() {
 
 function declareAction(form) {
     var message = form.formToDict();
-    message['type'] = "action_declare_action"
-    updater.socket.send(JSON.stringify(message))
-  }
+    message['type'] = "action_declare_action";
+    updater.socket.send(JSON.stringify(message));
+}
 
 jQuery.fn.formToDict = function() {
     var fields = this.serializeArray();
@@ -86,7 +94,8 @@ var updater = {
         var node = $(message.html);
         $("#container").html(node);
         $("#declare_action_form").hide();
-        $("#declare_action_form").on("submit", function() {
+        $("#declare_action_form").on("submit", function(event) {
+            event.preventDefault();  // Prevent the default form submission
             declareAction($(this));
             return false;
         });
@@ -112,6 +121,12 @@ var updater = {
             updater.askAction(content.table_html, content.event_html);
         } else {
             window.console.error("unexpected message in updateGame: " + content);
+        }
+
+        // Aktualizacja wartości potu
+        var potAmount = content.round_state.pot.main.amount;
+        if (potAmount !== undefined) {
+            $(".pot .main_pot").text("$" + potAmount);
         }
     },
 
