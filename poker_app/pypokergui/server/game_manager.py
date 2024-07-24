@@ -1,6 +1,5 @@
 import poker_app.pypokergui.engine_wrapper as Engine
 import poker_app.pypokergui.ai_generator as AG
-import poker_app.pypokergui.server.message_manager as MM
 
 
 class GameManager:

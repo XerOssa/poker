@@ -1,11 +1,11 @@
 {% load static %}
-{% load django_browser_reload %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     {% include "index.html" %}
+    <script src="{% static 'js/poker.js' %}"></script>
     <link rel="icon" type="image/png" href="{% static 'favicon.png' %}">
-
 </head>
 <body>
     <div id="game-info">
@@ -61,9 +61,5 @@
             </div>
         </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="{% static 'js/poker.js' %}"></script>
-    
-    {% django_browser_reload_script %}
 </body>
 </html>

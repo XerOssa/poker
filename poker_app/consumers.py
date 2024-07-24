@@ -19,9 +19,9 @@ class PokerConsumer(AsyncWebsocketConsumer):
         await self.accept()
         if "sockets" not in self.scope["session"]:
             self.scope["session"]["sockets"] = []
+            
             self.uuid = str(5)
         self.scope["session"]["sockets"].append(self)
-        # print(f"DEBUG: Connected. Sockets: {self.scope['session']['sockets']}")
 
     async def receive(self, text_data):
 
@@ -39,10 +39,6 @@ class PokerConsumer(AsyncWebsocketConsumer):
 
             members_info = setup_config_player(game_config_ai)
             self.scope["session"]["members_info"] = members_info
-                # print(f"DEBUG: Game config: {game_config}")
-                # print(f"DEBUG: Members info: {members_info}")
-
-            # Add the human player to members_info
             human_player = self.scope["session"].get("human_player")
             if human_player:
                 uuid_human = str(len(members_info))
@@ -51,8 +47,7 @@ class PokerConsumer(AsyncWebsocketConsumer):
                     "name": human_player['name'],
                     "uuid": uuid_human,
                 })
-                self.scope["session"]["members_info"] = members_info  # Update session with new member info
-                # print(f"DEBUG: Updated Members info with human player: {members_info}")
+                self.scope["session"]["members_info"] = members_info
 
             global_game_manager.members_info = members_info  # Assign members_info
 
@@ -70,15 +65,11 @@ class PokerConsumer(AsyncWebsocketConsumer):
                 if _is_next_player_ai(global_game_manager):
                     await self._progress_the_game_till_human(global_game_manager)
 
-
+    
     async def broadcast_start_game(self, game_manager, sockets):
         for soc in sockets:
-            try:
-                message = _gen_start_game_message(self, game_manager, soc.uuid)
-                await soc.send(text_data=json.dumps(message))
-            except Exception as e:
-                logging.error("Error sending message", exc_info=True)
-
+            message = _gen_start_game_message(game_manager)
+            await soc.send(text_data=json.dumps(message))
         game_info = _gen_game_info(game_manager)
         
         for uuid, player in game_manager.ai_players.items():
@@ -87,6 +78,10 @@ class PokerConsumer(AsyncWebsocketConsumer):
 
 
     async def broadcast_update_game(self, game_manager, sockets, mode="moderate"):
+        if not sockets:
+            logging.error("Sockets list is None or empty")
+            return
+
         for destination, update in game_manager.latest_messages:
             for uuid in _parse_destination(destination, game_manager, sockets):
                 if uuid != '5':
@@ -99,9 +94,10 @@ class PokerConsumer(AsyncWebsocketConsumer):
                         socket = _find_socket_by_uuid(sockets, uuid)
                         if socket is not None:
                             message = _gen_game_update_message(update)
+
                             try:
                                 await socket.send(text_data=json.dumps(message))
-                            except:
+                            except Exception as e:
                                 logging.error("Error sending message", exc_info=True)
                             await asyncio.sleep(_calc_wait_interval(mode, update))
 

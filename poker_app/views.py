@@ -5,7 +5,6 @@ from django.shortcuts import render, redirect
 from django.conf import settings
 from poker_analysis import process_poker_hand, save_to_csv
 from .models import Hero
-
 from waiting_room_param import players_list, configurations_table, read_config
 from .forms import HeroForm, GameConfigForm
 from channels.layers import get_channel_layer
@@ -55,6 +54,16 @@ def charts(request):
     plot_url = os.path.join(settings.MEDIA_URL, plot_filename)
     return render(request, 'charts.html', {'plot_url': plot_url})
     # return render(request, 'charts.html', {'plot_path': plot_path})
+
+
+def my_view(request):
+    ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"]
+    suits = ["s", "d", "h", "c"]
+
+    return render(request, 'index.html', {
+        'ranks': ranks,
+        'suits': suits,
+    })
 
 
 global_game_manager = GM.GameManager()
@@ -122,43 +131,37 @@ def waiting_room_view(request):
         'players': players,
     })
 
+
 def start_game_view(request):
     print("start_game_view called")
     players = request.session.get('players', [])
-    # print(f"Players: {players}")
-    
-    table = Table()
-    community_cards = [str(card) for card in table.get_community_card()]
-    pot = 0
-    dealer_pos = table.dealer_btn
-    small_blind_pos = (table.dealer_btn + 1) % len(players)
-    big_blind_pos = (table.dealer_btn + 2) % len(players)
-    next_player = (big_blind_pos + 1) % len(players)
+
+    # Bezpośrednie ustawienie round_state
     round_state = {
+        'community_card': [],
+        'pot': 0,
+        'dealer_pos': 0,
+        'small_blind_pos': 0,
+        'big_blind_pos': 0,
+        'next_player': 0,
         'seats': players,
-        'community_card': community_cards,
-        'pot': pot,
-        'next_player': next_player,
-        'dealer_pos': dealer_pos,
-        'small_blind_pos': small_blind_pos,
-        'big_blind_pos': big_blind_pos
     }
+
     used_cards = [] 
     hole_card = _pick_unused_card(card_num=2, used_card=used_cards)
     game_config = request.session.get('game_config', {})
-    stack = game_config.get('initial_stack')
+    stack = game_config.get('initial_stack', 0)
 
-    for player in players:
-        player['stack'] = stack
-
-    # if request.method == 'POST':
-    #     channel_layer = get_channel_layer()
-    #     async_to_sync(channel_layer.group_send)(
-    #         'poker', {
-    #             'type': 'start_game',
-    #         }
-    #     )
-    #     return redirect('start_game')
+    # Możesz zmodyfikować round_state przed przekazaniem go do render
+    round_state.update({
+        'seats': players,
+        'community_card': round_state['community_card'],
+        'pot': round_state['pot'],
+        'next_player': round_state['next_player'],
+        'dealer_pos': round_state['dealer_pos'],
+        'small_blind_pos': round_state['small_blind_pos'],
+        'big_blind_pos': round_state['big_blind_pos']
+    })
 
     return render(request, 'start_game.html', {
         'round_state': round_state,
@@ -167,12 +170,3 @@ def start_game_view(request):
         'stack': stack
     })
 
-def my_view(request):
-    # Lista rang i kolorów (przykład dynamicznego generowania)
-    ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"]
-    suits = ["s", "d", "h", "c"]
-
-    return render(request, 'index.html', {
-        'ranks': ranks,
-        'suits': suits,
-    })

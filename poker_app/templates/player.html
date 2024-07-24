@@ -1,29 +1,23 @@
 {% load static %}
 
+<div id="player-{{ player.idx }}" class="player-{% if player.state == 'participating' %}active{% else %}folded{% endif %}">
+    <i class="material-icons md-48
+    {% if player.state == 'folded' %}inactive{% endif %}
+    {% if round_state.next_player == player.idx %}color-decision{% endif %}">
+    {% if player.name == 'Jacek' %}face{% else %}android{% endif %}
+    </i>
+    <div class="player-info">
+        <span id="player-name-{{ player.idx }}">{{ player.name }}</span>
+        <span id="player-stack-{{ player.idx }}">${{ player.stack }}</span>
+    </div>
 
-<div class="player-{% if player.state == 'participating' %}active{% else %}folded{% endif %}">
-  <i class="material-icons md-48
-  {% if player.state == 'folded' %}inactive{% endif %}
-  {% if round_state.next_player == player.idx %}color-decision{% endif %}">
-  {% if player.name == 'Jacek' %}face{% else %}android{% endif %}
-  </i>
-  <div class="player-info">
-    <span>{{ player.name }}</span>
-    <span>${{ player.stack }}</span>
-    
-  </div>
-
-
-
-  <div class="player-cards">
-    {% if player.name == 'Jacek' %}
-
-        {% for card in hole_card %}
-            <img class="card" src="{% static 'images/card_' %}{{ card }}.png" >
-        {% endfor %}
-
-    {% endif %}
-  </div>
+    <div class="player-cards" id="player-cards-{{ player.idx }}">
+        {% if player.name == 'Jacek' %}
+            {% for card in hole_card %}
+                <img class="card" src="{% static 'images/card_' %}{{ card }}.png">
+            {% endfor %}
+        {% endif %}
+    </div>
 </div>
 
 {% comment %} {% if player.name == 'Jacek' %}color-human {% else %}color-ai{% endif %} {% endcomment %}
