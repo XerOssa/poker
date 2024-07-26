@@ -53,7 +53,7 @@ class PokerConsumer(AsyncWebsocketConsumer):
 
             # Start the game and broadcast to clients
             result_message = global_game_manager.start_game()  # Zmienna do przechowywania wyniku
-            await self.broadcast_start_game(global_game_manager, self.scope["session"].get("sockets", []))
+            # await self.broadcast_start_game(global_game_manager, self.scope["session"].get("sockets", []))
             if _is_next_player_ai(global_game_manager):
                 await self._progress_the_game_till_human(global_game_manager)
             
@@ -66,15 +66,15 @@ class PokerConsumer(AsyncWebsocketConsumer):
                     await self._progress_the_game_till_human(global_game_manager)
 
     
-    async def broadcast_start_game(self, game_manager, sockets):
-        for soc in sockets:
-            message = _gen_start_game_message(game_manager)
-            await soc.send(text_data=json.dumps(message))
-        game_info = _gen_game_info(game_manager)
+    # async def broadcast_start_game(self, game_manager, sockets):
+    #     for soc in sockets:
+    #         message = _gen_start_game_message(game_manager)
+    #         await soc.send(text_data=json.dumps(message))
+    #     game_info = _gen_game_info(game_manager)
         
-        for uuid, player in game_manager.ai_players.items():
-            player.receive_game_start_message(game_info)
-            player.set_uuid(uuid)
+    #     for uuid, player in game_manager.ai_players.items():
+    #         player.receive_game_start_message(game_info)
+    #         player.set_uuid(uuid)
 
 
     async def broadcast_update_game(self, game_manager, sockets, mode="moderate"):

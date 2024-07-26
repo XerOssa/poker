@@ -99,11 +99,11 @@ body {
 }
 
 .pot img {
-  width: 100%; /* Ustaw szerokość ikony na pełną szerokość kontenera */
+  width: 5%; /* Ustaw szerokość ikony na pełną szerokość kontenera */
   height: auto; /* Automatyczna wysokość proporcjonalna do szerokości */
 }
 
-.main_pot {
+.pot {
   text-align: center;
   margin-top: 5px; /* Odstęp na górę między ikoną a wartością */
   font-size: 16px; /* Rozmiar czcionki wartości */

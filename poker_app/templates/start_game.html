@@ -8,21 +8,8 @@
 
 </head>
 <body>
-    <div id="game-info">
-        <div id="round-state">
-            <h2>Round State</h2>
-            <p id="current-street"></p>
-            <p id="pot"></p>
-            <p id="dealer-btn"></p>
-            <p id="next-player"></p>
-        </div>
-        <div id="action-history">
-            <h2>Action History</h2>
-            <ul id="actions-list"></ul>
-        </div>
-    </div>
     <div id="round_state">
-        {% include "action_start_game.html" %}
+        {% comment %} {% include "action_start_game.html" %} {% endcomment %}
         <div id="round-state-table" class="img-rounded">
             {% for player in players %}
                 {% if player.idx == round_state.dealer_btn %}
@@ -52,10 +39,19 @@
                     <img class="card" src="{% static 'images/card_B1.png' %}" alt="card">
                 {% endif %}
             </div>
-            <div class="pot">
-                <img src="{% static 'images/poker_pot.png' %}">
-                <h4 class="main_pot">${{ round_state.pot.main.amount }}</h4>
-            </div>
+            <div id="messages"></div>
+    <button id="start-game">GO!</button>
+    
+    <div id="messages"></div>
+    <button id="start-game">GO!</button>
+    
+    <!-- Pot Display -->
+    <div id="pot">
+        <img src="{% static 'images/poker_pot.png' %}">
+        <h4 class="main_pot">$0</h4>
+    </div>
+
+
             <div>
                 {% include "button_action.html" %}
             </div>
