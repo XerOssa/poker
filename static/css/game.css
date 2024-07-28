@@ -89,26 +89,26 @@ body {
 
 
 
-.pot {
-  top: 50%;
-  left: 45%;
+
+.pot_img {
+  top: 43%;
+  left: 50%;
   position: absolute;
-  width: 100px;
-  height: 100px;
-  text-align: center;
-}
-
-.pot img {
-  width: 5%; /* Ustaw szerokość ikony na pełną szerokość kontenera */
+  transform: translateX(-50%);
+  width: 7%; /* Ustaw szerokość ikony na pełną szerokość kontenera */
   height: auto; /* Automatyczna wysokość proporcjonalna do szerokości */
+  z-index: 0;
+}
+.main_pot {
+  top: 55%;
+  left: 50%;
+  position: absolute;
+  font-size: 16px;
+  color: #fff;
+  text-align: center;
 }
 
-.pot {
-  text-align: center;
-  margin-top: 5px; /* Odstęp na górę między ikoną a wartością */
-  font-size: 16px; /* Rozmiar czcionki wartości */
-  color: #fff; /* Kolor tekstu wartości */
-}
+
 
 
 
@@ -210,55 +210,42 @@ body {
   transform: translate(-50%, -50%);
 }
 
+
+
 .button-panel {
   position: absolute;
   top: 90%;
-  left: 9%;
+  left: 50%;
   display: flex;
-  flex-direction: row; /* Ustawienie kierunku na wiersz */
-  justify-content: flex-end; /* Wyrównanie przycisków do prawej */
- /* Wyrównanie przycisków do środka w pionie */
+  flex-direction: row;
   width: 83%;
 }
 
-.custom-button {
-  background-color: #4CAF50; /* Zielony kolor tła */
-  border: none;
-  color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
-  cursor: pointer;
+.button-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: bottom;
+  width: 70%;
 }
 
 .button-action {
-  display: flex;
-  flex-direction: row; /* Ustawienie kierunku na wiersz */
-  justify-content: flex-end; /* Wyrównanie przycisków do prawej */
-  align-items: bottom; /* Wyrównanie przycisków do środka w pionie */
-  width: 83%;
-}
-.button {
-  justify-content: right;
-  align-items: center;
-  font-size: 17px;
-  width: 120px; /* Szerokość przycisku */
-  height: 50px; /* Wysokość przycisku */
-  display: grid;
-  padding: 10px 20px;
-  background-color: #ac1838; /* Kolor tła przycisku */
-  color: #030000; /* Kolor tekstu */
-  border-radius: 10px;
+  display: inline-block;
+  font-size: 22px;
   cursor: pointer;
-  text-decoration: none; /* Usunięcie podkreślenia dla odnośnika */
-  max-width: 150px;
   text-align: center;
-  margin-bottom: 10px;
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: #040faa;
+  border: none;
+  border-radius: 20px;
+  margin-right: 5px;
 }
 
+.button-action.active {
+  border: 2px solid red; /* Zmieniono kolor obramowania na czerwony */
+}
 
 
 .label-dealer {

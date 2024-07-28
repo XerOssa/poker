@@ -8,58 +8,54 @@
 
 </head>
 <body>
+    <div id="messages"></div>
+    <button class="button-GO" id="start-game">GO!</button>
     <div id="round_state">
-        {% comment %} {% include "action_start_game.html" %} {% endcomment %}
+        <!-- Ensure correct include files and their structure -->
         <div id="round-state-table" class="img-rounded">
             {% for player in players %}
-                {% if player.idx == round_state.dealer_btn %}
-                    <span class="label-dealer dealer-position-{{round_state.dealer_btn}}">D</span>
-                {% endif %}
-                {% if player.idx == round_state.small_blind_pos %}
-                    <span class="label-blind dealer-position-{{round_state.small_blind_pos}}">SB</span>
-                {% endif %}
-                {% if player.idx == round_state.big_blind_pos %}
-                    <span class="label-blind dealer-position-{{round_state.big_blind_pos}}">BB</span>
-                {% endif %}
-                <div id="player-{{ player.idx }}" class="seat s{{ forloop.counter }}">
+                <div id="player-{{ player.uuid }}" class="seat s{{ forloop.counter }}">
+                    {% if player.idx == round_state.dealer_btn %}
+                        <span class="label-dealer dealer-position-{{round_state.dealer_btn}}">D</span>
+                    {% endif %}
+                    {% if player.idx == round_state.small_blind_pos %}
+                        <span class="label-blind dealer-position-{{round_state.small_blind_pos}}">SB</span>
+                    {% endif %}
+                    {% if player.idx == round_state.big_blind_pos %}
+                        <span class="label-blind dealer-position-{{round_state.big_blind_pos}}">BB</span>
+                    {% endif %}
                     {% include "player.html" %}
                 </div>
             {% endfor %}
-            <div id="community_card" class="community_card">
-                {% if round_state.community_card|length > 0 %}
-                    <h4 class="round-state-table-text"></h4>
-                    {% for card in round_state.community_card %}
-                        <img class="card" src="{% static 'images/card_' %}{{ card }}.png" alt="card">
-                    {% endfor %}
-                {% else %}
-                    <img class="card" src="{% static 'images/card_B1.png' %}" alt="card">
-                    <img class="card" src="{% static 'images/card_B1.png' %}" alt="card">
-                    <img class="card" src="{% static 'images/card_B1.png' %}" alt="card">
-                    <img class="card" src="{% static 'images/card_B1.png' %}" alt="card">
-                    <img class="card" src="{% static 'images/card_B1.png' %}" alt="card">
-                {% endif %}
-            </div>
-            <div id="messages"></div>
-    <button id="start-game">GO!</button>
-    
-    <div id="messages"></div>
-    <button id="start-game">GO!</button>
-    
-    <!-- Pot Display -->
-    <div id="pot">
-        <img src="{% static 'images/poker_pot.png' %}">
-        <h4 class="main_pot">$0</h4>
-    </div>
+        </div>
 
+        <div id="community_card" class="community_card">
+            {% if round_state.community_card|length > 0 %}
+                <h4 class="round-state-table-text"></h4>
+                {% for card in round_state.community_card %}
+                    <img class="card" src="/static/images/card_{{ card }}.png" alt="card">
+                {% endfor %}
+            {% else %}
+                <img class="card" src="/static/images/card_B1.png" alt="card">
+                <img class="card" src="/static/images/card_B1.png" alt="card">
+                <img class="card" src="/static/images/card_B1.png" alt="card">
+                <img class="card" src="/static/images/card_B1.png" alt="card">
+                <img class="card" src="/static/images/card_B1.png" alt="card">
+            {% endif %}
+        </div>
 
-            <div>
-                {% include "button_action.html" %}
-            </div>
+        <!-- Pot Display -->
+        <img class="pot_img" src="/static/images/poker_pot.png">
+        <div class="main_pot">$0</div>
+
+        <div>
+            {% include "button_action.html" %}
         </div>
     </div>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{% static 'js/poker.js' %}"></script>
-    
     {% django_browser_reload_script %}
 </body>
+
 </html>

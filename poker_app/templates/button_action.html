@@ -10,38 +10,24 @@
     
 </head>
 <body>
-  
   <div class="button-panel">
     <form action="" method="post" id="declare_action_form">
-    {% csrf_token %}
-      <fieldset class="button-action">
-        <div class="form-check">
-          <label class="form-check-label">
-            <input type="radio" class="button" name="action" id="r1" value="fold" checked> FOLD
-          </label>
-        </div>
-        <div class="form-check">
-          <label class="form-check-label">
-            <input type="radio" class="button" name="action" id="r2" value="check"> CHECK
-          </label>
-        </div>
-        <div class="form-check">
-          <label class="form-check-label">
-            <input type="radio" class="button" name="action" id="r3" value="call"> CALL
-          </label>
-        </div>
-        <div class="form-check">
-          <label class="form-check-label">
-            <input type="radio" class="button" name="action" id="r4" value="raise"> RAISE
-          </label>
-        </div>
-        <div class="form-group" style="display: inline-block;">
-          <input type="text" class="form-control" name="amount" id="raiseAmoutInput" placeholder="amount" style="width:70px">
-        </div>
-        <button type="submit">Declare Action</button>
-      </fieldset>
+        {% csrf_token %}
+        <fieldset class="button-container">
+            <input type="button" class="button-action" onclick="activateButton(this)" name="action" id="r1" value="fold">
+            <input type="button" class="button-action" onclick="activateButton(this)" name="action" id="r2" value="check">
+            <input type="button" class="button-action" onclick="activateButton(this)" name="action" id="r3" value="call">
+            <input type="button" class="button-action" onclick="activateButton(this)" name="action" id="r4" value="raise">
+            <div class="form-group" style="display: inline-block;">
+                <input type="text" class="form-control" name="amount" id="raiseAmountInput" placeholder="amount" style="width:70px">
+            </div>
+            <button type="submit" class="button-action">Declare Action</button>
+        </fieldset>
     </form>
   </div>
+
+  </div>
+  
 
 </body>
 </html>
