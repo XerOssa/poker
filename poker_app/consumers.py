@@ -65,17 +65,6 @@ class PokerConsumer(AsyncWebsocketConsumer):
                 if _is_next_player_ai(global_game_manager):
                     await self._progress_the_game_till_human(global_game_manager)
 
-    
-    # async def broadcast_start_game(self, game_manager, sockets):
-    #     for soc in sockets:
-    #         message = _gen_start_game_message(game_manager)
-    #         await soc.send(text_data=json.dumps(message))
-    #     game_info = _gen_game_info(game_manager)
-        
-    #     for uuid, player in game_manager.ai_players.items():
-    #         player.receive_game_start_message(game_info)
-    #         player.set_uuid(uuid)
-
 
     async def broadcast_update_game(self, game_manager, sockets, mode="moderate"):
         if not sockets:

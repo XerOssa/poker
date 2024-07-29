@@ -80,7 +80,7 @@ body {
 .community_card {
   text-align:center;
   vertical-align:center;
-  top: 24%;
+  top: 33%;
   left: 50%;
   position: absolute;
   transform: translateX(-50%);
@@ -91,7 +91,7 @@ body {
 
 
 .pot_img {
-  top: 43%;
+  top: 53%;
   left: 50%;
   position: absolute;
   transform: translateX(-50%);
@@ -100,7 +100,7 @@ body {
   z-index: 0;
 }
 .main_pot {
-  top: 55%;
+  top: 65%;
   left: 50%;
   position: absolute;
   font-size: 16px;
@@ -276,12 +276,12 @@ body {
   font-weight: bold; /* Pogrubienie tekstu */
 }
 
-.dealer-position-0 { top: 65%; left: 34%; }
-.dealer-position-1 { top: 49%; left: 21%; }
-.dealer-position-2 { top: 20%; left: 34%; }
-.dealer-position-3 { top: 20%; left: 64%; }
-.dealer-position-4 { top: 49%; left: 76%; }
-.dealer-position-5 { top: 65%; left: 64%; }
+.dealer-position-0 { top: -30%; left: 60%; }
+.dealer-position-1 { top: 10%; left: 110%; }
+.dealer-position-2 { top: 110%; left: 60%; }
+.dealer-position-3 { top: 110%; left: 30%; }
+.dealer-position-4 { top: 10%; left: -25%; }
+.dealer-position-5 { top: -30%; left: 30%; }
 
 .button-GO {
   margin: 1% 1%;

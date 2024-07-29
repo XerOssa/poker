@@ -140,15 +140,14 @@ def start_game_view(request):
     round_state = {
         'community_card': [],
         'pot': 0,
-        'dealer_pos': 0,
-        'small_blind_pos': 0,
-        'big_blind_pos': 0,
-        'next_player': 0,
+        'dealer_pos': None,
+        'small_blind_pos': None,
+        'big_blind_pos': None,
+        'next_player': None,
         'seats': players,
     }
 
-    used_cards = [] 
-    hole_card = _pick_unused_card(card_num=2, used_card=used_cards)
+    hole_card = [] 
     game_config = request.session.get('game_config', {})
     stack = game_config.get('initial_stack', 0)
 

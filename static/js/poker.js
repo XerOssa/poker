@@ -126,15 +126,31 @@ var updater = {
         }
 
         // Update the players
-        roundState.seats.forEach((player, index) => {
+        roundState.seats.forEach(player => {
+            // Logowanie danych każdego gracza
+            console.log(`Aktualizacja gracza: ${player.name}, UUID: ${player.uuid}, Stack: ${player.stack}, Stan: ${player.state}`);
+            
+            // Znalezienie elementu DOM dla gracza
             const playerDiv = $(`#player-${player.uuid}`);
+            
             if (playerDiv.length) {
-                playerDiv.find('.player-stack').text(player.stack);
+                // Logowanie elementu playerDiv i sprawdzenie, czy istnieje
+                console.log(`Znaleziono element dla gracza ${player.name}:`, playerDiv);
+                
+                // Ustawienie wartości stacka i logowanie nowej wartości
+                playerDiv.find(`#player-stack-${player.uuid}`).text(`$${player.stack}`);
+                console.log(`Ustawiono stack dla ${player.name} na $${player.stack}`);
+                
+                // Ustawienie klas folded i allin oraz logowanie zmian
                 if (player.state === "folded") {
                     playerDiv.addClass("folded");
+                    console.log(`${player.name} jest folded`);
                 } else {
                     playerDiv.removeClass("folded");
                 }
+                
+            } else {
+                console.warn(`Nie znaleziono elementu playerDiv dla gracza ${player.name} o UUID ${player.uuid}`);
             }
         });
 

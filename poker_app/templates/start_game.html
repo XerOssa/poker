@@ -5,7 +5,7 @@
 <head>
     {% include "index.html" %}
     <link rel="icon" type="image/png" href="{% static 'favicon.png' %}">
-
+    <link rel="stylesheet" href="{% static 'css/game.css' %}">
 </head>
 <body>
     <div id="messages"></div>
@@ -14,7 +14,7 @@
         <!-- Ensure correct include files and their structure -->
         <div id="round-state-table" class="img-rounded">
             {% for player in players %}
-                <div id="player-{{ player.uuid }}" class="seat s{{ forloop.counter }}">
+                <div id="player-{{ player.idx }}" class="seat s{{ forloop.counter }}">
                     {% if player.idx == round_state.dealer_btn %}
                         <span class="label-dealer dealer-position-{{round_state.dealer_btn}}">D</span>
                     {% endif %}
