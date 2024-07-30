@@ -4,9 +4,9 @@
 
 
 <div id="player-{{ player.idx }}" class="avatar-center">
-    <i class="material-icons md-48
+    <i class="material-icons
     {% if player.state == 'folded' %}inactive{% endif %}
-    {% if round_state.next_player == player.idx %}color-decision{% endif %}">
+    {% if round_state.next_player == player.idx %}highlight{% endif %}">
     {% if player.name == 'Jacek' %}face{% else %}android{% endif %}
     </i>
     <div class="player-info">
@@ -14,7 +14,7 @@
         <span id="player-stack-{{ player.idx }}">${{ player.stack }}</span>
     </div>
     
-    <div class="player-cards" id="player-cards-{{ player.idx }}">
+    <div class="player-cards" id="player-cards-{{ player.uuid }}">
         {% if player.name == 'Jacek' %}
             {% for card in hole_card %}
                 <img class="card" src="{% static 'images/card_' %}{{ card }}.png">

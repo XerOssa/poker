@@ -23,6 +23,9 @@ body {
     
   }
 
+  .highlight {
+    border: 2px solid #FFD700; /* Przykładowy styl dla wyróżnienia */
+  }
 
   #round-state-table {
     position: relative;
@@ -117,11 +120,9 @@ body {
 
 
 
-/* option class for icon size*/
-.material-icons.md-18 { font-size: 18px; }
-.material-icons.md-24 { font-size: 24px; }
-.material-icons.md-36 { font-size: 36px; }
-.material-icons.md-48 { font-size: 48px; }
+.material-icons {
+  font-size: 48px;
+}
 
 /* option class for icon color */
 .material-icons.color-ai { color: #E8F5E9; }

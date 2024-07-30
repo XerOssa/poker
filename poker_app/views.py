@@ -144,7 +144,7 @@ def start_game_view(request):
         'small_blind_pos': None,
         'big_blind_pos': None,
         'next_player': None,
-        'seats': players,
+        'seats': None,
     }
 
     hole_card = [] 

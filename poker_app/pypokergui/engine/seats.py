@@ -12,16 +12,16 @@ class Seats:
     self.players.append(player)
     random.shuffle(self.players)
     # Sprawdź, czy human jest wśród graczy
-    human_index = None
-    for idx, p in enumerate(self.players):
-        player_name = getattr(p, 'name', None)  # Uzyskanie nazwy gracza z właściwości 'name'
-        if player_name == "Jacek":
-            human_index = idx
-            break
+    # human_index = None
+    # for idx, p in enumerate(self.players):
+    #     player_name = getattr(p, 'name', None)  # Uzyskanie nazwy gracza z właściwości 'name'
+    #     if player_name == "Jacek":
+    #         human_index = idx
+    #         break
     # Jeśli human jest wśród graczy, przesuń go na 4. miejsce w kolejności
-    if human_index is not None and human_index != 3:
-        # Jeśli human nie jest na 4. miejscu, zamień go z graczem na 4. miejscu
-        self.players[3], self.players[human_index] = self.players[human_index], self.players[3]
+    # if human_index is not None and human_index != 3:
+    #     # Jeśli human nie jest na 4. miejscu, zamień go z graczem na 4. miejscu
+    #     self.players[3], self.players[human_index] = self.players[human_index], self.players[3]
 
 
   def size(self):

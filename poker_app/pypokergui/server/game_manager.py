@@ -1,7 +1,6 @@
 import poker_app.pypokergui.engine_wrapper as Engine
 import poker_app.pypokergui.ai_generator as AG
 
-
 class GameManager:
 
 
@@ -45,7 +44,7 @@ class GameManager:
     def start_game(self):
         uuid_list = [member["uuid"] for member in self.members_info]
         name_list = [member["name"] for member in self.members_info]
-        players_info = Engine.gen_players_info(uuid_list, name_list)
+        players_info = Engine.gen_players_info(uuid_list, name_list)  
         self.ai_players = build_ai_players(self.members_info)
         self.engine = Engine.EngineWrapper()
 
