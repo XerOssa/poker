@@ -8,6 +8,11 @@ body {
     text-align: center;
   }
 
+  .avatar-center {
+    text-align: center;
+    align-items: center;
+  }
+  
   
 
   .round {
@@ -176,7 +181,7 @@ body {
 /* Pozycjonowanie miejsc względem kontenera stołu */
 .seat.s1 {
   top: 78%;
-  left: 30%;
+  left: 35%;
   transform: translate(-50%, -50%);
 }
 
@@ -282,6 +287,13 @@ body {
 .dealer-position-3 { top: 110%; left: 30%; }
 .dealer-position-4 { top: 10%; left: -25%; }
 .dealer-position-5 { top: -30%; left: 30%; }
+
+.player-0 { top: -30%; left: 60%; }
+.player-1 { top: 10%; left: 110%; }
+.player-2 { top: 110%; left: 60%; }
+.player-3 { top: 110%; left: 30%; }
+.player-4 { top: 10%; left: -25%; }
+.player-5 { top: -30%; left: 30%; }
 
 .button-GO {
   margin: 1% 1%;

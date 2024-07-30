@@ -29,15 +29,15 @@ class PokerConsumer(AsyncWebsocketConsumer):
         message_type = js.get('type')
 
         if message_type == 'action_start_game':
-            game_config_ai = self.scope["session"].get("game_config")
+            game_config = self.scope["session"].get("game_config")
 
             form_data = js.get('form_data', {})
-            default_config = self.get_default_config()
-            game_config = setup_game_config(form_data, default_config)
+            # default_config = self.get_default_config()
+            # game_config = setup_game_config(form_data)
             self.scope["session"]["game_config"] = game_config
 
 
-            members_info = setup_config_player(game_config_ai)
+            members_info = setup_config_player(game_config)
             self.scope["session"]["members_info"] = members_info
             human_player = self.scope["session"].get("human_player")
             if human_player:
@@ -140,11 +140,11 @@ class PokerConsumer(AsyncWebsocketConsumer):
         return data["action"], data["amount"]
     
 
-def setup_game_config(form_data, default_config):
+def setup_game_config(game_config):
     game_config = {
-        'initial_stack': form_data.get('initial_stack', default_config['initial_stack']),
-        'small_blind': form_data.get('small_blind', default_config['small_blind']),
-        'ante': form_data.get('ante', default_config['ante']),
+        'initial_stack': game_config.get('initial_stack'),
+        'small_blind': game_config.get('small_blind'),
+        'ante': game_config.get('ante'),
     }
     global_game_manager.define_rule(
             game_config['initial_stack'], 
@@ -154,9 +154,14 @@ def setup_game_config(form_data, default_config):
     return game_config
 
 
-def setup_config_player(game_config_ai):
+def setup_config_player(game_config):
     members_info = []
-    for ai_player in game_config_ai['ai_players']:
+    global_game_manager.define_rule(
+        game_config['initial_stack'], 
+        game_config['small_blind'],
+        game_config['ante'], 
+    )
+    for ai_player in game_config['ai_players']:
         global_game_manager.join_ai_player(ai_player['name'], ai_player['path'])
         player_info = gen_ai_player_info(ai_player['name'], str(len(members_info)), ai_player['path'])
         members_info.append(player_info)

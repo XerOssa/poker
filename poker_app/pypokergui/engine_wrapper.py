@@ -61,9 +61,9 @@ def gen_players_info(uuid_list, name_list):
 
 
 def gen_game_config(initial_stack, small_blind, ante):
-    assert initial_stack > 0
-    assert small_blind > 0
-    assert ante >= 0
+    # assert initial_stack > 0
+    # assert small_blind > 0
+    # assert ante >= 0
     return {
             'initial_stack': initial_stack,
             'small_blind': small_blind,

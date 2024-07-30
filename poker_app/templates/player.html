@@ -3,7 +3,7 @@
 
 
 
-<div id="player-{{ player.idx }}" class="player {% if player.state == 'participating' %}active{% else %}folded{% endif %}">
+<div id="player-{{ player.idx }}" class="avatar-center">
     <i class="material-icons md-48
     {% if player.state == 'folded' %}inactive{% endif %}
     {% if round_state.next_player == player.idx %}color-decision{% endif %}">

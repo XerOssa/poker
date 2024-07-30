@@ -85,13 +85,13 @@ def waiting_room_view(request):
                 'ante': config_data.get('ante'),
             }
             request.session['form_config_table'] = form_config_table_data
-            default_config_table = configurations_table({})
+            # default_config_table = configurations_table({})
             form_config_table_data = request.session.get('form_config_table', {})
 
             game_config = {
-                'initial_stack': form_config_table_data.get('initial_stack', default_config_table['initial_stack']),
-                'small_blind': form_config_table_data.get('small_blind', default_config_table['small_blind']),
-                'ante': form_config_table_data.get('ante', default_config_table['ante']),
+                'initial_stack': form_config_table_data.get('initial_stack'),
+                'small_blind': form_config_table_data.get('small_blind'),
+                'ante': form_config_table_data.get('ante'),
                 'ai_players': players
             }
             request.session['game_config'] = game_config  # Store config in session
