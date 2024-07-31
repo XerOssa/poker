@@ -94,6 +94,9 @@ var updater = {
                 case 'street_start_message':
                     updater.handleStreetStart(message);
                     break;
+                case 'ask_message':
+                    updater.askMessage(message);
+                    break;
                 default:
                     window.console.error("received unexpected message: ", message);
             }
@@ -127,7 +130,7 @@ var updater = {
 
         // Update the players
         roundState.seats.forEach(player => {
-            const playerDiv = $(`#player-${player.name}`); // Używamy player.name jako identyfikator
+            const playerDiv = $(`#player-${player.name}`); // Use player.name as identifier
        
             if (playerDiv.length) {
                 playerDiv.find(`#player-uuid-${player.name}`).text(`${player.uuid}`);
@@ -135,13 +138,13 @@ var updater = {
 
                 if (player.state === "folded") {
                     playerDiv.addClass("folded");
-                    console.log(`${player.name} jest folded`);
+                    console.log(`${player.name} is folded`);
                 } else {
                     playerDiv.removeClass("folded");
                 }
         
             } else {
-                console.warn(`Nie znaleziono elementu playerDiv dla gracza ${player.name} o UUID ${player.uuid}`);
+                console.warn(`No element found for player ${player.name} with UUID ${player.uuid}`);
             }
         });
 
@@ -171,7 +174,7 @@ var updater = {
         // Process the street start message
         const roundState = message.round_state;
 
-        // Example: Update the community cards on the flop
+        // Update the community cards
         if (roundState && roundState.community_card) {
             const communityCards = roundState.community_card;
             let communityCardHtml = "";
@@ -181,14 +184,53 @@ var updater = {
             $("#community-cards").html(communityCardHtml);
         }
 
-        // Update other parts of the UI if necessary
-        // For example, highlight the next player to act
+        // Highlight the next player to act
         if (roundState && roundState.next_player !== undefined) {
             $(".player-info").removeClass("highlight");
             $(`#player-${roundState.next_player} .player-info`).addClass("highlight");
         }
+    },
+
+    askMessage: function(message) {
+        // Log the message data for debugging purposes
+        window.console.log("askMessage: ", message);
+
+        // Extract relevant data from the message
+        const actionOptions = message.action_options; // Assuming the message contains this
+        const playerName = message.player_name; // Assuming the message contains the player's name
+
+        // Display the prompt to the player (Hero)
+        const promptContainer = $("#action_prompt");
+        promptContainer.empty(); // Clear existing prompt
+        promptContainer.append(`<h3>${playerName}, it's your turn!</h3>`);
+
+        // Add options to the prompt
+        actionOptions.forEach(option => {
+            const button = $(`<button class="action-button">${option}</button>`);
+            button.on("click", function() {
+                updater.sendAction(option); // Send the action selected by the player
+            });
+            promptContainer.append(button);
+        });
+
+        // Show the prompt container
+        promptContainer.show();
+    },
+
+    sendAction: function(action) {
+        // Send the selected action to the server
+        if (updater.socket && updater.socket.readyState === WebSocket.OPEN) {
+            const actionMessage = {
+                type: "player_action",
+                action: action
+            };
+            updater.socket.send(JSON.stringify(actionMessage));
+        } else {
+            console.error("WebSocket is not open.");
+        }
     }
 };
+
 
 // Initialize the WebSocket connection
 document.addEventListener('DOMContentLoaded', () => {
