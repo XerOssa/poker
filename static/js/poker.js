@@ -2,11 +2,11 @@ $(document).ready(function() {
     if (!window.console) window.console = {};
     if (!window.console.log) window.console.log = function() {};
 
-    $("#registration_form").on("submit", function(event) {
-        event.preventDefault();  // Prevent the default form submission
-        registerPlayer($(this));
-        return false;
-    });
+    // $("#registration_form").on("submit", function(event) {
+    //     event.preventDefault();  // Prevent the default form submission
+    //     registerPlayer($(this));
+    //     return false;
+    // });
 
     $("#start_game_form").on("submit", function(event) {
         event.preventDefault();  // Prevent the default form submission
@@ -23,13 +23,13 @@ $(document).ready(function() {
     updater.start();
 });
 
-function registerPlayer(form) {
-    var message = form.formToDict();
-    message['type'] = "action_new_member";
-    message['name'] = message['name'];  // Extract the name from the form
-    delete message.body;  // Remove unnecessary fields if any
-    updater.socket.send(JSON.stringify(message));
-}
+// function registerPlayer(form) {
+//     var message = form.formToDict();
+//     message['type'] = "action_new_member";
+//     message['name'] = message['name'];  // Extract the name from the form
+//     delete message.body;  // Remove unnecessary fields if any
+//     updater.socket.send(JSON.stringify(message));
+// }
 
 function startGame() {
     var message = {};
