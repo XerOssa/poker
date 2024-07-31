@@ -1,27 +1,27 @@
-// $(document).ready(function() {
-//     if (!window.console) window.console = {};
-//     if (!window.console.log) window.console.log = function() {};
+$(document).ready(function() {
+    if (!window.console) window.console = {};
+    if (!window.console.log) window.console.log = function() {};
 
-//     // $("#registration_form").on("submit", function(event) {
-//     //     event.preventDefault();  // Prevent the default form submission
-//     //     registerPlayer($(this));
-//     //     return false;
-//     // });
+    // $("#registration_form").on("submit", function(event) {
+    //     event.preventDefault();  // Prevent the default form submission
+    //     registerPlayer($(this));
+    //     return false;
+    // });
 
-//     $("#start_game_form").on("submit", function(event) {
-//         event.preventDefault();  // Prevent the default form submission
-//         startGame();
-//         return false;
-//     });
+    $("#start_game_form").on("submit", function(event) {
+        event.preventDefault();  // Prevent the default form submission
+        startGame();
+        return false;
+    });
 
-//     $("#declare_action_form").on("submit", function(event) {
-//         event.preventDefault();  // Prevent the default form submission
-//         declareAction($(this));
-//         return false;
-//     });
+    $("#declare_action_form").on("submit", function(event) {
+        event.preventDefault();  // Prevent the default form submission
+        declareAction($(this));
+        return false;
+    });
 
-//     updater.start();
-// });
+    updater.start();
+});
 
 // function registerPlayer(form) {
 //     var message = form.formToDict();
