@@ -127,28 +127,19 @@ var updater = {
 
         // Update the players
         roundState.seats.forEach(player => {
-            // Logowanie danych każdego gracza
-            console.log(`Aktualizacja gracza: ${player.name}, UUID: ${player.uuid}, Stack: ${player.stack}, Stan: ${player.state}`);
-            
-            // Znalezienie elementu DOM dla gracza
-            const playerDiv = $(`#player-${player.uuid}`);
-            
+            const playerDiv = $(`#player-${player.name}`); // Używamy player.name jako identyfikator
+       
             if (playerDiv.length) {
-                // Logowanie elementu playerDiv i sprawdzenie, czy istnieje
-                console.log(`Znaleziono element dla gracza ${player.name}:`, playerDiv);
-                
-                // Ustawienie wartości stacka i logowanie nowej wartości
-                playerDiv.find(`#player-stack-${player.uuid}`).text(`$${player.stack}`);
-                console.log(`Ustawiono stack dla ${player.name} na $${player.stack}`);
-                
-                // Ustawienie klas folded i allin oraz logowanie zmian
+                playerDiv.find(`#player-uuid-${player.name}`).text(`${player.uuid}`);
+                playerDiv.find(`#player-stack-${player.name}`).text(`$${player.stack}`);
+
                 if (player.state === "folded") {
                     playerDiv.addClass("folded");
                     console.log(`${player.name} jest folded`);
                 } else {
                     playerDiv.removeClass("folded");
                 }
-                
+        
             } else {
                 console.warn(`Nie znaleziono elementu playerDiv dla gracza ${player.name} o UUID ${player.uuid}`);
             }
@@ -212,23 +203,38 @@ document.addEventListener('DOMContentLoaded', () => {
     chatSocket.onmessage = function(e) {
         try {
             const data = JSON.parse(e.data);
-
-            // Log received data
+    
+            // Log the entire received data for debugging
             console.log('Received data:', data);
-
-            // Handle different message types
+    
+            // Check for the presence of critical properties and log accordingly
+            console.log('Contains update_type:', 'update_type' in data);
+            console.log('Contains action:', 'action' in data);
+            console.log('Contains round_state:', 'round_state' in data);
+    
+            // Handle different message structures based on the data received
             if (data.message) {
                 document.querySelector('#messages').innerHTML += '<p>' + data.message + '</p>';
             } else if (data.html) {
                 document.querySelector('#messages').innerHTML += '<p>Received HTML content</p>';
                 console.log('Received HTML content:', data.html);
+            } else if (data.update_type) {
+                // Custom handling based on update_type
+                console.log('Processing update_type:', data.update_type);
+                if (data.update_type === 'game_update_message') {
+                    updater.updateGame(data);
+                } else {
+                    console.warn('Unknown update_type:', data.update_type);
+                }
             } else {
-                console.warn('Received data without message property:', data);
+                console.warn('Received data without expected properties:', data);
             }
         } catch (error) {
             console.error('Error parsing message data:', error, 'Received data:', e.data);
         }
     };
+    
+    
 
     chatSocket.onerror = function(e) {
         console.error('Chat socket encountered an error:', e);

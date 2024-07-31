@@ -83,13 +83,15 @@ class PokerConsumer(AsyncWebsocketConsumer):
                         socket = _find_socket_by_uuid(sockets, uuid)
                         if socket is not None:
                             message = _gen_game_update_message(update)
-
+                            logging.debug(f"Generated message for UUID {uuid}: {message}")
                             try:
                                 await socket.send(text_data=json.dumps(message))
+                                logging.info(f"Message successfully sent to UUID {uuid}")
                             except Exception as e:
-                                logging.error("Error sending message", exc_info=True)
+                                logging.error(f"Error sending message to UUID {uuid}: {message}", exc_info=True)
                             await asyncio.sleep(_calc_wait_interval(mode, update))
-
+                    else:
+                        logging.warning(f"Socket not found for UUID {uuid}")
 
     async def _progress_the_game_till_human(self, game_manager):
         while _is_next_player_ai(game_manager):

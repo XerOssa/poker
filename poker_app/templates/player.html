@@ -3,18 +3,18 @@
 
 
 
-<div id="player-{{ player.idx }}" class="avatar-center">
+<div id="player-{{ player.name }}" class="avatar-center">
     <i class="material-icons
     {% if player.state == 'folded' %}inactive{% endif %}
-    {% if round_state.next_player == player.idx %}highlight{% endif %}">
+    {% if round_state.next_player == player.name %}highlight{% endif %}">
     {% if player.name == 'Jacek' %}face{% else %}android{% endif %}
     </i>
     <div class="player-info">
-        <span id="player-name-{{ player.idx }}">{{ player.name }}</span>
-        <span id="player-stack-{{ player.idx }}">${{ player.stack }}</span>
+        <span id="player-uuid-{{ player.name }}">{{ player.uuid }}</span>
+        <span id="player-name-{{ player.name }}">{{ player.name }}</span>
+        <span id="player-stack-{{ player.name }}">${{ player.stack }}</span>
     </div>
-    
-    <div class="player-cards" id="player-cards-{{ player.uuid }}">
+    <div class="player-cards" id="player-cards-{{ player.name }}">
         {% if player.name == 'Jacek' %}
             {% for card in hole_card %}
                 <img class="card" src="{% static 'images/card_' %}{{ card }}.png">
@@ -24,32 +24,3 @@
 </div>
 
 
-
-
-
-
-
-
-
-
-{% comment %} <div id="player-{{ player.idx }}" class="player-{% if player.state == 'participating' %}active{% else %}folded{% endif %}">
-    <i class="material-icons md-48
-    {% if player.state == 'folded' %}inactive{% endif %}
-    {% if round_state.next_player == player.idx %}color-decision{% endif %}">
-    {% if player.name == 'Jacek' %}face{% else %}android{% endif %}
-    </i>
-    <div class="player-info">
-        <span id="player-name-{{ player.uuid }}">{{ player.name }}</span>
-        <span id="player-stack-{{ player.uuid }}">${{ player.stack }}</span>
-    </div>
-    
-    <div class="player-cards" id="player-cards-{{ player.uuid }}">
-        {% if player.name == 'Jacek' %}
-            {% for card in hole_card %}
-                <img class="card" src="{% static 'images/card_' %}{{ card }}.png">
-            {% endfor %}
-        {% endif %}
-    </div>
-</div> {% endcomment %}
-
-{% comment %} {% if player.name == 'Jacek' %}color-human {% else %}color-ai{% endif %} {% endcomment %}

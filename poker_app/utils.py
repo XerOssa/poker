@@ -15,6 +15,7 @@ def _gen_game_update_message(message):
             'round_count': round_count,
             'hole_card': hole_card
         })
+
     elif 'street_start_message' == message_type:
         round_state = message['message']['round_state']
         street = message['message']['street']
@@ -22,6 +23,7 @@ def _gen_game_update_message(message):
             'round_state': round_state,
             'street': street
         })
+
     elif 'game_update_message' == message_type:
         round_state = message['message']['round_state']
         action = message['message']['action']
@@ -31,6 +33,7 @@ def _gen_game_update_message(message):
             'action': action,
             'action_histories': action_histories
         })
+
     elif 'round_result_message' == message_type:
         round_state = message['message']['round_state']
         hand_info = message['message']['hand_info']
@@ -42,9 +45,11 @@ def _gen_game_update_message(message):
             'winners': winners,
             'round_count': round_count
         })
+
     elif 'game_result_message' == message_type:
         game_info = message['message']['game_information']
         content.update({'game_information': game_info})
+
     elif 'ask_message' == message_type:
         round_state = message['message']['round_state']
         hole_card = message['message']['hole_card']
@@ -61,11 +66,6 @@ def _gen_game_update_message(message):
     
     return content
 
-# def _gen_start_game_message(game_manager):
-#     context = {'config': game_manager}
-#     html_str = render_to_string('start_game.html', context)
-#     html = mark_safe(html_str)
-#     return {'message_type': 'start_game', 'html': html}
 
 def _gen_start_game_message(game_manager):
     context = {'config': game_manager}
