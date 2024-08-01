@@ -1,5 +1,4 @@
 {% load static %}
-{% load django_browser_reload %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -49,7 +48,8 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{% static 'js/poker.js' %}"></script>
-    {% django_browser_reload_script %}
+    <script src="http://127.0.0.1:8000/static/django_browser_reload/reload.js"></script>
+
 </body>
 
 </html>
