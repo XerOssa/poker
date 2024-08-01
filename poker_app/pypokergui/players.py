@@ -67,9 +67,9 @@ class BasePokerPlayer(object):
       new_action, round_state = self.__parse_game_update_message(message)
       self.receive_game_update_message(new_action, round_state)
 
-    # elif msg_type == "round_result_message":
-    #   winners, hand_info, state = self.__parse_round_result_message(message)
-    #   self.receive_round_result_message(winners, hand_info, state)
+    elif msg_type == "round_result_message":
+      winners, hand_info, state = self.__parse_round_result_message(message)
+      self.receive_round_result_message(winners, hand_info, state)
 
 
   def __build_err_msg(self, msg):

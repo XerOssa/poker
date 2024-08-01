@@ -218,12 +218,12 @@ def _calc_wait_interval(mode, update):
         raise Exception("Unexpected mode received [ %s ]" % mode)
 
 SLOW_WAIT_INTERVAL = {  # TODO
-        'round_start_message': 0,
-        'street_start_message': 0,
-        'ask_message': 0,
-        'game_update_message': 0,
+        'round_start_message': 1,
+        'street_start_message': 1,
+        'ask_message': 1,
+        'game_update_message': 1,
         'round_result_message': 5,
-        'game_result_message': 0
+        'game_result_message': 1
 }
 
 MODERATE_WAIT_INTERVAL = {
@@ -269,11 +269,11 @@ def _broadcast_message_to_ai(ai_player, message):
         action = message['message']['action']
         round_state = message['message']['round_state']
         ai_player.receive_game_update_message(action, round_state)
-    elif 'round_result_message' == message_type:
-        winners = message['message']['winners']
-        round_state = message['message']['round_state']
-        hand_info = message['message']['hand_info']
-        ai_player.receive_round_result_message(winners, hand_info, round_state)
+    # elif 'round_result_message' == message_type:
+    #     winners = message['message']['winners']
+    #     round_state = message['message']['round_state']
+    #     hand_info = message['message']['hand_info']
+    #     ai_player.receive_round_result_message(winners, hand_info, round_state)
     elif 'game_result_message' == message_type:
         pass  # ai does not handle game result
     elif 'ask_message' == message_type:
