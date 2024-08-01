@@ -2,11 +2,6 @@ $(document).ready(function() {
     if (!window.console) window.console = {};
     if (!window.console.log) window.console.log = function() {};
 
-    // $("#registration_form").on("submit", function(event) {
-    //     event.preventDefault();  // Prevent the default form submission
-    //     registerPlayer($(this));
-    //     return false;
-    // });
 
     $("#start_game_form").on("submit", function(event) {
         event.preventDefault();  // Prevent the default form submission
@@ -21,15 +16,54 @@ $(document).ready(function() {
     });
 
     updater.start();
+
+    const chatSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/pokersocket/'
+    );
+
+    chatSocket.onopen = function(e) {
+        console.log('Chat socket connected successfully');
+    };
+
+    chatSocket.onmessage = function(e) {
+        try {
+            const data = JSON.parse(e.data);
+            if (data.message) {
+                document.querySelector('#messages').innerHTML += '<p>' + data.message + '</p>';
+            } else if (data.html) {
+                document.querySelector('#messages').innerHTML += '<p>Received HTML content</p>';
+                console.log('Received HTML content:', data.html);
+            } else if (data.update_type) {
+                // Custom handling based on update_type
+                if (data.update_type === 'game_update_message') {
+                    updater.updateGame(data);
+                }
+            }
+        } catch (err) {
+            console.error('Error handling chatSocket.onmessage:', err);
+        }
+    };
+    
+    
+
+    chatSocket.onerror = function(e) {
+        console.error('Chat socket encountered an error:', e);
+    };
+
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly:', e);
+    };
+
+    $('#start-game').on('click', function() {
+        if (chatSocket.readyState === WebSocket.OPEN) {
+            chatSocket.send(JSON.stringify({'type': 'action_start_game'}));
+        } else {
+            console.error('Chat socket is not open. ReadyState:', chatSocket.readyState);
+        }
+    });
+
 });
 
-// function registerPlayer(form) {
-//     var message = form.formToDict();
-//     message['type'] = "action_new_member";
-//     message['name'] = message['name'];  // Extract the name from the form
-//     delete message.body;  // Remove unnecessary fields if any
-//     updater.socket.send(JSON.stringify(message));
-// }
 
 function startGame() {
     var message = {};
@@ -233,72 +267,53 @@ var updater = {
 
 
 // Initialize the WebSocket connection
-document.addEventListener('DOMContentLoaded', () => {
-    const chatSocket = new WebSocket(
-        'ws://' + window.location.host + '/ws/pokersocket/'
-    );
+// document.addEventListener('DOMContentLoaded', () => {
+//     const chatSocket = new WebSocket(
+//         'ws://' + window.location.host + '/ws/pokersocket/'
+//     );
 
-    chatSocket.onopen = function(e) {
-        console.log('Chat socket connected successfully');
-    };
+//     chatSocket.onopen = function(e) {
+//         console.log('Chat socket connected successfully');
+//     };
 
-    chatSocket.onmessage = function(e) {
-        try {
-            const data = JSON.parse(e.data);
-    
-            // Log the entire received data for debugging
-            console.log('Received data:', data);
-    
-            // Check for the presence of critical properties and log accordingly
-            console.log('Contains update_type:', 'update_type' in data);
-            console.log('Contains action:', 'action' in data);
-            console.log('Contains round_state:', 'round_state' in data);
-    
-            // Handle different message structures based on the data received
-            if (data.message) {
-                document.querySelector('#messages').innerHTML += '<p>' + data.message + '</p>';
-            } else if (data.html) {
-                document.querySelector('#messages').innerHTML += '<p>Received HTML content</p>';
-                console.log('Received HTML content:', data.html);
-            } else if (data.update_type) {
-                // Custom handling based on update_type
-                console.log('Processing update_type:', data.update_type);
-                if (data.update_type === 'game_update_message') {
-                    updater.updateGame(data);
-                } else {
-                    console.warn('Unknown update_type:', data.update_type);
-                }
-            } else {
-                console.warn('Received data without expected properties:', data);
-            }
-        } catch (error) {
-            console.error('Error parsing message data:', error, 'Received data:', e.data);
-        }
-    };
+//     chatSocket.onmessage = function(e) {
+//         try {
+//             const data = JSON.parse(e.data);
+//             if (data.message) {
+//                 document.querySelector('#messages').innerHTML += '<p>' + data.message + '</p>';
+//             } else if (data.html) {
+//                 document.querySelector('#messages').innerHTML += '<p>Received HTML content</p>';
+//                 console.log('Received HTML content:', data.html);
+//             } else if (data.update_type) {
+//                 // Custom handling based on update_type
+//                 if (data.update_type === 'game_update_message') {
+//                     updater.updateGame(data);
+//             }
+//     };
     
     
 
-    chatSocket.onerror = function(e) {
-        console.error('Chat socket encountered an error:', e);
-    };
+//     chatSocket.onerror = function(e) {
+//         console.error('Chat socket encountered an error:', e);
+//     };
 
-    chatSocket.onclose = function(e) {
-        console.error('Chat socket closed unexpectedly:', e);
-    };
+//     chatSocket.onclose = function(e) {
+//         console.error('Chat socket closed unexpectedly:', e);
+//     };
 
-    // Function to send a message for testing purposes
-    function sendMessage(message) {
-        if (chatSocket.readyState === WebSocket.OPEN) {
-            chatSocket.send(JSON.stringify(message));
-        } else {
-            console.error('Chat socket is not open. ReadyState:', chatSocket.readyState);
-        }
-    }
+//     // Function to send a message for testing purposes
+//     function sendMessage(message) {
+//         if (chatSocket.readyState === WebSocket.OPEN) {
+//             chatSocket.send(JSON.stringify(message));
+//         } else {
+//             console.error('Chat socket is not open. ReadyState:', chatSocket.readyState);
+//         }
+//     }
 
-    // Event listener for the Start Game button
-    document.querySelector('#start-game').addEventListener('click', () => {
-        sendMessage({
-            'type': 'action_start_game'
-        });
-    });
-});
+//     // Event listener for the Start Game button
+//     document.querySelector('#start-game').addEventListener('click', () => {
+//         sendMessage({
+//             'type': 'action_start_game'
+//         });
+//     });
+// });
