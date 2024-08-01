@@ -122,6 +122,9 @@ var updater = {
             window.console.log("received new message: " + event.data);
             var message = JSON.parse(event.data);
             switch (message.update_type) {
+                case 'round_start_message':
+                    updater.roundStartMessage(message);
+                    break;
                 case 'game_update_message':
                     updater.updateGame(message);
                     break;
@@ -139,6 +142,34 @@ var updater = {
             }
         };
     },
+
+    roundStartMessage: function(message) {
+        // Log the message data for debugging purposes
+        window.console.log("roundStartMessage: ", message);
+    
+        const results = message.results;
+        const winnerInfo = message.winner_info; // Zakładając, że message zawiera informacje o zwycięzcy
+        const winningHand = message.winning_hand; // Zakładając, że message zawiera informacje o zwycięskiej ręce
+    
+        // Wyświetl informację o wynikach rundy
+        const resultContainer = $("#round_results");
+        resultContainer.empty(); // Wyczyść poprzednie wyniki
+    
+        if (results && results.length > 0) {
+            results.forEach(result => {
+                resultContainer.append(`<p>${result.player_name}: ${result.amount_won}</p>`);
+            });
+        }
+    
+        if (winnerInfo) {
+            resultContainer.append(`<p>Zwycięzca: ${winnerInfo.name}</p>`);
+            if (winningHand) {
+                resultContainer.append(`<p>Zwycięska ręka: ${winningHand}</p>`);
+            }
+        }
+    
+        // Możesz dodać tutaj inne szczegóły dotyczące wyników rundy, np. pokazane karty graczy itp.
+    }, 
 
     updateGame: function(message) {
         // Log the message data for debugging purposes
