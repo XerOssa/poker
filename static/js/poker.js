@@ -262,25 +262,37 @@ var updater = {
     askMessage: function(message) {
         // Log the message data for debugging purposes
         window.console.log("askMessage: ", message);
-
+    
         // Extract relevant data from the message
-        const actionOptions = message.action_options; // Assuming the message contains this
-        const playerName = message.player_name; // Assuming the message contains the player's name
-
+        const validActions = message.valid_actions; // Now we use `valid_actions` instead of `action_options`
+        const playerName = "Current Player"; // Placeholder since `player_name` is not available in message
+    
         // Display the prompt to the player (Hero)
         const promptContainer = $("#action_prompt");
         promptContainer.empty(); // Clear existing prompt
         promptContainer.append(`<h3>${playerName}, it's your turn!</h3>`);
-
+    
         // Add options to the prompt
-        actionOptions.forEach(option => {
-            const button = $(`<button class="action-button">${option}</button>`);
+        validActions.forEach(option => {
+            const actionText = option.action; // Get the action name
+            const amount = option.amount; // Get the action amount (can be 0 for fold)
+            let displayText = actionText;
+    
+            // Include amount in display text if relevant
+            if (amount !== 0 && amount.amount !== undefined) {
+                displayText += ` (${amount.amount})`;
+            } else if (amount !== 0) {
+                displayText += ` (${amount})`;
+            }
+    
+            // Create a button for each valid action
+            const button = $(`<button class="action-button">${displayText}</button>`);
             button.on("click", function() {
-                updater.sendAction(option); // Send the action selected by the player
+                updater.sendAction(actionText); // Send the action selected by the player
             });
             promptContainer.append(button);
         });
-
+    
         // Show the prompt container
         promptContainer.show();
     },

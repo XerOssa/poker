@@ -79,7 +79,7 @@ body {
   }
   
   .player-uuid {
-    font-size: 0.8em; /* Przykład: mniejszy rozmiar czcionki */
+    font-size: 0.6em; /* Przykład: mniejszy rozmiar czcionki */
     color: #888; /* Przykład: szary kolor */
     display: block; /* Przykład: każda UUID na osobnej linii */
 }
