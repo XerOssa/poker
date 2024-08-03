@@ -23,7 +23,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'poker_app',
     'poker_analysis',
-    'django_browser_reload',
+    'django_livereload',
 ]
 
 MIDDLEWARE = [
@@ -35,7 +35,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django_browser_reload.middleware.BrowserReloadMiddleware',
+    'django_livereload.middleware.LiveReloadScript',
 ]
 
 ROOT_URLCONF = 'poker_app.urls'
@@ -104,7 +104,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
-    os.path.join(BASE_DIR, "djangoenv/Lib/site-packages/django_browser_reload/static"),
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')
 
