@@ -30,13 +30,25 @@ body {
   #round-state-table {
     position: relative;
     box-sizing: border-box;
-    width: 70vw; /* Use viewport width for full-screen */
-    height: 92vh; /* Calculate height based on viewport height */
-    margin-left: auto; /* Automatyczne wycentrowanie w poziomie */
+    width: 70vw;
+    height: 92vh;
+    margin-left: auto;
     margin-right: auto;
-    margin-bottom: 0; /* Automatyczne wycentrowanie w poziomie */
+    margin-bottom: 0;
     background-color: #2E7D32;
     border-radius: 350px;
+    overflow: hidden; /* Ukrywa wszystko co wykracza poza zaokrąglony kontener */
+  }
+  
+  #poker-field {
+    position: absolute; /* Umożliwia precyzyjne umiejscowienie wewnątrz kontenera */
+    top: 5%; /* Margines od góry - dostosuj do potrzeb */
+    left: 5%; /* Margines od lewej - dostosuj do potrzeb */
+    width: 90%; /* Szerokość pola gry - dostosuj do potrzeb */
+    height: 90%; /* Wysokość pola gry - dostosuj do potrzeb */
+    background-color: transparent; /* Przezroczyste tło, aby widoczny był zielony stół */
+    border: 5px solid white; /* Biała obwódka */
+    border-radius: 300px; /* Dostosuj zaokrąglenie do potrzeb */
   }
 
     

@@ -12,20 +12,22 @@
     <div id="round_state">
         <!-- Ensure correct include files and their structure -->
         <div id="round-state-table" class="img-rounded">
-            {% for player in players %}
-                <div id="player-{{ player.idx }}" class="seat s{{ forloop.counter }}">
-                    {% if player.idx == round_state.dealer_btn %}
-                        <span class="label-dealer dealer-position-{{round_state.dealer_btn}}">D</span>
-                    {% endif %}
-                    {% if player.idx == round_state.small_blind_pos %}
-                        <span class="label-blind dealer-position-{{round_state.small_blind_pos}}">SB</span>
-                    {% endif %}
-                    {% if player.idx == round_state.big_blind_pos %}
-                        <span class="label-blind dealer-position-{{round_state.big_blind_pos}}">BB</span>
-                    {% endif %}
-                    {% include "player.html" %}
-                </div>
-            {% endfor %}
+            <div id="poker-field">
+                {% for player in players %}
+                    <div id="player-{{ player.idx }}" class="seat s{{ forloop.counter }}">
+                        {% if player.idx == round_state.dealer_btn %}
+                            <span class="label-dealer dealer-position-{{round_state.dealer_btn}}">D</span>
+                        {% endif %}
+                        {% if player.idx == round_state.small_blind_pos %}
+                            <span class="label-blind dealer-position-{{round_state.small_blind_pos}}">SB</span>
+                        {% endif %}
+                        {% if player.idx == round_state.big_blind_pos %}
+                            <span class="label-blind dealer-position-{{round_state.big_blind_pos}}">BB</span>
+                        {% endif %}
+                        {% include "player.html" %}
+                    </div>
+                {% endfor %}
+            </div>
         </div>
 
         <div id="community_card" class="community_card">
