@@ -23,7 +23,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'poker_app',
     'poker_analysis',
-    'django_livereload',
+    'livereload',
 ]
 
 MIDDLEWARE = [
@@ -35,7 +35,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django_livereload.middleware.LiveReloadScript',
+    'livereload.middleware.LiveReloadScript',
 ]
 
 ROOT_URLCONF = 'poker_app.urls'

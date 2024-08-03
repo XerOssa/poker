@@ -8,7 +8,6 @@ from . import views, consumers
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('__reload__/', include('django_browser_reload.urls')),
     path('charts/', views.charts, name='charts'),
     path('poker_app/', views.handhistory, name='handhistory'),
     path('waiting_room/', views.waiting_room_view, name='waiting_room'),

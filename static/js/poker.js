@@ -190,10 +190,6 @@ var updater = {
             roundState.community_card.forEach(card => {
                 communityCardContainer.append(`<img class="card" src="/static/images/card_${card}.png" alt="card">`);
             });
-        } else {
-            for (let i = 0; i < 5; i++) {
-                communityCardContainer.append(`<img class="card" src="/static/images/card_B1.png" alt="card">`);
-            }
         }
 
         // Update the players
