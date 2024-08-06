@@ -53,32 +53,23 @@ body {
     pointer-events: none; /* Zapobiega interakcji z pseudo-elementem */
   }
   .card-slot {
-    position: relative;
+    position: absolute;
     top: 24%;
     left: 30%;
-    width: 40%; /* Szerokość każdego pola */
-    height: 13%; /* Wysokość każdego pola */
-    border: 1px solid white; /* Biała obwódka dla każdego pola */
+    width: 40%; /* Szerokość slotu */
+    height: 20%; /* Wysokość slotu */
+    border: 1px solid white; /* Biała obwódka dla slotu */
     display: grid;
-    grid-template-columns: repeat(5, 108px);
-    grid-gap: 5px;
-  }
-    
-  /* .group1 {
-    display: grid;
-    grid-template-columns: repeat(5, 108px);
-    grid-gap: 5px;
-    position: relative;
-    width: 540px;
-    height: 131px;
+    grid-template-columns: repeat(5, 1fr); /* 5 równych kolumn */
+    grid-gap: 5px; /* Odstęp między kartami */
+    box-sizing: border-box; /* Aby padding i border nie wpływały na szerokość i wysokość */
   }
   
-  .rectangle {
-    background-color: #f5f5f5;
-    height: 131px;
-    width: 108px;
-    border: 1px solid #000000;
-  } */
+  .card-slot > div {
+    background: black; /* Kolor tła kart */
+  }
+
+
 
   .player-cards {
     display: flex; /* Ustawia karty w linii */
