@@ -7,11 +7,13 @@
     <link rel="stylesheet" href="{% static 'css/game.css' %}">
 </head>
 <body>
+    
     <div id="messages"></div>
     <button class="button-GO" id="start-game">GO!</button>
     <div id="round_state">
         <!-- Ensure correct include files and their structure -->
         <div id="round-state-table" class="img-rounded">
+            <div class="card-slot"></div>
             <div id="poker-field">
                 {% for player in players %}
                     <div id="player-{{ player.idx }}" class="seat s{{ forloop.counter }}">
@@ -29,7 +31,7 @@
                 {% endfor %}
             </div>
         </div>
-
+        
         <div id="community_card" class="community_card">
             {% if round_state.community_card|length > 0 %}
                 <h4 class="round-state-table-text"></h4>
@@ -38,7 +40,6 @@
                 {% endfor %}
             {% endif %}
         </div>
-
         <!-- Pot Display -->
         <img class="pot_img" src="/static/images/poker_pot.png">
         <div class="main_pot">$0</div>
