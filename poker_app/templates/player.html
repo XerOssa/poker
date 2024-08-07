@@ -5,8 +5,7 @@
 
 <div id="player-{{ player.name }}" class="avatar-center">
     <i class="material-icons
-    {% if player.state == 'folded' %}inactive{% endif %}
-    {% if round_state.next_player == player.name %}highlight{% endif %}">
+    {% if player.state == 'folded' %}inactive{% endif %}">
     {% if player.name == 'Jacek' %}face{% else %}android{% endif %}
     </i>
     <div class="player-info">

@@ -7,17 +7,19 @@
     <link rel="stylesheet" href="{% static 'css/game.css' %}">
 </head>
 <body>
-    
     <div id="messages"></div>
-    <button class="button-GO" id="start-game">GO!</button>
+    
+    <!-- Umieść przycisk w odpowiednim miejscu -->
     <div id="round_state">
-        <!-- Ensure correct include files and their structure -->
+        <button class="button-GO" id="start-game">GO!</button>
+        
+        <!-- Reszta kodu -->
         <div id="round-state-table" class="img-rounded">
             <div class="card-slot"></div>
-
             <div id="poker-field">
                 {% for player in players %}
-                    <div id="player-{{ player.idx }}" class="seat s{{ forloop.counter }}">
+                    <div id="player-{{ player.idx }}" class="seat s{{ forloop.counter }}
+                    {% if round_state.next_player == player.name %}highlight{% endif %}">
                         {% if player.idx == round_state.dealer_btn %}
                             <span class="label-dealer dealer-position-{{round_state.dealer_btn}}">D</span>
                         {% endif %}
@@ -27,6 +29,7 @@
                         {% if player.idx == round_state.big_blind_pos %}
                             <span class="label-blind dealer-position-{{round_state.big_blind_pos}}">BB</span>
                         {% endif %}
+                        
                         {% include "player.html" %}
                     </div>
                 {% endfor %}
@@ -41,19 +44,16 @@
                 {% endfor %}
             {% endif %}
         </div>
-        <!-- Pot Display -->
+        
         <img class="pot_img" src="/static/images/poker_pot.png">
         <div class="main_pot">$0</div>
-
+        
         <div>
             {% include "button_action.html" %}
         </div>
     </div>
+    
     <script src="{% static 'js/jquery.min.js' %}"></script>
     <script src="{% static 'js/poker.js' %}"></script>
-
-
-
 </body>
-
 </html>
