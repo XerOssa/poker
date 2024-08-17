@@ -53,7 +53,8 @@ class PokerConsumer(AsyncWebsocketConsumer):
 
             # Start the game and broadcast to clients
             result_message = global_game_manager.start_game()  # Zmienna do przechowywania wyniku
-            # await self.broadcast_start_game(global_game_manager, self.scope["session"].get("sockets", []))
+            await self.broadcast_start_game(global_game_manager, self.scope["session"]["sockets"])
+            await self.broadcast_update_game(global_game_manager, self.scope["session"]["sockets"], MODE_SPEED)
             if _is_next_player_ai(global_game_manager):
                 await self._progress_the_game_till_human(global_game_manager)
             
@@ -65,7 +66,20 @@ class PokerConsumer(AsyncWebsocketConsumer):
                 if _is_next_player_ai(global_game_manager):
                     await self._progress_the_game_till_human(global_game_manager)
 
-
+    async def broadcast_start_game(handler, game_manager, sockets):
+    # broadcast message to browser via sockets
+        for soc in sockets:
+            try:
+                # Zamiana write_message na send
+                await soc.send(text_data=json.dumps(_gen_start_game_message(handler, game_manager, soc.uuid)))
+            except Exception as e:
+                logging.error("Error sending message", exc_info=True)
+        # broadcast message to AI by invoking proper callback method
+        game_info = _gen_game_info(game_manager)
+        for uuid, player in game_manager.ai_players.items():
+            player.receive_game_start_message(game_info)
+            player.set_uuid(uuid)
+            
     async def broadcast_update_game(self, game_manager, sockets, mode="moderate"):
         if not sockets:
             logging.error("Sockets list is None or empty")
@@ -102,6 +116,7 @@ class PokerConsumer(AsyncWebsocketConsumer):
                 action, amount = action_and_amount[:2]
                 game_manager.update_game(action, amount)
             await self.broadcast_update_game(game_manager, self.scope["session"]["sockets"], MODE_SPEED)
+
 
 
     def get_default_config(self):
@@ -202,6 +217,15 @@ def _gen_game_info(game_manager):
             "seats": copy_seats,
             "player_num": player_num,
             "rule": rule,
+            }
+
+
+
+
+def _gen_start_game_message(handler, game_manager, uuid):
+
+    return {
+            'message_type': 'start_game',
             }
 
 def _calc_wait_interval(mode, update):
