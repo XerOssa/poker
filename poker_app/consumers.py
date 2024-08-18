@@ -67,14 +67,14 @@ class PokerConsumer(AsyncWebsocketConsumer):
                     await self._progress_the_game_till_human(global_game_manager)
 
     async def broadcast_start_game(handler, game_manager, sockets):
-    # broadcast message to browser via sockets
+        logging.debug("Broadcasting start game message...")
         for soc in sockets:
             try:
-                # Zamiana write_message na send
-                await soc.send(text_data=json.dumps(_gen_start_game_message(handler, game_manager, soc.uuid)))
+                message = json.dumps(_gen_start_game_message(handler, game_manager, soc.uuid))
+                logging.debug(f"Sending message to socket: {message}")
+                await soc.send(text_data=message)
             except Exception as e:
                 logging.error("Error sending message", exc_info=True)
-        # broadcast message to AI by invoking proper callback method
         game_info = _gen_game_info(game_manager)
         for uuid, player in game_manager.ai_players.items():
             player.receive_game_start_message(game_info)
