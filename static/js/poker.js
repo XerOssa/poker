@@ -147,28 +147,16 @@ var updater = {
         // Log the message data for debugging purposes
         window.console.log("roundStartMessage: ", message);
     
-        const results = message.results;
-        const winnerInfo = message.winner_info; // Zakładając, że message zawiera informacje o zwycięzcy
-        const winningHand = message.winning_hand; // Zakładając, że message zawiera informacje o zwycięskiej ręce
-    
-        // Wyświetl informację o wynikach rundy
+        const roundCount = message.round_count;
+        const holeCards = message.hole_card;
+
+        // Display round start information
         const resultContainer = $("#round_results");
-        resultContainer.empty(); // Wyczyść poprzednie wyniki
+        resultContainer.empty(); // Clear previous results
+
+        resultContainer.append(`<p>Runda: ${roundCount}</p>`);
+        resultContainer.append(`<p>Twoje karty: ${holeCards.join(', ')}</p>`);
     
-        if (results && results.length > 0) {
-            results.forEach(result => {
-                resultContainer.append(`<p>${result.player_name}: ${result.amount_won}</p>`);
-            });
-        }
-    
-        if (winnerInfo) {
-            resultContainer.append(`<p>Zwycięzca: ${winnerInfo.name}</p>`);
-            if (winningHand) {
-                resultContainer.append(`<p>Zwycięska ręka: ${winningHand}</p>`);
-            }
-        }
-    
-        // Możesz dodać tutaj inne szczegóły dotyczące wyników rundy, np. pokazane karty graczy itp.
     }, 
 
     updateGame: function(message) {
@@ -335,55 +323,3 @@ var updater = {
     }
 };
 
-
-// Initialize the WebSocket connection
-// document.addEventListener('DOMContentLoaded', () => {
-//     const chatSocket = new WebSocket(
-//         'ws://' + window.location.host + '/ws/pokersocket/'
-//     );
-
-//     chatSocket.onopen = function(e) {
-//         console.log('Chat socket connected successfully');
-//     };
-
-//     chatSocket.onmessage = function(e) {
-//         try {
-//             const data = JSON.parse(e.data);
-//             if (data.message) {
-//                 document.querySelector('#messages').innerHTML += '<p>' + data.message + '</p>';
-//             } else if (data.html) {
-//                 document.querySelector('#messages').innerHTML += '<p>Received HTML content</p>';
-//                 console.log('Received HTML content:', data.html);
-//             } else if (data.update_type) {
-//                 // Custom handling based on update_type
-//                 if (data.update_type === 'game_update_message') {
-//                     updater.updateGame(data);
-//             }
-//     };
-    
-    
-
-//     chatSocket.onerror = function(e) {
-//         console.error('Chat socket encountered an error:', e);
-//     };
-
-//     chatSocket.onclose = function(e) {
-//         console.error('Chat socket closed unexpectedly:', e);
-//     };
-
-//     // Function to send a message for testing purposes
-//     function sendMessage(message) {
-//         if (chatSocket.readyState === WebSocket.OPEN) {
-//             chatSocket.send(JSON.stringify(message));
-//         } else {
-//             console.error('Chat socket is not open. ReadyState:', chatSocket.readyState);
-//         }
-//     }
-
-//     // Event listener for the Start Game button
-//     document.querySelector('#start-game').addEventListener('click', () => {
-//         sendMessage({
-//             'type': 'action_start_game'
-//         });
-//     });
-// });
