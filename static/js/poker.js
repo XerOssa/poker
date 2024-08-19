@@ -44,6 +44,13 @@ function activateButton(button) {
     selectedAction = button.value; // Zapisz aktualnie wybraną akcję
 }
 
+function highlightNextPlayer(nextPlayerId) {
+    $(".player-info").removeClass("highlight"); // Usuń podświetlenie od wszystkich
+    if (nextPlayerId !== undefined) {
+        $(`#player-${nextPlayerId} .player-info`).addClass("highlight"); // Dodaj podświetlenie tylko do następnego gracza
+    }
+}
+
 // Globalna funkcja
 window.activateButton = activateButton;
 
@@ -156,27 +163,25 @@ const updater = {
         // Aktualizacja pozycji dealera, małej i dużej ciemnej
         this.updateBlinds(roundState);
     
-        // Podświetlenie następnego gracza
-        $(".player-info").removeClass("highlight");
-        if (roundState.next_player !== undefined) {
-            $(`#player-${roundState.next_player} .player-info`).addClass("highlight");
-        }
+        highlightNextPlayer(roundState.next_player); // Podświetlenie następnego gracza
     },
 
+
     updatePlayerState: function(player) {
-        console.log(`Updating state for player ${player.name}`);
-    
         const playerDiv = $(`#player-${player.name}`);
-    
         if (playerDiv.length) {
-            console.log(`Player div found for ${player.name}`);
             playerDiv.find(`#player-uuid-${player.name}`).text(`${player.uuid}`);
             playerDiv.find(`#player-stack-${player.name}`).text(`$${player.stack}`);
-            playerDiv.toggleClass('folded', player.state === "folded");
-        } else {
-            console.warn(`No element found for player ${player.name}. Check if the HTML structure was correctly generated.`);
+            
+            // Add or remove the 'inactive' class based on the player's state
+            if (player.state === "folded") {
+                playerDiv.find('.material-icons').addClass('inactive');
+            } else {
+                playerDiv.find('.material-icons').removeClass('inactive');
+            }
         }
     },
+    
 
     updateBlinds: function(roundState) {
         $(".label-dealer, .label-blind").remove();
@@ -194,17 +199,14 @@ const updater = {
 
     handleStreetStart: function(message) {
         console.log("handleStreetStart:", message);
-
+    
         const communityCardContainer = $("#community-cards");
         communityCardContainer.empty();
         message.round_state.community_card.forEach(card => {
             communityCardContainer.append(`<img class="card" src="/static/images/card_${card}.png">`);
         });
-
-        $(".player-info").removeClass("highlight");
-        if (message.round_state.next_player !== undefined) {
-            $(`#player-${message.round_state.next_player} .player-info`).addClass("highlight");
-        }
+    
+        highlightNextPlayer(message.round_state.next_player); // Podświetlenie następnego gracza
     },
 
     askMessage: function(message) {
@@ -224,6 +226,7 @@ const updater = {
         });
 
         promptContainer.show();
+        highlightNextPlayer(message.round_state.next_player);
     },
 
     sendAction: function(action) {

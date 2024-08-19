@@ -2,10 +2,14 @@
 {% load static %}
 
 <div id="player-{{ player.name }}" class="player">
-    <i class="material-icons
-    {% if player.state == 'folded' %}inactive{% endif %}">
-    {% if player.name == 'Jacek' %}face{% else %}android{% endif %}
+    <i class="material-icons {% if player.state == 'folded' %}inactive{% endif %}">
+        {% if player.name == 'Jacek' %}
+            face
+        {% else %}
+            android
+        {% endif %}
     </i>
+    
     <div class="player-info" >
         <span id="player-uuid-{{ player.name }}">{{ player.uuid }}</span>
         <span id="player-name-{{ player.name }}">{{ player.name }}</span>

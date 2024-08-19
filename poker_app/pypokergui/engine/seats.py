@@ -10,7 +10,7 @@ class Seats:
 
   def sitdown(self, player):
     self.players.append(player)
-    random.shuffle(self.players)
+    # random.shuffle(self.players)
     # Sprawdź, czy human jest wśród graczy
     # human_index = None
     # for idx, p in enumerate(self.players):

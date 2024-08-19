@@ -159,8 +159,12 @@ body {
 
 .material-icons {
   font-size: 48px;
+  color: #fff;
 }
 
+.material-icons.inactive {
+  color: #443c3c;
+}
 
 
 .seat {
@@ -283,17 +287,14 @@ body {
   border-radius: 50%;
   display: flex;
   justify-content: center;
-  align-items: center;
 }
 
 .label-blind {
   position: absolute;
-  width: 24px;
-  height: 24px;
   background-color: #f321a3;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  /* justify-content: center; */
+  /* align-items: center; */
 }
 
 .dealer-token {
