@@ -66,21 +66,18 @@ const updater = {
         this.socket.onopen = () => console.log('WebSocket connected successfully');
         this.socket.onmessage = this.handleMessage;
         this.socket.onerror = e => console.error('WebSocket error:', e);
-        this.socket.onclose = e => console.error('WebSocket closed unexpectedly:', e);
+        this.socket.onclose = e => {
+            console.error('WebSocket closed unexpectedly:', e);
+            // Attempt to reconnect after a delay
+            setTimeout(() => this.start(), 5000); // Retry after 5 seconds
+        };
     },
 
     handleMessage: function(event) {
-        console.log("Raw WebSocket data:", event.data);
         try {
             const message = JSON.parse(event.data);
-            console.log("Parsed WebSocket message:", message);
-
             if (message.update_type) {
                 updater.handleUpdate(message);
-            } else if (message.message) {
-                updater.displayChatMessage(message.message);
-            } else if (message.html) {
-                updater.displayHtmlMessage(message.html);
             } else {
                 console.warn("Unknown message format:", message);
             }
@@ -138,27 +135,27 @@ const updater = {
 
     updateGame: function(message) {
         console.log("updateGame:", message);
-
+    
         const roundState = message.round_state;
-
+    
         // Aktualizacja puli głównej
         if (roundState.pot && roundState.pot.main) {
             $(".main_pot").text("$" + roundState.pot.main.amount);
         }
-
+    
         // Aktualizacja kart wspólnych
         const communityCardContainer = $("#community_card");
         communityCardContainer.empty();
         roundState.community_card.forEach(card => {
             communityCardContainer.append(`<img class="card" src="/static/images/card_${card}.png" alt="card">`);
         });
-
+    
         // Aktualizacja graczy
-        roundState.seats.forEach(this.updatePlayerState);
-
+        roundState.seats.forEach(this.updatePlayerState.bind(this));
+    
         // Aktualizacja pozycji dealera, małej i dużej ciemnej
         this.updateBlinds(roundState);
-
+    
         // Podświetlenie następnego gracza
         $(".player-info").removeClass("highlight");
         if (roundState.next_player !== undefined) {
@@ -167,15 +164,17 @@ const updater = {
     },
 
     updatePlayerState: function(player) {
+        console.log(`Updating state for player ${player.name}`);
+    
         const playerDiv = $(`#player-${player.name}`);
-
+    
         if (playerDiv.length) {
+            console.log(`Player div found for ${player.name}`);
             playerDiv.find(`#player-uuid-${player.name}`).text(`${player.uuid}`);
             playerDiv.find(`#player-stack-${player.name}`).text(`$${player.stack}`);
-
             playerDiv.toggleClass('folded', player.state === "folded");
         } else {
-            console.warn(`No element found for player ${player.name}`);
+            console.warn(`No element found for player ${player.name}. Check if the HTML structure was correctly generated.`);
         }
     },
 
@@ -183,13 +182,13 @@ const updater = {
         $(".label-dealer, .label-blind").remove();
 
         if (roundState.dealer_btn !== undefined) {
-            $(`#player-${roundState.dealer_btn}`).append('<span class="label-dealer">D</span>');
+            $(`#player-${roundState.dealer_btn}`).append(`<span class="label-dealer dealer-position-${roundState.dealer_btn}">D</span>`);
         }
         if (roundState.small_blind_pos !== undefined) {
-            $(`#player-${roundState.small_blind_pos}`).append('<span class="label-blind">SB</span>');
+            $(`#player-${roundState.small_blind_pos}`).append(`<span class="label-blind dealer-position-${roundState.small_blind_pos}">SB</span>`);
         }
         if (roundState.big_blind_pos !== undefined) {
-            $(`#player-${roundState.big_blind_pos}`).append('<span class="label-blind">BB</span>');
+            $(`#player-${roundState.big_blind_pos}`).append(`<span class="label-blind dealer-position-${roundState.big_blind_pos}">BB</span>`);
         }
     },
 
@@ -251,3 +250,11 @@ const updater = {
         }
     }
 };
+
+
+
+
+
+
+
+

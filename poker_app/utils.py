@@ -67,9 +67,3 @@ def _gen_game_update_message(message):
     return content
 
 
-def _gen_start_game_message(game_manager):
-    context = {'config': game_manager}
-    html_str = render_to_string('start_game.html', context)
-    html = mark_safe(html_str)
-    clean_html = strip_tags(html_str)
-    return {'message_type': 'start_game', 'html': clean_html}

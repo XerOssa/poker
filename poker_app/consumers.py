@@ -5,7 +5,7 @@ import poker_app.pypokergui.server.game_manager as GM
 import poker_app.pypokergui.utils.action_utils as AU
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.core.cache import cache
-from poker_app.utils import _gen_game_update_message, _gen_start_game_message
+from poker_app.utils import _gen_game_update_message
 
 # from poker_app.pypokergui.server.poker import setup_config
 
@@ -67,14 +67,14 @@ class PokerConsumer(AsyncWebsocketConsumer):
                     await self._progress_the_game_till_human(global_game_manager)
 
     async def broadcast_start_game(handler, game_manager, sockets):
-        logging.debug("Broadcasting start game message...")
-        for soc in sockets:
-            try:
-                message = json.dumps(_gen_start_game_message(handler, game_manager, soc.uuid))
-                logging.debug(f"Sending message to socket: {message}")
-                await soc.send(text_data=message)
-            except Exception as e:
-                logging.error("Error sending message", exc_info=True)
+        # logging.debug("Broadcasting start game message...")
+        # for soc in sockets:
+        #     try:
+        #         message = json.dumps(_gen_start_game_message(handler, game_manager, soc.uuid))
+        #         logging.debug(f"Sending message to socket: {message}")
+        #         await soc.send(text_data=message)
+        #     except Exception as e:
+        #         logging.error("Error sending message", exc_info=True)
         game_info = _gen_game_info(game_manager)
         for uuid, player in game_manager.ai_players.items():
             player.receive_game_start_message(game_info)
