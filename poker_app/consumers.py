@@ -67,14 +67,6 @@ class PokerConsumer(AsyncWebsocketConsumer):
                     await self._progress_the_game_till_human(global_game_manager)
 
     async def broadcast_start_game(handler, game_manager, sockets):
-        # logging.debug("Broadcasting start game message...")
-        # for soc in sockets:
-        #     try:
-        #         message = json.dumps(_gen_start_game_message(handler, game_manager, soc.uuid))
-        #         logging.debug(f"Sending message to socket: {message}")
-        #         await soc.send(text_data=message)
-        #     except Exception as e:
-        #         logging.error("Error sending message", exc_info=True)
         game_info = _gen_game_info(game_manager)
         for uuid, player in game_manager.ai_players.items():
             player.receive_game_start_message(game_info)
@@ -118,7 +110,6 @@ class PokerConsumer(AsyncWebsocketConsumer):
             await self.broadcast_update_game(game_manager, self.scope["session"]["sockets"], MODE_SPEED)
 
 
-
     def get_default_config(self):
         return {
             'initial_stack': 100,
@@ -127,17 +118,15 @@ class PokerConsumer(AsyncWebsocketConsumer):
             'ai_players': [],
         }
 
-
     def _correct_action(self, data):
-        try:
-            data["amount"] = int(data["amount"])
-            # print(data["amount"])
-        except:
-            data["amount"] = -1     
-        
         players = global_game_manager.engine.current_state["table"].seats.players
         next_player_pos = global_game_manager.engine.current_state["next_player"]
         sb_amount = global_game_manager.engine.current_state["small_blind_amount"]
+
+        # Sprawdzenie poprawności next_player_pos
+        if next_player_pos < 0 or next_player_pos >= len(players):
+            raise ValueError(f"Invalid next_player_pos: {next_player_pos}. Must be within 0 and {len(players)-1}.")
+
         actions = AU.generate_legal_actions(players, next_player_pos, sb_amount)
 
         if data["action"] == "fold":
@@ -145,7 +134,6 @@ class PokerConsumer(AsyncWebsocketConsumer):
         elif data["action"] == "call":
             data["amount"] = actions[1]["amount"]
         elif data["action"] == "check":
-            # Jeśli gracz decyduje się na check i nie było żadnego podbicia, pozwól mu zachować swoją rękę
             data["amount"] = 0
         else:
             legal = actions[2]["amount"]
@@ -154,8 +142,9 @@ class PokerConsumer(AsyncWebsocketConsumer):
             else:
                 data["action"] = "fold"
                 data["amount"] = 0
+
         return data["action"], data["amount"]
-    
+   
 
 def setup_game_config(game_config):
     game_config = {
@@ -204,7 +193,6 @@ def _gen_base_player_info(player_type, name, uuid):
     }
 
 
-
 def _gen_game_info(game_manager):
     seats = game_manager.latest_messages[0][1]["message"]["seats"]
     copy_seats = [{k:v for k,v in player.items()} for player in seats]
@@ -218,8 +206,6 @@ def _gen_game_info(game_manager):
             "player_num": player_num,
             "rule": rule,
             }
-
-
 
 
 def _gen_start_game_message(handler, game_manager, uuid):

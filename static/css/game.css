@@ -279,6 +279,26 @@ body {
   border: 2px solid red;
 }
 
+.hidden {
+  display: none;
+}
+
+/* Stylizacja dla widocznego kontenera */
+.visible {
+  display: block;
+  transition: opacity 0.3s ease-in-out; /* Dodaje płynne przejście widoczności */
+  opacity: 1;
+}
+#raise-amount-container {
+  display: none; /* Ukrywa kontener */
+  margin-top: 10px; /* Przykładowy margines, aby oddzielić od innych elementów */
+}
+
+/* Pokaż pole dla kwoty przebicia */
+#raise-amount-container.show {
+  display: inline-block; /* Pokaż kontener */
+}
+
 .label-dealer {
   position: absolute;
   width: 24px;

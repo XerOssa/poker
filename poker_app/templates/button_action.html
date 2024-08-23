@@ -16,13 +16,13 @@
             <input type="button" class="button-action" onclick="activateButton(this)" name="action" id="r2" value="check">
             <input type="button" class="button-action" onclick="activateButton(this)" name="action" id="r3" value="call">
             <input type="button" class="button-action" onclick="activateButton(this)" name="action" id="r4" value="raise">
-            <div class="form-group" style="display: inline-block;">
-                <input type="text" class="form-control" name="amount" id="raiseAmountInput" placeholder="amount" style="width:70px">
+            <div class="form-group" id="raise-amount-container" style="display: none;">
+                <input type="number" class="form-control" name="amount" id="raise-amount" placeholder="amount" min="1" step="1" style="width:70px">
             </div>
             <button type="submit" class="button-action">Declare Action</button>
         </fieldset>
     </form>
-  </div>
+</div>
 
   </div>
   

@@ -3,14 +3,6 @@ from functools import reduce
 
 class ActionChecker:
 
-  # @classmethod
-  # def correct_action(cls, players, player_pos, sb_amount, action, amount=None):
-  #   if cls.is_allin(players[player_pos], action, amount):
-  #     amount = players[player_pos].stack + players[player_pos].paid_sum()
-  #   elif cls.__is_illegal(players, player_pos, sb_amount, action, amount):
-  #     action, amount = "fold", 0
-  #   return action, amount
-
   @classmethod
   def correct_action(cls, players, player_pos, sb_amount, action, amount=None):
     if cls.is_allin(players[player_pos], action, amount):
@@ -26,12 +18,15 @@ class ActionChecker:
 
   @classmethod
   def is_allin(cls, player, action, bet_amount):
-    if action == 'call':
-      return bet_amount >= player.stack + player.paid_sum()
-    elif action == 'raise':
-      return bet_amount == player.stack + player.paid_sum()
-    else:
-      return False
+      if not isinstance(bet_amount, (int, float)):
+          raise TypeError(f"Invalid bet_amount: {bet_amount}. Expected a number.")
+          
+      if action == 'call':
+          return bet_amount >= player.stack + player.paid_sum()
+      elif action == 'raise':
+          return bet_amount == player.stack + player.paid_sum()
+      else:
+          return False
 
 
 
@@ -39,12 +34,7 @@ class ActionChecker:
   def need_amount_for_action(cls, player, amount):
     return amount - player.paid_sum()
 
-
-  # @classmethod
-  # def agree_amount(cls, players):
-  #   last_raise = cls.__fetch_last_raise(players)
-  #   return last_raise["amount"] if last_raise else 0
-  
+ 
   @classmethod
   def agree_amount(cls, players):
     last_raise = cls.__fetch_last_raise(players)
@@ -126,11 +116,6 @@ class ActionChecker:
   def __is_illegal_raise(cls, players, amount, sb_amount):
     return cls.__min_raise_amount(players, sb_amount) > amount
 
-  # @classmethod
-  # def __min_raise_amount(cls, players, sb_amount):
-  #   raise_ = cls.__fetch_last_raise(players)
-  #   return raise_["amount"] + raise_["add_amount"] if raise_ else sb_amount*2
-
 
   @classmethod
   def __min_raise_amount(cls, players, sb_amount):
@@ -144,7 +129,8 @@ class ActionChecker:
 
   @classmethod
   def __is_short_of_money(cls, player, amount):
-    return player.stack < amount - player.paid_sum()
+    # Gracz może sprawdzić nawet jeśli nie ma wystarczającej kwoty na pełny call (all-in przeciwnika)
+    return player.stack < (amount - player.paid_sum()) and player.stack > 0
 
   @classmethod
   def __fetch_last_raise(cls, players):

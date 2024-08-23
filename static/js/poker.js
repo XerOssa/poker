@@ -30,19 +30,41 @@ function startGame() {
     sendWebSocketMessage("action_start_game");
 }
 
-function declareAction(form) {
-    const message = form.formToDict();
-    message['type'] = "action_declare_action";
-    message['action'] = selectedAction; // Wcześniej wybrana akcja
-    console.log("Sending message:", message); // Loguj wiadomość
-    sendWebSocketMessage("action_declare_action", message);
-}
-
 function activateButton(button) {
     $('.button-action').removeClass('active');
     button.classList.add('active');
     selectedAction = button.value; // Zapisz aktualnie wybraną akcję
+
+    // Sprawdź, czy akcja to 'raise' i dostosuj widoczność pola kwoty
+    if (selectedAction === 'raise') {
+        $("#raise-amount-container").show(); // Pokaż pole dla kwoty
+    } else {
+        $("#raise-amount-container").hide(); // Ukryj pole dla kwoty
+    }
 }
+
+function declareAction(form) {
+    const message = form.formToDict();
+    message['type'] = "action_declare_action";
+    message['action'] = selectedAction; // Wcześniej wybrana akcja
+
+    if (selectedAction === 'raise') {
+        const rawAmount = $("#raise-amount").val().trim(); // Pobierz wartość z formularza i usuń białe znaki
+        const parsedAmount = parseInt(rawAmount, 10); // Przekształć wartość na liczbę całkowitą
+
+        if (isNaN(parsedAmount) || parsedAmount <= 0) { // Sprawdź, czy wartość jest prawidłowa
+            alert("Please enter a valid raise amount");
+            return;
+        }
+
+        message['amount'] = parsedAmount;  // Ustaw prawidłową wartość
+    }
+
+    console.log("Hero decision:", message); // Loguj wiadomość
+    sendWebSocketMessage("action_declare_action", message);
+}
+
+
 
 function highlightNextPlayer(nextPlayerId) {
     $(".player-info").removeClass("highlight"); // Usuń podświetlenie od wszystkich
@@ -95,17 +117,20 @@ const updater = {
 
     handleUpdate: function(message) {
         switch (message.update_type) {
+            case 'street_start_message':
+                this.handleStreetStart(message);
+                break;
+            case 'ask_message':
+                // Opóźnienie wywołania askMessage, aby upewnić się, że karty wspólne zostały już wyrenderowane
+                setTimeout(() => {
+                    this.askMessage(message);
+                }, 200); // Ustawienie krótkiego opóźnienia, aby wyrenderować karty
+                break;
             case 'round_start_message':
                 this.roundStartMessage(message);
                 break;
             case 'game_update_message':
                 this.updateGame(message);
-                break;
-            case 'street_start_message':
-                this.handleStreetStart(message);
-                break;
-            case 'ask_message':
-                this.askMessage(message);
                 break;
             case 'round_result_message':
                 this.roundResultMessage(message);
@@ -125,7 +150,7 @@ const updater = {
     },
 
     roundStartMessage: function(message) {
-        console.log("roundStartMessage received:", message);
+        console.log("Start round:", message);
 
         const playerName = "Jacek";
         const playerCardsContainer = $(`#player-cards-${playerName}`);
@@ -141,7 +166,7 @@ const updater = {
     },
 
     updateGame: function(message) {
-        console.log("updateGame:", message);
+        console.log("Game update:", message);
     
         const roundState = message.round_state;
     
@@ -198,35 +223,41 @@ const updater = {
     },
 
     handleStreetStart: function(message) {
-        console.log("handleStreetStart:", message);
+        console.log("Start street:", message);
+        console.log("Karty wspólne przed renderowaniem:", message.round_state.community_card);
     
         const communityCardContainer = $("#community-cards");
         communityCardContainer.empty();
+    
         message.round_state.community_card.forEach(card => {
             communityCardContainer.append(`<img class="card" src="/static/images/card_${card}.png">`);
         });
     
-        highlightNextPlayer(message.round_state.next_player); // Podświetlenie następnego gracza
+        highlightNextPlayer(message.round_state.next_player);
+        console.log("Karty wspólne po renderowaniu.");
     },
 
     askMessage: function(message) {
-        console.log("askMessage received:", message);
-
-        const promptContainer = $("#action_prompt");
-        promptContainer.empty().append(`<h3>It's your turn!</h3>`);
-
-        message.valid_actions.forEach(action => {
-            let displayText = action.action;
-            if (action.amount !== 0) {
-                displayText += ` (${action.amount.amount || action.amount})`;
-            }
-            const button = $(`<button class="action-button">${displayText}</button>`);
-            button.on("click", () => this.sendAction(action.action));
-            promptContainer.append(button);
-        });
-
-        promptContainer.show();
-        highlightNextPlayer(message.round_state.next_player);
+        console.log("Hero have decision", message);
+    
+        // Daj niewielkie opóźnienie przed wyświetleniem opcji decyzji gracza
+        setTimeout(() => {
+            const promptContainer = $("#action_prompt");
+            promptContainer.empty().append(`<h3>It's your turn!</h3>`);
+    
+            message.valid_actions.forEach(action => {
+                let displayText = action.action;
+                if (action.amount !== 0) {
+                    displayText += ` (${action.amount.amount || action.amount})`;
+                }
+                const button = $(`<button class="action-button">${displayText}</button>`);
+                button.on("click", () => this.sendAction(action.action));
+                promptContainer.append(button);
+            });
+    
+            promptContainer.show();
+            highlightNextPlayer(message.round_state.next_player);
+        }, 500); // Opóźnienie 100ms
     },
 
     sendAction: function(action) {
@@ -234,7 +265,7 @@ const updater = {
     },
 
     roundResultMessage: function(message) {
-        console.log("roundResultMessage received:", message);
+        console.log("roundResult:", message);
 
         const resultContainer = $("#round_results");
         resultContainer.empty();
@@ -253,11 +284,3 @@ const updater = {
         }
     }
 };
-
-
-
-
-
-
-
-

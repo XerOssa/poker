@@ -30,8 +30,6 @@ class GameEvaluator:
         prize = int(pot["amount"] / len(winners))
         for winner in winners:
           prize_map[players.index(winner)] += prize
-      else:
-        print('Nie ma zwycięzcy w puli, nagroda nie zostanie przyznana.')
     return prize_map
 
 

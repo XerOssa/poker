@@ -181,8 +181,7 @@ class RoundManager:
 
   @classmethod
   def __update_message(cls, state, action, bet_amount):
-    return (-1, MessageBuilder.build_game_update_message(
-      state["next_player"], action, bet_amount, state))
+    return (-1, MessageBuilder.build_game_update_message(state["next_player"], action, bet_amount, state))
 
   @classmethod
   def __is_everyone_agreed(cls, state):
