@@ -129,8 +129,7 @@ class ActionChecker:
 
   @classmethod
   def __is_short_of_money(cls, player, amount):
-    # Gracz może sprawdzić nawet jeśli nie ma wystarczającej kwoty na pełny call (all-in przeciwnika)
-    return player.stack < (amount - player.paid_sum()) and player.stack > 0
+    return player.stack < amount - player.paid_sum()
 
   @classmethod
   def __fetch_last_raise(cls, players):

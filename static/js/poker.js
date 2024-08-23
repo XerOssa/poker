@@ -121,10 +121,7 @@ const updater = {
                 this.handleStreetStart(message);
                 break;
             case 'ask_message':
-                // Opóźnienie wywołania askMessage, aby upewnić się, że karty wspólne zostały już wyrenderowane
-                setTimeout(() => {
-                    this.askMessage(message);
-                }, 200); // Ustawienie krótkiego opóźnienia, aby wyrenderować karty
+                this.askMessage(message);
                 break;
             case 'round_start_message':
                 this.roundStartMessage(message);
@@ -165,22 +162,26 @@ const updater = {
         }
     },
 
+
+    updateCommunityCards: function(communityCards) {
+        const communityCardContainer = $("#community_card");
+        communityCardContainer.empty(); // Wyczyść poprzednie karty
+        communityCards.forEach(card => {
+            communityCardContainer.append(`<img class="card" src="/static/images/card_${card}.png" alt="card">`);
+        });
+    },
+
+
     updateGame: function(message) {
         console.log("Game update:", message);
-    
         const roundState = message.round_state;
     
         // Aktualizacja puli głównej
         if (roundState.pot && roundState.pot.main) {
             $(".main_pot").text("$" + roundState.pot.main.amount);
         }
-    
-        // Aktualizacja kart wspólnych
-        const communityCardContainer = $("#community_card");
-        communityCardContainer.empty();
-        roundState.community_card.forEach(card => {
-            communityCardContainer.append(`<img class="card" src="/static/images/card_${card}.png" alt="card">`);
-        });
+        // Wywołanie nowej funkcji do aktualizacji kart wspólnych
+        this.updateCommunityCards(roundState.community_card);
     
         // Aktualizacja graczy
         roundState.seats.forEach(this.updatePlayerState.bind(this));
@@ -224,41 +225,65 @@ const updater = {
 
     handleStreetStart: function(message) {
         console.log("Start street:", message);
-        console.log("Karty wspólne przed renderowaniem:", message.round_state.community_card);
+        this.renderCommunityCards(message.round_state.community_card);
+        this.highlightNextPlayer(message.round_state.next_player);
+    },
     
+    renderCommunityCards: function(communityCards) {
         const communityCardContainer = $("#community-cards");
         communityCardContainer.empty();
     
-        message.round_state.community_card.forEach(card => {
+        communityCards.forEach(card => {
             communityCardContainer.append(`<img class="card" src="/static/images/card_${card}.png">`);
         });
     
-        highlightNextPlayer(message.round_state.next_player);
         console.log("Karty wspólne po renderowaniu.");
+    },
+    
+    highlightNextPlayer: function(nextPlayerId) {
+        $(".player-info").removeClass("highlight");
+        if (nextPlayerId !== undefined) {
+            $(`#player-${nextPlayerId} .player-info`).addClass("highlight");
+        }
     },
 
     askMessage: function(message) {
         console.log("Hero have decision", message);
     
-        // Daj niewielkie opóźnienie przed wyświetleniem opcji decyzji gracza
         setTimeout(() => {
-            const promptContainer = $("#action_prompt");
-            promptContainer.empty().append(`<h3>It's your turn!</h3>`);
-    
-            message.valid_actions.forEach(action => {
-                let displayText = action.action;
-                if (action.amount !== 0) {
-                    displayText += ` (${action.amount.amount || action.amount})`;
-                }
-                const button = $(`<button class="action-button">${displayText}</button>`);
-                button.on("click", () => this.sendAction(action.action));
-                promptContainer.append(button);
-            });
-    
-            promptContainer.show();
-            highlightNextPlayer(message.round_state.next_player);
-        }, 500); // Opóźnienie 100ms
+            this.displayPlayerActions(message.valid_actions);
+            this.highlightNextPlayer(message.round_state.next_player);
+        }, 500); 
     },
+    
+    displayPlayerActions: function(validActions) {
+        const promptContainer = $("#action_prompt");
+        promptContainer.empty().append(`<h3>It's your turn!</h3>`);
+    
+        validActions.forEach(action => {
+            const button = this.createActionButton(action);
+            promptContainer.append(button);
+        });
+    
+        promptContainer.show();
+    },
+    
+    createActionButton: function(action) {
+        let displayText = action.action;
+        if (action.amount !== 0) {
+            displayText += ` (${action.amount.amount || action.amount})`;
+        }
+    
+        const button = $(`<button class="action-button">${displayText}</button>`);
+        button.on("click", () => this.sendAction(action.action));
+    
+        return button;
+    },
+    
+    sendAction: function(action) {
+        sendWebSocketMessage("player_action", { action });
+    },
+    
 
     sendAction: function(action) {
         sendWebSocketMessage("player_action", { action });
