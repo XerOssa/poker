@@ -128,7 +128,6 @@ class PokerConsumer(AsyncWebsocketConsumer):
             raise ValueError(f"Invalid next_player_pos: {next_player_pos}. Must be within 0 and {len(players)-1}.")
 
         actions = AU.generate_legal_actions(players, next_player_pos, sb_amount)
-
         if data["action"] == "fold":
             data["amount"] = 0
         elif data["action"] == "call":
@@ -140,8 +139,7 @@ class PokerConsumer(AsyncWebsocketConsumer):
             if legal["min"] <= data["amount"] <= legal["max"]:
                 data["amount"] = data["amount"]
             else:
-                data["action"] = "fold"
-                data["amount"] = 0
+                print("cos nie tak z przebiciem")
 
         return data["action"], data["amount"]
    

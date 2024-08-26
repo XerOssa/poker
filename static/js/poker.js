@@ -146,11 +146,11 @@ const updater = {
         console.log('Received HTML content:', html);
     },
 
+
     roundStartMessage: function(message) {
         console.log("Start round:", message);
 
-        const playerName = "Jacek";
-        const playerCardsContainer = $(`#player-cards-${playerName}`);
+        const playerCardsContainer = $(`#player-cards-5`);
         playerCardsContainer.empty(); // Wyczyść poprzednie karty
 
         if (message.hole_card && message.hole_card.length) {
@@ -237,7 +237,6 @@ const updater = {
             communityCardContainer.append(`<img class="card" src="/static/images/card_${card}.png">`);
         });
     
-        console.log("Karty wspólne po renderowaniu.");
     },
     
     highlightNextPlayer: function(nextPlayerId) {
@@ -249,7 +248,7 @@ const updater = {
 
     askMessage: function(message) {
         console.log("Hero have decision", message);
-    
+        this.updateCommunityCards(message.round_state.community_card);
         setTimeout(() => {
             this.displayPlayerActions(message.valid_actions);
             this.highlightNextPlayer(message.round_state.next_player);
@@ -284,10 +283,6 @@ const updater = {
         sendWebSocketMessage("player_action", { action });
     },
     
-
-    sendAction: function(action) {
-        sendWebSocketMessage("player_action", { action });
-    },
 
     roundResultMessage: function(message) {
         console.log("roundResult:", message);

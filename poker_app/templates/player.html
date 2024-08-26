@@ -15,8 +15,8 @@
         <span id="player-name-{{ player.name }}">{{ player.name }}</span>
         <span id="player-stack-{{ player.name }}">${{ player.stack }}</span>
     </div>
-    <div class="player-cards" id="player-cards-{{ player.name }}">
-        {% if player.name == 'Jacek' and hole_card %}
+    <div class="player-cards" id="player-cards-5">
+        {% if hole_card %}
             {% for card in hole_card %}
                 <img class="card" src="{% static 'images/card_' %}{{ card }}.png" alt="{{ card }}">
             {% endfor %}

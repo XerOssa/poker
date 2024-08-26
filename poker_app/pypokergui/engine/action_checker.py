@@ -10,7 +10,6 @@ class ActionChecker:
     elif cls.__is_illegal(players, player_pos, sb_amount, action, amount):
       action, amount = "fold", 0
     elif action == 'check':
-        # Jeśli gracz decyduje się na check i nie było żadnego podbicia, pozwól mu zachować swoją rękę
       last_raise = cls.__fetch_last_raise(players)
       if last_raise is None:
         action, amount = "check", 0
@@ -18,15 +17,23 @@ class ActionChecker:
 
   @classmethod
   def is_allin(cls, player, action, bet_amount):
-      if not isinstance(bet_amount, (int, float)):
-          raise TypeError(f"Invalid bet_amount: {bet_amount}. Expected a number.")
-          
-      if action == 'call':
-          return bet_amount >= player.stack + player.paid_sum()
-      elif action == 'raise':
-          return bet_amount == player.stack + player.paid_sum()
-      else:
-          return False
+    # Jeśli bet_amount jest słownikiem, weź maksymalną wartość
+    if isinstance(bet_amount, dict):
+        bet_amount = bet_amount.get('max')  # Weź pod uwagę maksymalną wartość zakładu
+    
+    # Sprawdź, czy bet_amount jest liczbą
+    if not isinstance(bet_amount, (int, float)):
+        raise TypeError(f"Invalid bet_amount: {bet_amount}. Expected a number.")
+    
+    # Sprawdzenie all-in dla akcji call
+    if action == 'call':
+        return bet_amount >= player.stack + player.paid_sum()
+    
+    # Sprawdzenie all-in dla akcji raise
+    elif action == 'raise':
+        return bet_amount == player.stack + player.paid_sum()
+    
+    return False
 
 
 
@@ -69,10 +76,10 @@ class ActionChecker:
       valid_actions.append({"action": "check", "amount": 0})
     if not can_check:
       valid_actions.append({"action": "fold", "amount": 0})
-
+    if amount_to_call == 0:
+      valid_actions.append({"action": "check", "amount": 0})
     if amount_to_call > 0:
       valid_actions.append({"action": "call", "amount": amount_to_call})
-
     if max_raise >= min_raise:
       valid_actions.append({"action": "raise", "amount": {"min": min_raise, "max": max_raise}})
 
