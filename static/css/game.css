@@ -84,9 +84,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  
   top: -120%;
-  left: 370%;
+  left: 102%;
 }
 
 .card {

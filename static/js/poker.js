@@ -149,8 +149,8 @@ const updater = {
 
     roundStartMessage: function(message) {
         console.log("Start round:", message);
-
-        const playerCardsContainer = $(`#player-cards-5`);
+        const playerName = "Jacek";
+        const playerCardsContainer = $(`#player-cards-${playerName}`);
         playerCardsContainer.empty();
 
         if (message.hole_card && message.hole_card.length) {
