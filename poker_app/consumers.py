@@ -32,14 +32,12 @@ class PokerConsumer(AsyncWebsocketConsumer):
             game_config = self.scope["session"].get("game_config")
 
             form_data = js.get('form_data', {})
-            # default_config = self.get_default_config()
-            # game_config = setup_game_config(form_data)
             self.scope["session"]["game_config"] = game_config
 
 
             members_info = setup_config_player(game_config)
             self.scope["session"]["members_info"] = members_info
-            human_player = self.scope["session"].get("human_player")
+            human_player = self.scope["session"].get("hero")
             if human_player:
                 uuid_human = str(len(members_info))
                 members_info.append({

@@ -34,8 +34,6 @@ function activateButton(button) {
     $('.button-action').removeClass('active');
     button.classList.add('active');
     selectedAction = button.value; // Zapisz aktualnie wybraną akcję
-
-    // Sprawdź, czy akcja to 'raise' i dostosuj widoczność pola kwoty
     if (selectedAction === 'raise') {
         $("#raise-amount-container").show(); // Pokaż pole dla kwoty
     } else {
@@ -72,6 +70,8 @@ function highlightNextPlayer(nextPlayerId) {
         $(`#player-${nextPlayerId} .player-info`).addClass("highlight"); // Dodaj podświetlenie tylko do następnego gracza
     }
 }
+
+
 
 // Globalna funkcja
 window.activateButton = activateButton;
@@ -151,7 +151,7 @@ const updater = {
         console.log("Start round:", message);
 
         const playerCardsContainer = $(`#player-cards-5`);
-        playerCardsContainer.empty(); // Wyczyść poprzednie karty
+        playerCardsContainer.empty();
 
         if (message.hole_card && message.hole_card.length) {
             message.hole_card.forEach(card => {
@@ -165,7 +165,7 @@ const updater = {
 
     updateCommunityCards: function(communityCards) {
         const communityCardContainer = $("#community_card");
-        communityCardContainer.empty(); // Wyczyść poprzednie karty
+        communityCardContainer.empty();
         communityCards.forEach(card => {
             communityCardContainer.append(`<img class="card" src="/static/images/card_${card}.png" alt="card">`);
         });
@@ -175,31 +175,24 @@ const updater = {
     updateGame: function(message) {
         console.log("Game update:", message);
         const roundState = message.round_state;
-    
-        // Aktualizacja puli głównej
         if (roundState.pot && roundState.pot.main) {
             $(".main_pot").text("$" + roundState.pot.main.amount);
         }
-        // Wywołanie nowej funkcji do aktualizacji kart wspólnych
         this.updateCommunityCards(roundState.community_card);
-    
         // Aktualizacja graczy
         roundState.seats.forEach(this.updatePlayerState.bind(this));
-    
-        // Aktualizacja pozycji dealera, małej i dużej ciemnej
         this.updateBlinds(roundState);
-    
         highlightNextPlayer(roundState.next_player); // Podświetlenie następnego gracza
     },
 
 
     updatePlayerState: function(player) {
+        // console.log("wiadomosc player:", player);
         const playerDiv = $(`#player-${player.name}`);
         if (playerDiv.length) {
             playerDiv.find(`#player-uuid-${player.name}`).text(`${player.uuid}`);
             playerDiv.find(`#player-stack-${player.name}`).text(`$${player.stack}`);
-            
-            // Add or remove the 'inactive' class based on the player's state
+
             if (player.state === "folded") {
                 playerDiv.find('.material-icons').addClass('inactive');
             } else {
@@ -285,22 +278,19 @@ const updater = {
     
 
     roundResultMessage: function(message) {
-        console.log("roundResult:", message);
+        console.log("round Result:", message);
 
         const resultContainer = $("#round_results");
         resultContainer.empty();
 
-        if (message.results) {
-            message.results.forEach(result => {
-                resultContainer.append(`<p>${result.player_name}: ${result.amount_won}</p>`);
-            });
-        }
+        // if (message.results) {
+        //     message.results.forEach(result => {
+        //         resultContainer.append(`<p>${result.player_name}: ${result.amount_won}</p>`);
+        //     });
+        // }
 
         if (message.winner_info) {
-            resultContainer.append(`<p>Winner: ${message.winner_info.name}</p>`);
-            if (message.winning_hand) {
-                resultContainer.append(`<p>Winning hand: ${message.winning_hand}</p>`);
-            }
+            resultContainer.append(`<p>Winner: ${message.winners.name}</p>`);
         }
     }
 };

@@ -107,7 +107,7 @@ def waiting_room_view(request):
                 'name': hero.name,
             })
             request.session['players'] = players
-
+            request.session['hero'] = {'name': hero.name}
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
                 'poker', {
