@@ -5,12 +5,10 @@ from django.shortcuts import render, redirect
 from django.conf import settings
 from poker_analysis import process_poker_hand, save_to_csv
 from .models import Hero
-from waiting_room_param import players_list, configurations_table, read_config
+from waiting_room_param import players_list, read_config
 from .forms import HeroForm, GameConfigForm
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-from poker_app.pypokergui.utils.card_utils import _pick_unused_card
-from poker_app.pypokergui.engine.table import Table
 import poker_app.pypokergui.server.game_manager as GM
 
 
@@ -133,7 +131,6 @@ def waiting_room_view(request):
 
 
 def start_game_view(request):
-    print("start_game_view called")
     players = request.session.get('players', [])
 
     # Bezpośrednie ustawienie round_state
