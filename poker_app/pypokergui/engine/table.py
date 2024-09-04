@@ -17,22 +17,6 @@ class Table:
         community_cards = ', '.join(self._community_card) if self._community_card else 'None'
         return f"Table(Players: {num_players}, Dealer Button: {self.dealer_btn}, Community Cards: {community_cards})"
 
-    # def shift_dealer_btn(self):
-    #     print(f"Shifting dealer button from {self.dealer_btn}")
-    #     next_pos = self.next_active_player_pos(self.dealer_btn)
-    #     print(f"New dealer button candidate: {next_pos}")
-    #     if next_pos == self._player_not_found:
-    #         # Jeśli nie znaleziono aktywnego gracza, losujemy nową pozycję dla dealer_btn
-    #         active_players = [i for i, player in enumerate(self.seats.players) if player.is_active() and player.stack > 0]
-    #         if active_players:
-    #             self.dealer_btn = random.choice(active_players)
-    #             print(f"Randomized dealer button to: {self.dealer_btn}")
-    #         else:
-    #             self.dealer_btn = 0
-    #             print(f"No active players found. Dealer button set to 0")
-    #     else:
-    #         self.dealer_btn = next_pos
-    #         print(f"New dealer button candidate: {self.dealer_btn}")
 
     def shift_dealer_btn(self):
         # print(f"Shifting dealer button from {self.dealer_btn}")

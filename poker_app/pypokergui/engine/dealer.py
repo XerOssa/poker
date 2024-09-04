@@ -67,16 +67,12 @@ class Dealer:
     self.table.seats.sitdown(player)
     return uuid
 
-  # def __notify_game_start(self):
-  #   start_msg = MessageBuilder.build_game_start_message(self.table.seats)
-  #   self.message_handler.process_message(-1, start_msg)
-  #   self.message_summarizer.summarize(start_msg)
 
   def __is_game_finished(self, table):
     return len([player for player in  table.seats.players if player.is_active()]) == 1
 
   def __message_check(self, msgs, street):
-    address, msg = msgs[-1]
+    msg = msgs[-1]
     invalid = msg["type"] != 'ask'
     invalid &= street != Const.Street.FINISHED or msg["message"]["message_type"] == 'round_result'
     if invalid:

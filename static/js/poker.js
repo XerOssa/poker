@@ -98,7 +98,7 @@ const updater = {
         this.socket.onclose = e => {
             console.error('WebSocket closed unexpectedly:', e);
             // Attempt to reconnect after a delay
-            setTimeout(() => this.start(), 5000); // Retry after 5 seconds
+            setTimeout(() => this.start(), 2000); // Retry after 5 seconds
         };
     },
 
@@ -131,6 +131,9 @@ const updater = {
                 break;
             case 'round_result_message':
                 this.roundResultMessage(message);
+                break;
+            case 'game_result_message':
+                this.gameResultMessage(message);
                 break;
             default:
                 console.error("Unexpected message type:", message.update_type);
@@ -194,8 +197,12 @@ const updater = {
 
             if (player.state === "folded") {
                 playerDiv.find('.material-icons').addClass('inactive');
+                playerDiv.find(`#player-cards-human`).hide(); // Ukryj karty, jeśli gracz spasował
+                // console.log(`Player ${player.name} folded, hiding cards.`);
             } else {
                 playerDiv.find('.material-icons').removeClass('inactive');
+                playerDiv.find(`#player-cards-human`).show(); // Pokaż karty, jeśli gracz jest aktywny
+                // console.log(`Player ${player.name} active, showing cards.`);
             }
         }
     },
@@ -281,15 +288,12 @@ const updater = {
 
         const resultContainer = $("#round_results");
         resultContainer.empty();
+    },
 
-        // if (message.results) {
-        //     message.results.forEach(result => {
-        //         resultContainer.append(`<p>${result.player_name}: ${result.amount_won}</p>`);
-        //     });
-        // }
+    gameResultMessage: function(message) {
+        console.log("game Result:", message);
 
-        if (message.winner_info) {
-            resultContainer.append(`<p>Winner: ${message.winners.name}</p>`);
-        }
+        const resultContainer = $("#game_results");
+        resultContainer.empty();
     }
 };

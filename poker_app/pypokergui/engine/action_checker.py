@@ -15,6 +15,8 @@ class ActionChecker:
         action, amount = "check", 0
     return action, amount
 
+
+
   @classmethod
   def is_allin(cls, player, action, bet_amount):
     # Jeśli bet_amount jest słownikiem, weź maksymalną wartość
@@ -126,12 +128,17 @@ class ActionChecker:
 
   @classmethod
   def __min_raise_amount(cls, players, sb_amount):
-    raise_ = cls.__fetch_last_raise(players)
-    if raise_:
-      
-      return raise_["amount"]* 2
+    last_raise = cls.__fetch_last_raise(players)
+    
+    if last_raise:
+        # Jeśli już jest raise, minimalne podbicie to ostatni raise plus suma już zapłaconych pieniędzy
+        min_raise = last_raise["amount"] * 2
     else:
-      return sb_amount * 4
+        # Jeśli nie było jeszcze raise, minimalne podbicie to czterokrotność small blinda
+        min_raise = sb_amount * 4
+
+    # Uwzględnienie kwoty, którą gracz już zapłacił (np. blind)
+    return min_raise
 
 
   @classmethod

@@ -132,8 +132,6 @@ def waiting_room_view(request):
 
 def start_game_view(request):
     players = request.session.get('players', [])
-
-    # Bezpośrednie ustawienie round_state
     round_state = {
         'community_card': [],
         'pot': 0,
@@ -143,12 +141,6 @@ def start_game_view(request):
         'next_player': None,
         'seats': None,
     }
-
-    hole_card = [] 
-    game_config = request.session.get('game_config', {})
-    stack = game_config.get('initial_stack', 0)
-
-    # Możesz zmodyfikować round_state przed przekazaniem go do render
     round_state.update({
         'seats': players,
         'community_card': round_state['community_card'],
@@ -162,7 +154,5 @@ def start_game_view(request):
     return render(request, 'start_game.html', {
         'round_state': round_state,
         'players': players,
-        'hole_card': hole_card,
-        'stack': stack
     })
 
