@@ -198,11 +198,9 @@ const updater = {
             if (player.state === "folded") {
                 playerDiv.find('.material-icons').addClass('inactive');
                 playerDiv.find(`#player-cards-human`).hide(); // Ukryj karty, jeśli gracz spasował
-                // console.log(`Player ${player.name} folded, hiding cards.`);
             } else {
                 playerDiv.find('.material-icons').removeClass('inactive');
                 playerDiv.find(`#player-cards-human`).show(); // Pokaż karty, jeśli gracz jest aktywny
-                // console.log(`Player ${player.name} active, showing cards.`);
             }
         }
     },

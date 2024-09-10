@@ -98,10 +98,10 @@ class ActionChecker:
     if action == 'fold':
       return False
     elif action == 'check':
-      return cls.__is_illegal_check(amount)                          #do przeróbki
+      return cls.__is_illegal_check(amount)                          # FIXME: do przerobki
     elif action == 'call':
       return cls.__is_short_of_money(players[player_pos], amount)\
-          or cls.__is_illegal_call(players, amount)
+          or cls.__is_illegal_call(players, amount)                  # FIXME: cos nie tak z callem
     elif action == 'raise':
       return cls.__is_short_of_money(players[player_pos], amount) \
           or cls.__is_illegal_raise(players, amount, sb_amount)

@@ -15,7 +15,6 @@
         <span id="player-stack-{{ player.name }}">${{ player.stack }}</span>
     </div>
     
-    {% if player.state != 'folded' and player.stack >= 1 %}
     <div class="player-cards" id="player-cards-human">
         {% if player.type == 'human' and hole_card %}
             {% for card in hole_card %}
@@ -23,5 +22,4 @@
             {% endfor %}
         {% endif %}
     </div>
-    {% endif %}
 </div>

@@ -47,6 +47,7 @@ class GameEvaluator:
     if scores:
       best_score = max(scores)
     else:
+      # FIXME: do zmiany
       print("cos nie tak z podziałem puli")
     score_with_players = [(score, player) for score, player in zip(scores, active_players)]
     winners = [s_p[1] for s_p in score_with_players if s_p[0] == best_score]
