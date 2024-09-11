@@ -11,6 +11,10 @@ $(document).ready(function() {
     $('#start-game').on('click', () => sendWebSocketMessage('action_start_game'));
 });
 
+function startGame() {
+    sendWebSocketMessage("action_start_game");
+}
+
 function handleFormSubmit(actionFunction, event) {
     event.preventDefault();
     actionFunction($(this));
@@ -26,9 +30,7 @@ function sendWebSocketMessage(type, additionalData = {}) {
     }
 }
 
-function startGame() {
-    sendWebSocketMessage("action_start_game");
-}
+
 
 function activateButton(button) {
     $('.button-action').removeClass('active');
@@ -103,6 +105,7 @@ const updater = {
     },
 
     handleMessage: function(event) {
+
         try {
             const message = JSON.parse(event.data);
             if (message.update_type) {
@@ -116,15 +119,16 @@ const updater = {
     },
 
     handleUpdate: function(message) {
+        console.log('teraz obsługuje:', message);
         switch (message.update_type) {
+            case 'round_start_message':
+                this.roundStartMessage(message);
+                break;
             case 'street_start_message':
-                this.handleStreetStart(message);
+                this.streetStartMessage(message);
                 break;
             case 'ask_message':
                 this.askMessage(message);
-                break;
-            case 'round_start_message':
-                this.roundStartMessage(message);
                 break;
             case 'game_update_message':
                 this.updateGame(message);
@@ -154,8 +158,12 @@ const updater = {
         console.log("Start round:", message);
         const playerCardsContainer = $(`#player-cards-human`);
         playerCardsContainer.empty();
-
+    
+        // Check if hole cards are available
         if (message.hole_card && message.hole_card.length) {
+            console.log("Hero ma:", message.hole_card);
+            
+            // Render the hole cards immediately after logging them
             message.hole_card.forEach(card => {
                 playerCardsContainer.append(`<img class="card" src="/static/images/card_${card}.png">`);
             });
@@ -163,7 +171,16 @@ const updater = {
             console.warn("No hole cards received.");
         }
     },
+    
 
+
+    streetStartMessage: function(message) {
+        console.log("Start street:", message);
+        // this.renderCommunityCards(message.round_state.community_card);
+        this.highlightNextPlayer(message.round_state.next_player);
+        const roundState = message.round_state;
+        this.updateBlinds(roundState);  
+    },
 
     updateCommunityCards: function(communityCards) {
         const communityCardContainer = $("#community_card");
@@ -177,13 +194,15 @@ const updater = {
     updateGame: function(message) {
         console.log("Game update:", message);
         const roundState = message.round_state;
+        // this.updateBlinds(roundState);                                                  // FIXME: zmiana kolejniosci
         if (roundState.pot && roundState.pot.main) {
             $(".main_pot").text("$" + roundState.pot.main.amount);
         }
         this.updateCommunityCards(roundState.community_card);
         // Aktualizacja graczy
+        
         roundState.seats.forEach(this.updatePlayerState.bind(this));
-        this.updateBlinds(roundState);
+        
         highlightNextPlayer(roundState.next_player); // Podświetlenie następnego gracza
     },
 
@@ -220,11 +239,7 @@ const updater = {
         }
     },
 
-    handleStreetStart: function(message) {
-        console.log("Start street:", message);
-        this.renderCommunityCards(message.round_state.community_card);
-        this.highlightNextPlayer(message.round_state.next_player);
-    },
+
     
     renderCommunityCards: function(communityCards) {
         const communityCardContainer = $("#community-cards");
@@ -246,10 +261,8 @@ const updater = {
     askMessage: function(message) {
         console.log("Hero have decision", message);
         this.updateCommunityCards(message.round_state.community_card);
-        setTimeout(() => {
-            this.displayPlayerActions(message.valid_actions);
-            this.highlightNextPlayer(message.round_state.next_player);
-        }, 500); 
+        this.displayPlayerActions(message.valid_actions);
+        this.highlightNextPlayer(message.round_state.next_player);      // FIXME: usuniecie timeout
     },
     
     displayPlayerActions: function(validActions) {
@@ -283,7 +296,6 @@ const updater = {
 
     roundResultMessage: function(message) {
         console.log("round Result:", message);
-
         const resultContainer = $("#round_results");
         resultContainer.empty();
     },

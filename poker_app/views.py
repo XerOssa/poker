@@ -90,33 +90,25 @@ def waiting_room_view(request):
                 'ante': form_config_table_data.get('ante'),
                 'ai_players': players
             }
-            request.session['game_config'] = game_config  # Store config in session
+            request.session['game_config'] = game_config
             return redirect('waiting_room')
 
         if form.is_valid():
             hero = form.save(commit=False)
             hero.save()
-
-            # Pobierz wartość initial_stack z konfiguracji gry z sesji
-            initial_stack = request.session['game_config'].get('initial_stack', 1000)  # Domyślna wartość, np. 1000
+            initial_stack = request.session['game_config'].get('initial_stack', 100)
 
             display_id = len(players)
             players.append({
                 'idx': display_id,
                 'type': 'human',
                 'name': hero.name,
-                'stack': initial_stack  # Dodaj klucz 'stack' z wartością initial_stack dla nowego gracza
             })
-
-            # Zaktualizuj stack dla wszystkich graczy (AI i human)
             for player in players:
-                if 'stack' not in player:  # Jeśli gracz nie ma jeszcze stack, to go dodaj
-                    player['stack'] = initial_stack
+                player['stack'] = initial_stack
 
             request.session['players'] = players
             request.session['hero'] = {'name': hero.name}
-
-            # Wyślij wiadomość WebSocket
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
                 'poker', {
@@ -144,27 +136,7 @@ def waiting_room_view(request):
 
 def start_game_view(request):
     players = request.session.get('players', [])
-    # round_state = {
-    #     'community_card': [],
-    #     'pot': 0,
-    #     'dealer_pos': None,
-    #     'small_blind_pos': None,
-    #     'big_blind_pos': None,
-    #     'next_player': None,
-    #     'seats': None,
-    # }
-    # round_state.update({
-    #     'seats': players,
-    #     'community_card': round_state['community_card'],
-    #     'pot': round_state['pot'],
-    #     'next_player': round_state['next_player'],
-    #     'dealer_pos': round_state['dealer_pos'],
-    #     'small_blind_pos': round_state['small_blind_pos'],
-    #     'big_blind_pos': round_state['big_blind_pos']
-    # })
-
     return render(request, 'start_game.html', {
-        # 'round_state': round_state,
         'players': players,
     })
 

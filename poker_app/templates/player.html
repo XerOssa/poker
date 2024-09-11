@@ -16,10 +16,10 @@
     </div>
     
     <div class="player-cards" id="player-cards-human">
-        {% if player.type == 'human' and hole_card %}
-            {% for card in hole_card %}
-                <img class="card" src="{% static 'images/card_' %}{{ card }}.png" alt="{{ card }}">
-            {% endfor %}
-        {% endif %}
+        {% comment %} {% if player.type == 'human' and hole_card %} {% endcomment %}
+        {% for card in hole_card %}
+            <img class="card" src="{% static 'images/card_' %}{{ card }}.png" alt="{{ card }}">
+        {% endfor %}
+        {% comment %} {% endif %} {% endcomment %}
     </div>
 </div>
