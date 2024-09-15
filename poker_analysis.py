@@ -86,7 +86,7 @@ def from_text(text: str) -> PokerHand:
     return PokerHand(Hand_ID, stakes, date, my_hand,  win_loss, position, line)
 
 def save_to_csv(hands: list):
-    filename = 'D:/ROBOTA/python/poker/poker_hand.csv'
+    filename = './poker_hand.csv'
     with open(filename, 'w', newline='') as csvfile:
         fieldnames = ['Hand_ID', 'stakes', 'date', 'win_loss']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)

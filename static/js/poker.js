@@ -119,7 +119,6 @@ const updater = {
     },
 
     handleUpdate: function(message) {
-        console.log('teraz obsługuje:', message);
         switch (message.update_type) {
             case 'round_start_message':
                 this.roundStartMessage(message);
@@ -144,15 +143,6 @@ const updater = {
         }
     },
 
-    displayChatMessage: function(message) {
-        $('#messages').append('<p>' + message + '</p>');
-    },
-
-    displayHtmlMessage: function(html) {
-        $('#messages').append('<p>Received HTML content</p>');
-        console.log('Received HTML content:', html);
-    },
-
 
     roundStartMessage: function(message) {
         console.log("Start round:", message);
@@ -162,7 +152,7 @@ const updater = {
         // Check if hole cards are available
         if (message.hole_card && message.hole_card.length) {
             console.log("Hero ma:", message.hole_card);
-            
+            playerCardsContainer.show();
             // Render the hole cards immediately after logging them
             message.hole_card.forEach(card => {
                 playerCardsContainer.append(`<img class="card" src="/static/images/card_${card}.png">`);
@@ -173,21 +163,20 @@ const updater = {
     },
     
 
-
     streetStartMessage: function(message) {
         console.log("Start street:", message);
-        // this.renderCommunityCards(message.round_state.community_card);
+        this.renderCommunityCards(message.round_state.community_card);
         this.highlightNextPlayer(message.round_state.next_player);
         const roundState = message.round_state;
         this.updateBlinds(roundState);  
     },
 
-    updateCommunityCards: function(communityCards) {
-        const communityCardContainer = $("#community_card");
-        communityCardContainer.empty();
-        communityCards.forEach(card => {
-            communityCardContainer.append(`<img class="card" src="/static/images/card_${card}.png" alt="card">`);
-        });
+
+    askMessage: function(message) {
+        console.log("Hero have decision", message);
+        this.updateCommunityCards(message.round_state.community_card);
+        this.displayPlayerActions(message.valid_actions);
+        this.highlightNextPlayer(message.round_state.next_player);      // FIXME: usuniecie timeout
     },
 
 
@@ -204,6 +193,29 @@ const updater = {
         roundState.seats.forEach(this.updatePlayerState.bind(this));
         
         highlightNextPlayer(roundState.next_player); // Podświetlenie następnego gracza
+    },
+
+
+    roundResultMessage: function(message) {
+        console.log("round Result:", message);
+        const resultContainer = $("#round_results");
+        resultContainer.empty();
+    },
+
+    gameResultMessage: function(message) {
+        console.log("game Result:", message);
+
+        const resultContainer = $("#game_results");
+        resultContainer.empty();
+    },
+
+
+    updateCommunityCards: function(communityCards) {
+        const communityCardContainer = $("#community_card");
+        communityCardContainer.empty();
+        communityCards.forEach(card => {
+            communityCardContainer.append(`<img class="card" src="/static/images/card_${card}.png" alt="card">`);
+        });
     },
 
 
@@ -258,12 +270,7 @@ const updater = {
         }
     },
 
-    askMessage: function(message) {
-        console.log("Hero have decision", message);
-        this.updateCommunityCards(message.round_state.community_card);
-        this.displayPlayerActions(message.valid_actions);
-        this.highlightNextPlayer(message.round_state.next_player);      // FIXME: usuniecie timeout
-    },
+
     
     displayPlayerActions: function(validActions) {
         const promptContainer = $("#action_prompt");
@@ -293,17 +300,13 @@ const updater = {
         sendWebSocketMessage("player_action", { action });
     },
     
+    // displayChatMessage: function(message) {
+    //     $('#messages').append('<p>' + message + '</p>');
+    // },
 
-    roundResultMessage: function(message) {
-        console.log("round Result:", message);
-        const resultContainer = $("#round_results");
-        resultContainer.empty();
-    },
+    // displayHtmlMessage: function(html) {
+    //     $('#messages').append('<p>Received HTML content</p>');
+    //     console.log('Received HTML content:', html);
+    // },
 
-    gameResultMessage: function(message) {
-        console.log("game Result:", message);
-
-        const resultContainer = $("#game_results");
-        resultContainer.empty();
-    }
 };

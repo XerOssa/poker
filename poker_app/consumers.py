@@ -142,18 +142,18 @@ class PokerConsumer(AsyncWebsocketConsumer):
         return data["action"], data["amount"]
    
 
-def setup_game_config(game_config):
-    game_config = {
-        'initial_stack': game_config.get('initial_stack'),
-        'small_blind': game_config.get('small_blind'),
-        'ante': game_config.get('ante'),
-    }
-    global_game_manager.define_rule(
-            game_config['initial_stack'], 
-            game_config['small_blind'],
-            game_config['ante'], 
-    )
-    return game_config
+# def setup_game_config(game_config):
+#     game_config = {
+#         'initial_stack': game_config.get('initial_stack'),
+#         'small_blind': game_config.get('small_blind'),
+#         'ante': game_config.get('ante'),
+#     }
+#     global_game_manager.define_rule(
+#             game_config['initial_stack'], 
+#             game_config['small_blind'],
+#             game_config['ante'], 
+#     )
+#     return game_config
 
 
 def setup_config_player(game_config):

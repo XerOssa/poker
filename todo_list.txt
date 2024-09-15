@@ -1,3 +1,5 @@
-# TODO: hero nie pojawiaja sie karty
+# TODO: kolejnosc wykonywania wczytywania graczy w waiting_room
+# TODO: dodac funkcje ktora czyssci dane przed nastepnym rozdaniem
 # TODO: jak jestem na EP to najpierw mam decyzje a pozniej widze karty (koljenosc wykonywania funkcji)
 # TODO: po showdownie gracze musza pokazać karty
+# TODO: gdy jestem na BB albo SB a ktos zagra za wszystko to nie podlicza blindow
