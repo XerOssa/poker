@@ -1,17 +1,8 @@
 import poker_app.pypokergui.engine_wrapper as Engine
 import poker_app.pypokergui.ai_generator as AG
-import asyncio
-import json
-import logging
-import poker_app.pypokergui.server.game_manager as GM
-import poker_app.pypokergui.utils.action_utils as AU
-from channels.generic.websocket import AsyncWebsocketConsumer
-from django.core.cache import cache
-from poker_app.utils import _gen_game_update_message
 
 
 class GameManager:
-
 
     def __init__(self):
         self.config = {}
@@ -56,18 +47,16 @@ class GameManager:
         players_info = Engine.gen_players_info(uuid_list, name_list)  
         self.ai_players = build_ai_players(self.members_info)
         self.engine = Engine.EngineWrapper()
-
         self.latest_messages = self.engine.start_game(players_info, self.rule)
-
         self.is_playing_poker = True
         self.next_player_uuid = fetch_next_player_uuid(self.latest_messages)
-
         return self.latest_messages
 
 
     def get_next_player(self):
         next_player_pos = self.current_state["next_player"]
         return self.current_state["table"].seats.players[next_player_pos]
+
 
     def update_game(self, action, amount):
         assert len(self.latest_messages) != 0  # check that start_game has already called

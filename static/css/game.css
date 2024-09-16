@@ -88,6 +88,15 @@ body {
   left: 370%;
 }
 
+#player-cards-Jacek {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  top: -120%;
+  left: 100%;
+}
+
 .card {
   width: 65px;
   height: 102px;

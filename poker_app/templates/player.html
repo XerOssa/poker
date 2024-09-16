@@ -8,18 +8,19 @@
             android
         {% endif %}
     </i>
-    
-    <div class="player-info" >
+
+    <div class="player-info">
         <span id="player-uuid-{{ player.name }}">{{ player.uuid }}</span>
         <span id="player-name-{{ player.name }}">{{ player.name }}</span>
         <span id="player-stack-{{ player.name }}">${{ player.stack }}</span>
     </div>
-    
-    <div class="player-cards" id="player-cards-human">
-        {% comment %} {% if player.type == 'human' and hole_card %} {% endcomment %}
-        {% for card in hole_card %}
-            <img class="card" src="{% static 'images/card_' %}{{ card }}.png" alt="{{ card }}">
-        {% endfor %}
-        {% comment %} {% endif %} {% endcomment %}
+
+    <!-- Używamy unikalnego id dla player-cards -->
+    <div class="player-cards" id="player-cards-{{ player.name }}">
+        {% if player.type == 'human' and hole_card %}
+            {% for card in hole_card %}
+                <img class="card" src="{% static 'images/card_' %}{{ card }}.png" alt="{{ card }}">
+            {% endfor %}
+        {% endif %}
     </div>
 </div>

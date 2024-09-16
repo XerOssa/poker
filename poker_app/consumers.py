@@ -102,15 +102,6 @@ class PokerConsumer(AsyncWebsocketConsumer):
                 action, amount = action_and_amount[:2]
                 game_manager.update_game(action, amount)
             await self.broadcast_update_game(game_manager, self.scope["session"]["sockets"], MODE_SPEED)
-
-
-    def get_default_config(self):
-        return {
-            'initial_stack': 100,
-            'small_blind': 1,
-            'ante': 0,
-            'ai_players': [],
-        }
     
 
     def _correct_action(self, data):
@@ -138,10 +129,9 @@ class PokerConsumer(AsyncWebsocketConsumer):
 
 def setup_config_player(game_config):
     members_info = []
-
     for ai_player in game_config['ai_players']:
         global_game_manager.join_ai_player(ai_player['name'], ai_player['path'])
-        player_info = gen_ai_player_info(ai_player['name'], str(len(members_info)), ai_player['path'])
+        player_info = GM.gen_ai_player_info(ai_player['name'], str(len(members_info)), ai_player['path'])
         members_info.append(player_info)
     return members_info
 
@@ -149,20 +139,6 @@ def setup_config_player(game_config):
 def _is_next_player_ai(game_manager):
     uuid = game_manager.next_player_uuid
     return uuid and len(uuid) <= 2 and uuid != '5'
-
-
-def gen_ai_player_info(name, uuid, path):
-    info = _gen_base_player_info("ai", name, uuid)
-    info["path"] = path
-    return info
-
-
-def _gen_base_player_info(player_type, name, uuid):
-    return {
-        "type": player_type,
-        "name": name,
-        "uuid": uuid
-    }
 
 
 def _gen_game_info(game_manager):

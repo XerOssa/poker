@@ -146,21 +146,27 @@ const updater = {
 
     roundStartMessage: function(message) {
         console.log("Start round:", message);
-        const playerCardsContainer = $(`#player-cards-human`);
-        playerCardsContainer.empty();
     
-        // Check if hole cards are available
+        // Zakładamy, że nazwa gracza to 'hero'
+        const heroName = message.hero_name;  // Nazwa gracza z wiadomości, może to być również np. message.player_uuid
+        const playerCardsContainer = $(`#player-cards-${heroName}`);
+        
+        playerCardsContainer.empty();  // Czyścimy karty przed nową rundą
+        
+        // Sprawdzamy, czy mamy dostępne karty hole_card
         if (message.hole_card && message.hole_card.length) {
             console.log("Hero ma:", message.hole_card);
             playerCardsContainer.show();
-            // Render the hole cards immediately after logging them
+            
+            // Renderujemy karty
             message.hole_card.forEach(card => {
-                playerCardsContainer.append(`<img class="card" src="/static/images/card_${card}.png">`);
+                playerCardsContainer.append(`<img class="card" src="/static/images/card_${card}.png" alt="${card}">`);
             });
         } else {
-            console.warn("No hole cards received.");
+            console.warn(`${playerName} nie otrzymał kart hole_card.`);
         }
     },
+    
     
 
     streetStartMessage: function(message) {
