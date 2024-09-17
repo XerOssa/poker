@@ -62,7 +62,7 @@ class ActionChecker:
 
   @classmethod
   def legal_actions(cls, players, player_pos, sb_amount):
-    min_raise = cls.__min_raise_amount(players, sb_amount)
+    min_raise = cls.__min_raise_amount(players, sb_amount)+ players[player_pos].paid_sum()
     max_raise = players[player_pos].stack + players[player_pos].paid_sum()
     
     can_check = cls.can_check(players)
