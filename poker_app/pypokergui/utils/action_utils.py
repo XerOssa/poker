@@ -4,6 +4,7 @@ ACTION_CALL = "call"
 ACTION_FOLD = "fold"
 ACTION_RAISE = "raise"
 ACTION_CHECK = "check"
+ACTION_ALLIN = "all_in"
 
 
 def generate_legal_actions(players, player_position, sb_amount):

@@ -135,6 +135,7 @@ def _fetch_pay_amount(action_history):
     if action == Player.ACTION_CHECK_STR: return 0
     if action == Player.ACTION_CALL_STR: return action_history["paid"]
     if action == Player.ACTION_RAISE_STR: return action_history["paid"]
+    if action == Player.ACTION_ALLIN_STR: return action_history["paid"]
     if action == Player.ACTION_SMALL_BLIND: return action_history["amount"]
     if action == Player.ACTION_BIG_BLIND: return action_history["amount"]
     if action == Player.ACTION_ANTE: return action_history["amount"]

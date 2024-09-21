@@ -8,7 +8,7 @@ from poker_app.pypokergui.engine.action_checker import ActionChecker
 class DataEncoder:
 
   PAY_INFO_PAY_TILL_END_STR = "participating"
-  PAY_INFO_ALLIN_STR = "allin"
+  PAY_INFO_ALLIN_STR = "all_in"
   PAY_INFO_FOLDED_STR = "folded"
 
   @classmethod
@@ -61,8 +61,9 @@ class DataEncoder:
       "valid_actions": [
         { "action": "fold", "amount": 0 },
         { "action": "call", "amount": call_amount },
-        { "action": "raise", "amount": { "min": min_bet_amount, "max": max_bet_amount } },
         { "action": "check" , "amount": 0 if can_check else None },  # None oznacza, że akcja nie jest możliwa
+        { "action": "raise", "amount": { "min": min_bet_amount, "max": max_bet_amount } },
+        { "action": "all_in", "amount": {"max": max_bet_amount } },
       ]
     }
 

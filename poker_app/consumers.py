@@ -117,6 +117,10 @@ class PokerConsumer(AsyncWebsocketConsumer):
             data["amount"] = actions[1]["amount"]
         elif data["action"] == "check":
             data["amount"] = 0
+        elif data["action"] == "all_in":
+            legal_allin = actions[2]["amount"]
+            if legal_allin["max"]:
+                data["amount"] = legal_allin["max"]
         else:
             legal = actions[2]["amount"]
             if legal["min"] <= data["amount"] <= legal["max"]:
@@ -201,9 +205,9 @@ def _broadcast_message_to_ai(ai_player, message):
         hand_info = message['message']['hand_info']
         ai_player.receive_round_result_message(winners, hand_info, round_state)
     elif 'game_result_message' == message_type:
-        pass  # ai does not handle game result
+        pass
     elif 'ask_message' == message_type:
-        pass  # ask message handling is done in global_game_config.ask_action_to_ai
+        pass
     else:
         raise Exception("Unexpected message received : %r" % message)
     
@@ -218,19 +222,19 @@ SLOW_WAIT_INTERVAL = {
 }
 
 MODERATE_WAIT_INTERVAL = {
-        'round_start_message': 1,
-        'street_start_message': 1,
-        'ask_message': 0,
-        'game_update_message': 1,
-        'round_result_message': 5,
-        'game_result_message': 0
+    'round_start_message': 1,
+    'street_start_message': 1,
+    'ask_message': 0,
+    'game_update_message': 1,
+    'round_result_message': 5,
+    'game_result_message': 0
 }
 
 FAST_WAIT_INTERVAL = {
-        'round_start_message': 1,
-        'street_start_message': 0.5,
-        'ask_message': 0,
-        'game_update_message': 0.5,
-        'round_result_message': 5,
-        'game_result_message': 0
+    'round_start_message': 1,
+    'street_start_message': 0.5,
+    'ask_message': 0,
+    'game_update_message': 0.5,
+    'round_result_message': 5,
+    'game_result_message': 0
 }

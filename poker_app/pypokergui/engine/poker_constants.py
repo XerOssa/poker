@@ -8,6 +8,7 @@ class PokerConstants:
     BIG_BLIND = 4
     ANTE = 5
     CHECK = 6
+    ALLIN = 7
 
   class Street:
     PREFLOP = 0

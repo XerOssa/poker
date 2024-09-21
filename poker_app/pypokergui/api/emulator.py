@@ -82,7 +82,6 @@ class Emulator(object):
         return game_state, events
 
     def run_until_game_finish(self, game_state):
-        mailbox = []
         event_box= []
         if game_state["street"] != Const.Street.FINISHED:
             game_state, events = self.run_until_round_finish(game_state)
@@ -230,5 +229,6 @@ class Action:
     CALL = "call"
     RAISE = "raise"
     CHECK = "check"
+    ALLIN = "all_in"
 
 

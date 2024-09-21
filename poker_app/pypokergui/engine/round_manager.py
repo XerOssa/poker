@@ -157,18 +157,22 @@ class RoundManager:
   @classmethod
   def __accept_action(cls, state, action, bet_amount):
     player = state["table"].seats.players[state["next_player"]]
-    if action == 'call':
+    if action == 'fold':
+      player.add_action_history(Const.Action.FOLD)
+      player.pay_info.update_to_fold()
+    elif action == 'call':
       cls.__chip_transaction(player, bet_amount)
       player.add_action_history(Const.Action.CALL, bet_amount)
+    elif action == 'check':
+      player.add_action_history(Const.Action.CHECK)
     elif action == 'raise':
       cls.__chip_transaction(player, bet_amount)
       add_amount = bet_amount - ActionChecker.agree_amount(state["table"].seats.players)
       player.add_action_history(Const.Action.RAISE, bet_amount, add_amount)
-    elif action == 'fold':
-      player.add_action_history(Const.Action.FOLD)
-      player.pay_info.update_to_fold()
-    elif action == 'check':
-      player.add_action_history(Const.Action.CHECK)
+    elif action == 'all_in':
+      cls.__chip_transaction(player, bet_amount)
+      add_amount = bet_amount - ActionChecker.agree_amount(state["table"].seats.players)
+      player.add_action_history(Const.Action.ALLIN, bet_amount, add_amount)
     else:
       raise ValueError("Unexpected action %s received" % action)
     return state

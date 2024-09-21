@@ -22,11 +22,7 @@ class ActionChecker:
     # Jeśli bet_amount jest słownikiem, weź maksymalną wartość
     if isinstance(bet_amount, dict):
         bet_amount = bet_amount.get('max')  # Weź pod uwagę maksymalną wartość zakładu
-    
-    # Sprawdź, czy bet_amount jest liczbą
-    if not isinstance(bet_amount, (int, float)):
-        raise TypeError(f"Invalid bet_amount: {bet_amount}. Expected a number.")
-    
+   
     # Sprawdzenie all-in dla akcji call
     if action == 'call':
         return bet_amount >= player.stack + player.paid_sum()
@@ -35,6 +31,10 @@ class ActionChecker:
     elif action == 'raise':
         return bet_amount == player.stack + player.paid_sum()
     
+    elif action == 'all_in':
+        return bet_amount == player.stack + player.paid_sum()
+
+
     return False
 
 
@@ -72,18 +72,17 @@ class ActionChecker:
     
     amount_to_call = cls.agree_amount(players) if not can_check else 0
 
-
     valid_actions =[]
+    valid_actions.append({"action": "fold", "amount": 0})
     if can_check:
       valid_actions.append({"action": "check", "amount": 0})
-    if not can_check:
-      valid_actions.append({"action": "fold", "amount": 0})
     if amount_to_call == 0:
       valid_actions.append({"action": "check", "amount": 0})
     if amount_to_call > 0:
       valid_actions.append({"action": "call", "amount": amount_to_call})
     if max_raise >= min_raise:
       valid_actions.append({"action": "raise", "amount": {"min": min_raise, "max": max_raise}})
+    valid_actions.append({"action": "all_in", "amount": max_raise})
 
     return valid_actions
 
@@ -103,6 +102,9 @@ class ActionChecker:
       return cls.__is_short_of_money(players[player_pos], amount)\
           or cls.__is_illegal_call(players, amount)                  # FIXME: cos nie tak z callem
     elif action == 'raise':
+      return cls.__is_short_of_money(players[player_pos], amount) \
+          or cls.__is_illegal_raise(players, amount, sb_amount)
+    elif action == 'all_in':
       return cls.__is_short_of_money(players[player_pos], amount) \
           or cls.__is_illegal_raise(players, amount, sb_amount)
 
@@ -129,14 +131,12 @@ class ActionChecker:
   @classmethod
   def __min_raise_amount(cls, players, sb_amount):
     last_raise = cls.__fetch_last_raise(players)
-    
     if last_raise:
         # Jeśli już jest raise, minimalne podbicie to ostatni raise plus suma już zapłaconych pieniędzy
         min_raise = last_raise["amount"] * 2
     else:
         # Jeśli nie było jeszcze raise, minimalne podbicie to czterokrotność small blinda
         min_raise = sb_amount * 4
-
     # Uwzględnienie kwoty, którą gracz już zapłacił (np. blind)
     return min_raise
 
@@ -149,7 +149,7 @@ class ActionChecker:
   def __fetch_last_raise(cls, players):
     all_histories = [p.action_histories for p in players]
     all_histories = reduce(lambda acc, e: acc + e, all_histories)  # flatten
-    raise_histories = [h for h in all_histories if h["action"] in ["RAISE", "SMALLBLIND", "BIGBLIND"]]
+    raise_histories = [h for h in all_histories if h["action"] in ["RAISE", "all_in", "SMALLBLIND", "BIGBLIND"]]
     if len(raise_histories) == 0:
       return None
     else:

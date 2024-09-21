@@ -41,7 +41,11 @@ class FishPlayer(BasePokerPlayer):  # Do not forget to make parent class as "Bas
             action_info = next((action_info for action_info in valid_actions if action_info["action"] == "check"), None)
             if action_info:
                 amount = action_info["amount"]              
-        return action, amount   # action returned here is sent to the poker engine
+        elif action == "all_in":
+            action_info = next((action_info for action_info in valid_actions if action_info["action"] == "all_in"), None)
+            if action_info:
+                amount = action_info["amount"]
+        return action, amount
 
 
     def receive_game_start_message(self, game_info):
