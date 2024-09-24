@@ -1,7 +1,7 @@
-'name': 'Random', 'path': './poker_app/sample_player/random_player_setupCHECK.py',
-'name': 'Tag', 'path': './poker_app/sample_player/TagCHECK.py',
-'name': 'Tag_2', 'path': './poker_app/sample_player/TagCHECK.py',
-'name': 'Fish', 'path': './poker_app/sample_player/fish_player_setupCHECK.py',
-'name': 'Whale', 'path': './poker_app/sample_player/fish_player_setupCHECK.py',
+'name': 'Random', 'path': './poker_app/sample_player/Random.py',
+'name': 'Tag', 'path': './poker_app/sample_player/Tag.py',
+'name': 'Lag', 'path': './poker_app/sample_player/Lag.py',
+'name': 'Fish', 'path': './poker_app/sample_player/Fish.py',
+'name': 'Whale', 'path': './poker_app/sample_player/Whale.py',
 
 

@@ -47,16 +47,26 @@ class ActionChecker:
   @classmethod
   def agree_amount(cls, players):
     last_raise = cls.__fetch_last_raise(players)
-    if last_raise and last_raise["amount"] > players[3].stack:
-      return players[3].stack
-    else:
-      return last_raise["amount"] if last_raise else 0
+    
+    if not last_raise:  # Jeśli nie było podbicia, nie ma kwoty do sprawdzenia
+        return 0
+
+    agree_amount = last_raise["amount"]
+    
+    # Sprawdzenie, czy gracz ma wystarczająco dużo żetonów na sprawdzenie
+    if agree_amount > players[3].stack:
+        # Jeśli nie, gracz idzie all-in, więc wracamy z jego maksymalną kwotą
+        return players[3].stack
+
+    return agree_amount
+
 
 
   @classmethod
   def can_check(cls, players):
     last_raise = cls.__fetch_last_raise(players)
-    can_check = last_raise is None or last_raise["amount"] == 0
+    can_check = last_raise is None
+    # can_check = last_raise is None or last_raise["amount"] == 0
     return can_check
 
 
@@ -64,19 +74,19 @@ class ActionChecker:
   def legal_actions(cls, players, player_pos, sb_amount):
     min_raise = cls.__min_raise_amount(players, sb_amount)+ players[player_pos].paid_sum()
     max_raise = players[player_pos].stack + players[player_pos].paid_sum()
-    
+    if max_raise <= min_raise:
+      min_raise = max_raise = players[player_pos].stack
     can_check = cls.can_check(players)
 
-    if max_raise <= min_raise:
-        min_raise = max_raise = players[player_pos].stack
-    
-    amount_to_call = cls.agree_amount(players) if not can_check else 0
+
+    if max_raise == min_raise:
+        amount_to_call = min_raise
+    else:
+        amount_to_call = 0 if can_check else cls.agree_amount(players)
 
     valid_actions =[]
     valid_actions.append({"action": "fold", "amount": 0})
     if can_check:
-      valid_actions.append({"action": "check", "amount": 0})
-    if amount_to_call == 0:
       valid_actions.append({"action": "check", "amount": 0})
     if amount_to_call > 0:
       valid_actions.append({"action": "call", "amount": amount_to_call})
@@ -149,9 +159,9 @@ class ActionChecker:
   def __fetch_last_raise(cls, players):
     all_histories = [p.action_histories for p in players]
     all_histories = reduce(lambda acc, e: acc + e, all_histories)  # flatten
-    raise_histories = [h for h in all_histories if h["action"] in ["RAISE", "all_in", "SMALLBLIND", "BIGBLIND"]]
+    raise_histories = [h for h in all_histories if h["action"] in ["BIGBLIND", "RAISE", "all_in"]]
     if len(raise_histories) == 0:
-      return None
+        return None
     else:
-      return max(raise_histories, key=lambda h: h["amount"])  # maxby
+        return max(raise_histories, key=lambda h: h["amount"])   # maxby
 
