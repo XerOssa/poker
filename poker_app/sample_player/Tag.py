@@ -16,7 +16,7 @@ class Tag(BasePokerPlayer):  # Do not forget to make parent class as "BasePokerP
 
         # Determine the action to take
         action = random.choice(valid_actions)["action"]
-
+        print("Tag zagrał:", action)
         if action == "raise":
             # Set the maximum raise amount to 2x the last raise amount
             max_raise_amount = 2 * last_raise_amount

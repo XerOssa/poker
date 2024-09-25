@@ -71,30 +71,41 @@ class ActionChecker:
 
 
   @classmethod
-  def legal_actions(cls, players, player_pos, sb_amount):
-    min_raise = cls.__min_raise_amount(players, sb_amount)+ players[player_pos].paid_sum()
+  def can_raise(cls, players, player_pos, sb_amount):
+    min_raise = cls.__min_raise_amount(players, sb_amount) + players[player_pos].paid_sum()
     max_raise = players[player_pos].stack + players[player_pos].paid_sum()
-    if max_raise <= min_raise:
-      min_raise = max_raise = players[player_pos].stack
-    can_check = cls.can_check(players)
+    # Sprawdzamy, czy minimalna i maksymalna kwota raise to całkowity stack gracza
+    return max_raise >= min_raise
 
 
-    if max_raise == min_raise:
-        amount_to_call = min_raise
-    else:
-        amount_to_call = 0 if can_check else cls.agree_amount(players)
+  @classmethod
+  def legal_actions(cls, players, player_pos, sb_amount):
+      min_raise = cls.__min_raise_amount(players, sb_amount) ####################+ players[player_pos].paid_sum()
+      max_raise = players[player_pos].stack + players[player_pos].paid_sum()
 
-    valid_actions =[]
-    valid_actions.append({"action": "fold", "amount": 0})
-    if can_check:
-      valid_actions.append({"action": "check", "amount": 0})
-    if amount_to_call > 0:
-      valid_actions.append({"action": "call", "amount": amount_to_call})
-    if max_raise >= min_raise:
-      valid_actions.append({"action": "raise", "amount": {"min": min_raise, "max": max_raise}})
-    valid_actions.append({"action": "all_in", "amount": max_raise})
+      if max_raise <= min_raise:
+          min_raise = max_raise = players[player_pos].stack
+      
+      can_check = cls.can_check(players)
+      can_raise = cls.can_raise(players, player_pos, sb_amount)
 
-    return valid_actions
+      if max_raise == min_raise:
+          amount_to_call = min_raise
+      else:
+          amount_to_call = 0 if can_check else cls.agree_amount(players)  # Użycie poprawionej agree_amount
+
+      valid_actions = []
+      valid_actions.append({"action": "fold", "amount": 0})
+      if can_check:
+          valid_actions.append({"action": "check", "amount": 0})
+      if amount_to_call > 0:
+          valid_actions.append({"action": "call", "amount": amount_to_call})
+      if can_raise:
+          valid_actions.append({"action": "raise", "amount": {"min": min_raise, "max": max_raise}})
+      if can_raise:
+        valid_actions.append({"action": "all_in", "amount": max_raise})
+
+      return valid_actions
 
   
 
@@ -142,12 +153,9 @@ class ActionChecker:
   def __min_raise_amount(cls, players, sb_amount):
     last_raise = cls.__fetch_last_raise(players)
     if last_raise:
-        # Jeśli już jest raise, minimalne podbicie to ostatni raise plus suma już zapłaconych pieniędzy
         min_raise = last_raise["amount"] * 2
     else:
-        # Jeśli nie było jeszcze raise, minimalne podbicie to czterokrotność small blinda
         min_raise = sb_amount * 4
-    # Uwzględnienie kwoty, którą gracz już zapłacił (np. blind)
     return min_raise
 
 

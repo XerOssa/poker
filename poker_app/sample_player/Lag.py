@@ -17,7 +17,7 @@ class LagPlayer(BasePokerPlayer):  # Do not forget to make parent class as "Base
 
         # Determine the action to take
         action = random.choice(valid_actions)["action"]
-
+        print("Lag zagrał:", action)
         if action == "raise":
             # Set the maximum raise amount to 2x the last raise amount
             max_raise_amount = 2 * last_raise_amount
