@@ -53,7 +53,7 @@ class Player:
 
   def collect_bet(self, amount):
       # Jeśli gracz ma mniej żetonów niż zakład
-      if self.stack < amount:
+      if self.stack <= amount:
           print(f"Gracz ma tylko {self.stack} żetonów, więc stawia all-in.")
           # Stawia całość (all-in) i zmniejsza stack do 0
           bet = self.stack
