@@ -25,10 +25,10 @@ class RoundManager:
     return state, start_msg + street_msgs
 
   @classmethod
-  def apply_action(cls, original_state, action, bet_amount):
+  def apply_action(cls, original_state, action, amount):
     state = cls.__deep_copy_state(original_state)
-    state = cls.__update_state_by_action(state, action, bet_amount)
-    update_msg = cls.__update_message(state, action, bet_amount)
+    state = cls.__update_state_by_action(state, action, amount)
+    update_msg = cls.__update_message(state, action, amount)
     if cls.__is_everyone_agreed(state):
       [player.save_street_action_histories(state["street"]) for player in state["table"].seats.players]
       state["street"] += 1
@@ -145,14 +145,14 @@ class RoundManager:
       return state, street_start_msg + ask_message
 
   @classmethod
-  def __update_state_by_action(cls, state, action, bet_amount):
+  def __update_state_by_action(cls, state, action, amount):
     table = state["table"]
-    action, bet_amount = ActionChecker.correct_action(\
-        table.seats.players, state["next_player"], state["small_blind_amount"], action, bet_amount)
+    action, amount = ActionChecker.correct_action(\
+        table.seats.players, state["next_player"], state["small_blind_amount"], action, amount)
     next_player = table.seats.players[state["next_player"]]
-    if ActionChecker.is_allin(next_player, action, bet_amount):
+    if ActionChecker.is_allin(next_player, action, amount):
       next_player.pay_info.update_to_allin()
-    return cls.__accept_action(state, action, bet_amount)
+    return cls.__accept_action(state, action, amount)
 
   @classmethod
   def __accept_action(cls, state, action, bet_amount):

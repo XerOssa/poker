@@ -15,24 +15,41 @@ class ActionChecker:
 
 
   @classmethod
-  def is_allin(cls, player, action, bet_amount):
-    if isinstance(bet_amount, dict):
-        bet_amount = bet_amount.get('max')  # Weź pod uwagę maksymalną wartość zakładu
+  def is_allin(cls, player, action, amount):
+    if isinstance(amount, dict):
+        amount = amount.get('max')            # Weź pod uwagę maksymalną wartość zakładu
     if action == 'call':
-        return bet_amount >= player.stack + player.paid_sum() 
+        return amount >= player.stack         #+ player.paid_sum() 
     elif action == 'raise':
-        return bet_amount == player.stack + player.paid_sum()
+        return amount == player.stack         #+ player.paid_sum()
     elif action == 'all_in':
-        return bet_amount == player.stack + player.paid_sum()
+        return amount == player.stack               #       + player.paid_sum()
     return False
 
 
 
   @classmethod
   def need_amount_for_action(cls, player, amount):
-    return amount                                   #######- player.paid_sum()
+    return amount                 #- player.paid_sum()
 
  
+  # @classmethod
+  # def agree_amount(cls, players):
+  #   last_raise = cls.__fetch_last_raise(players)
+    
+  #   if not last_raise:  # Jeśli nie było podbicia, nie ma kwoty do sprawdzenia
+  #       return 0
+
+  #   agree_amount = last_raise["amount"]
+    
+  #   # Sprawdzenie, czy gracz ma wystarczająco dużo żetonów na sprawdzenie
+  #   if agree_amount > players[3].stack:
+  #       # Jeśli nie, gracz idzie all-in, więc wracamy z jego maksymalną kwotą
+  #       return players[3].stack
+
+  #   return agree_amount
+
+
   @classmethod
   def agree_amount(cls, players):
     last_raise = cls.__fetch_last_raise(players)
@@ -43,20 +60,26 @@ class ActionChecker:
     agree_amount = last_raise["amount"]
     
     # Sprawdzenie, czy gracz ma wystarczająco dużo żetonów na sprawdzenie
-    if agree_amount > players[3].stack:
+    player_stack = players[3].stack
+    if agree_amount > player_stack:
         # Jeśli nie, gracz idzie all-in, więc wracamy z jego maksymalną kwotą
-        return players[3].stack
+        return player_stack
 
     return agree_amount
 
 
-
   @classmethod
-  def can_check(cls, players):
+  def can_check(cls, players, player_pos):
     last_raise = cls.__fetch_last_raise(players)
-    can_check = last_raise is None
-    # can_check = last_raise is None or last_raise["amount"] == 0
+    
+    # Sprawdź, czy ostatnim zagraniem był BIGBLIND i czy został postawiony przez aktualnego gracza
+    if last_raise and last_raise["action"] == "BIGBLIND" and players[player_pos].uuid == last_raise["uuid"]:
+        return True  # Gracz postawił BIG BLIND, nikt nie podbił, więc może checkować
+
+    # Sprawdzenie, czy można checkować, bo nie było podbicia
+    can_check = last_raise is None or last_raise["amount"] == 0
     return can_check
+
 
 
   @classmethod
@@ -69,32 +92,40 @@ class ActionChecker:
 
   @classmethod
   def legal_actions(cls, players, player_pos, sb_amount):
-      min_raise = cls.__min_raise_amount(players, sb_amount) ####################+ players[player_pos].paid_sum()
-      max_raise = players[player_pos].stack + players[player_pos].paid_sum()
+    min_raise = cls.__min_raise_amount(players, sb_amount)  # Minimalny raise
+    max_raise = players[player_pos].stack  # Maksymalny raise to cały stack gracza
 
-      if max_raise <= min_raise:
-          min_raise = max_raise = players[player_pos].stack
-      
-      can_check = cls.can_check(players)
-      can_raise = cls.can_raise(players, player_pos, sb_amount)
+    if max_raise <= min_raise:
+        min_raise = max_raise = players[player_pos].stack
 
-      if max_raise == min_raise:
-          amount_to_call = min_raise
-      else:
-          amount_to_call = 0 if can_check else cls.agree_amount(players)
+    # Sprawdzenie, czy można czekać (jeśli nikt nie podbił)
+    can_check = cls.can_check(players, player_pos)
+    can_raise = cls.can_raise(players, player_pos, sb_amount)
 
-      valid_actions = []
-      valid_actions.append({"action": "fold", "amount": 0})
-      if can_check:
-          valid_actions.append({"action": "check", "amount": 0})
-      if amount_to_call > 0:
-          valid_actions.append({"action": "call", "amount": amount_to_call})
-      if can_raise:
-          valid_actions.append({"action": "raise", "amount": {"min": min_raise, "max": max_raise}})
-      if can_raise:
+    # Obliczamy kwotę do sprawdzenia (call), tylko jeśli było podbicie
+    if not can_check:
+        agree_amount = cls.agree_amount(players) - players[player_pos].paid_sum()  # Kwota potrzebna do sprawdzenia
+        player_stack = players[player_pos].stack
+        amount_to_call = min(agree_amount, player_stack)
+    else:
+        amount_to_call = 0  # Jeśli można czekać, nie ma opcji call
+
+    valid_actions = []
+    valid_actions.append({"action": "fold", "amount": 0})
+
+    if can_check:
+        valid_actions.append({"action": "check", "amount": 0})  # Jeśli można czekać
+
+    if amount_to_call > 0:
+        valid_actions.append({"action": "call", "amount": amount_to_call})  # Opcja call tylko jeśli było podbicie
+
+    if can_raise:
+        valid_actions.append({"action": "raise", "amount": {"min": min_raise, "max": max_raise}})
+    if can_raise:
         valid_actions.append({"action": "all_in", "amount": max_raise})
 
-      return valid_actions
+    return valid_actions
+
 
   
 
@@ -109,7 +140,7 @@ class ActionChecker:
     elif action == 'check':
       return cls.__is_illegal_check(amount)                          # FIXME: do przerobki
     elif action == 'call':
-      return cls.__is_illegal_call(players, amount)                  # FIXME: cos nie tak z callem
+      return cls.__is_illegal_call(players, amount, player_pos)                  # FIXME: cos nie tak z callem
     elif action == 'raise':
       return cls.__is_short_of_money(players[player_pos], amount) \
           or cls.__is_illegal_raise(players, amount, sb_amount)
@@ -118,8 +149,19 @@ class ActionChecker:
 
 
   @classmethod
-  def __is_illegal_call(cls, players, amount):
-    return amount != cls.agree_amount(players)
+  def __is_illegal_call(cls, players, amount, player_pos):
+    # Pobierz wymaganą kwotę do sprawdzenia
+    agree_amount = cls.agree_amount(players) - players[player_pos].paid_sum()
+    # Jeśli gracz ma mniej żetonów, call za wszystko jest legalny
+    player_stack = players[3].stack
+    if amount == player_stack:  # All-in za mniejszą kwotę
+        return False
+    return amount != agree_amount
+
+
+  # @classmethod
+  # def __is_illegal_call(cls, players, amount):
+  #   return amount != cls.agree_amount(players)
 
 
   @classmethod

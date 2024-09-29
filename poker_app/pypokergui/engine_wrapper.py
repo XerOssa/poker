@@ -20,8 +20,8 @@ class EngineWrapper(object):
         return result
 
 
-    def update_game(self, action, bet_amount):
-        state, msgs = RoundManager.apply_action(self.current_state, action, bet_amount)
+    def update_game(self, action, amount):
+        state, msgs = RoundManager.apply_action(self.current_state, action, amount)
         if state['street'] == Const.Street.FINISHED:
             state, new_msgs = self._start_next_round(
                     state['round_count']+1, state['table'])

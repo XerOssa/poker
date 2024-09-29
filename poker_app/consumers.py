@@ -108,27 +108,47 @@ class PokerConsumer(AsyncWebsocketConsumer):
         players = global_game_manager.engine.current_state["table"].seats.players
         next_player_pos = global_game_manager.engine.current_state["next_player"]
         sb_amount = global_game_manager.engine.current_state["small_blind_amount"]
+
         if next_player_pos < 0 or next_player_pos >= len(players):
             raise ValueError(f"Invalid next_player_pos: {next_player_pos}. Must be within 0 and {len(players)-1}.")
+        
         actions = AU.generate_legal_actions(players, next_player_pos, sb_amount)
+        amount = 0
+
         if data["action"] == "fold":
-            data["amount"] = 0
-        elif data["action"] == "call":
-            data["amount"] = actions[1]["amount"]
-        elif data["action"] == "check":
-            data["amount"] = 0
-        elif data["action"] == "all_in":
-            legal_allin = actions[2]["amount"]
-            if legal_allin["max"]:
-                data["amount"] = legal_allin["max"]
+            amount = 0
+        elif data["action"] in ["call", "check", "all_in"]:
+            for action in actions:
+                if action["action"] == data["action"]:
+                    amount = action["amount"]
+                    break  # Znaleziono odpowiednią akcję, więc wychodzimy z pętli
         else:
-            legal = actions[2]["amount"]
-            if legal["min"] <= data["amount"] <= legal["max"]:
-                data["amount"] = data["amount"]
+            # Sprawdź, czy kwota podana przez gracza jest zgodna z legalnymi zasadami
+            legal = next((action for action in actions if action["action"] == "raise"), None)
+            if legal and legal["amount"]["min"] <= data["amount"] <= legal["amount"]["max"]:
+                amount = data["amount"]
             else:
                 print("cos nie tak z przebiciem")
 
-        return data["action"], data["amount"]
+        return data["action"], amount
+        # amount = 0
+        # if data["action"] == "fold":
+        #     data["amount"] = 0
+
+        # elif data["action"] == "call":
+        #     data["amount"] = actions[1]["amount"]
+        # elif data["action"] == "check":
+        #     data["amount"] = 0
+        # elif data["action"] == "all_in":
+        #     data["amount"] = actions[2]["amount"]
+        # else:
+        #     legal = actions[2]["amount"]
+        #     if legal["min"] <= data["amount"] <= legal["max"]:
+        #         data["amount"] = data["amount"]
+        #     else:
+        #         print("cos nie tak z przebiciem")
+
+        # return data["action"], data["amount"]
 
 
 def setup_config_player(game_config):
