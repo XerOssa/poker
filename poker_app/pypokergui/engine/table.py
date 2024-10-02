@@ -22,7 +22,8 @@ class Table:
         # print(f"Shifting dealer button from {self.dealer_btn}")
         self.dealer_btn = self.next_active_player_pos(self.dealer_btn)
         if self.dealer_btn == 0 and any(player.is_active() for player in self.seats.players):
-            self.dealer_btn = random.randint(0, len(self.seats.players) - 1)
+            # self.dealer_btn = random.randint(0, len(self.seats.players) - 1)
+            self.dealer_btn = 0
             print(f"New dealer button candidate: {self.dealer_btn}")
 
 

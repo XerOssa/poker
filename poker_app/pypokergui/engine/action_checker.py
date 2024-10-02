@@ -30,7 +30,7 @@ class ActionChecker:
 
   @classmethod
   def need_amount_for_action(cls, player, amount):
-    return amount                 #- player.paid_sum()
+    return amount #- player.paid_sum()
 
  
   # @classmethod
@@ -152,6 +152,9 @@ class ActionChecker:
   def __is_illegal_call(cls, players, amount, player_pos):
     # Pobierz wymaganą kwotę do sprawdzenia
     agree_amount = cls.agree_amount(players) - players[player_pos].paid_sum()
+    
+    # if players[player_pos].paid_sum():
+    #    agree_amount = cls.agree_amount(players) - players[player_pos].paid_sum()
     # Jeśli gracz ma mniej żetonów, call za wszystko jest legalny
     player_stack = players[3].stack
     if amount == player_stack:  # All-in za mniejszą kwotę
@@ -169,8 +172,7 @@ class ActionChecker:
     # Sprawdzenie czy ilość postawionych pieniędzy nie zgadza się z kwotą do zrównania
     if amount != 0:
         return "Nie możesz czekać, ponieważ musisz dołożyć więcej, aby zrównać stawkę."
-    # Zwróć None, jeśli check jest legalny
-    return False     #zmieniłem na None
+    return False
 
 
   @classmethod
