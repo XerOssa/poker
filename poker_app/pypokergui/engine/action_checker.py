@@ -30,44 +30,20 @@ class ActionChecker:
 
   @classmethod
   def need_amount_for_action(cls, player, amount):
-    return amount #- player.paid_sum()
-
- 
-  # @classmethod
-  # def agree_amount(cls, players):
-  #   last_raise = cls.__fetch_last_raise(players)
-    
-  #   if not last_raise:  # Jeśli nie było podbicia, nie ma kwoty do sprawdzenia
-  #       return 0
-
-  #   agree_amount = last_raise["amount"]
-    
-  #   # Sprawdzenie, czy gracz ma wystarczająco dużo żetonów na sprawdzenie
-  #   if agree_amount > players[3].stack:
-  #       # Jeśli nie, gracz idzie all-in, więc wracamy z jego maksymalną kwotą
-  #       return players[3].stack
-
-  #   return agree_amount
+    return amount - player.paid_sum()
 
 
   @classmethod
   def agree_amount(cls, players):
     last_raise = cls.__fetch_last_raise(players)
     
-    if not last_raise:  # Jeśli nie było podbicia, nie ma kwoty do sprawdzenia
+    if not last_raise:  # If no raise, there's nothing to call
         return 0
 
     agree_amount = last_raise["amount"]
-    
-    # Sprawdzenie, czy gracz ma wystarczająco dużo żetonów na sprawdzenie
-    player_stack = players[3].stack
-    if agree_amount > player_stack:
-        # Jeśli nie, gracz idzie all-in, więc wracamy z jego maksymalną kwotą
-        return player_stack
+    return agree_amount  # Return the amount of the last raise
 
-    return agree_amount
-
-
+  
   @classmethod
   def can_check(cls, players, player_pos):
     last_raise = cls.__fetch_last_raise(players)
@@ -104,7 +80,7 @@ class ActionChecker:
 
     # Obliczamy kwotę do sprawdzenia (call), tylko jeśli było podbicie
     if not can_check:
-        agree_amount = cls.agree_amount(players) - players[player_pos].paid_sum()  # Kwota potrzebna do sprawdzenia
+        agree_amount = cls.agree_amount(players)
         player_stack = players[player_pos].stack
         amount_to_call = min(agree_amount, player_stack)
     else:
@@ -160,11 +136,6 @@ class ActionChecker:
     if amount == player_stack:  # All-in za mniejszą kwotę
         return False
     return amount != agree_amount
-
-
-  # @classmethod
-  # def __is_illegal_call(cls, players, amount):
-  #   return amount != cls.agree_amount(players)
 
 
   @classmethod

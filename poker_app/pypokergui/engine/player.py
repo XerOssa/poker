@@ -45,25 +45,25 @@ class Player:
     self.stack += amount
 
 
-  # def collect_bet(self, amount):
-  #   if self.stack < amount:
-  #     raise ValueError(self.__collect_err_msg % (amount, self.stack))
-  #   self.stack -= amount
-
-
   def collect_bet(self, amount):
-      # Jeśli gracz ma mniej żetonów niż zakład
-      if self.stack <= amount:
-          print(f"Gracz ma tylko {self.stack} żetonów, więc stawia all-in.")
-          # Stawia całość (all-in) i zmniejsza stack do 0
-          bet = self.stack
-          self.stack = 0
-      else:
-          # Zwykły zakład jeśli gracz ma wystarczająco żetonów
-          self.stack -= amount
-          bet = amount
+    if self.stack < amount:
+      raise ValueError(self.__collect_err_msg % (amount, self.stack))
+    self.stack -= amount
 
-      return bet
+
+  # def collect_bet(self, amount):
+  #     # Jeśli gracz ma mniej żetonów niż zakład
+  #     if self.stack <= amount:
+  #         print(f"Gracz ma tylko {self.stack} żetonów, więc stawia all-in.")
+  #         # Stawia całość (all-in) i zmniejsza stack do 0
+  #         bet = self.stack
+  #         self.stack = 0
+  #     else:
+  #         # Zwykły zakład jeśli gracz ma wystarczająco żetonów
+  #         self.stack -= amount
+  #         bet = amount
+
+  #     return bet
 
 
   def is_active(self):

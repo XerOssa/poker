@@ -84,7 +84,6 @@ def fetch_next_player_uuid(new_messages):
     if not has_game_finished(new_messages):
         ask_uuid, ask_message = new_messages[-1]
         assert ask_message['type'] == 'ask'
-        print(f"DEBUG: Fetching next player UUID: {ask_uuid}")  # Dodano logowanie
         return ask_uuid
     else:
         print("DEBUG: Game has finished")  # Dodano logowanie

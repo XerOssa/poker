@@ -121,6 +121,7 @@ class PokerConsumer(AsyncWebsocketConsumer):
             for action in actions:
                 if action["action"] == data["action"]:
                     amount = action["amount"]
+                    print("Hero zagrał: ", action["action"], amount)
                     break  # Znaleziono odpowiednią akcję, więc wychodzimy z pętli
         else:
             # Sprawdź, czy kwota podana przez gracza jest zgodna z legalnymi zasadami

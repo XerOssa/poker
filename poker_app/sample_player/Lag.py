@@ -39,7 +39,7 @@ class LagPlayer(BasePokerPlayer):  # Do not forget to make parent class as "Base
             if min_amount > max_amount:
                 min_amount, max_amount = max_amount, min_amount
             #amount = random.randint(min_amount, max_amount) if min_amount <= max_amount else min_amount
-            amount = 10 #- paid_amount
+            amount = 10
         elif action == "call":
             action_info = next((action_info for action_info in valid_actions if action_info["action"] == "call"), None)
             if action_info:

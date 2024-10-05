@@ -155,31 +155,40 @@ class RoundManager:
     return cls.__accept_action(state, action, amount)
 
   @classmethod
-  def __accept_action(cls, state, action, bet_amount):
+  def __accept_action(cls, state, action, amount):
     player = state["table"].seats.players[state["next_player"]]
     if action == 'fold':
       player.add_action_history(Const.Action.FOLD)
       player.pay_info.update_to_fold()
     elif action == 'call':
-      cls.__chip_transaction(player, bet_amount)
-      player.add_action_history(Const.Action.CALL, bet_amount)
+      cls.__chip_transaction(player, amount)
+      player.add_action_history(Const.Action.CALL, amount)
     elif action == 'check':
       player.add_action_history(Const.Action.CHECK)
     elif action == 'raise':
-      cls.__chip_transaction(player, bet_amount)
-      add_amount = bet_amount - ActionChecker.agree_amount(state["table"].seats.players)
-      player.add_action_history(Const.Action.RAISE, bet_amount, add_amount)
+      cls.__chip_transaction(player, amount)
+
+      # Check if player has paid the Big Blind
+      if any(h["action"] == "BIGBLIND" for h in player.action_histories):  # Check player's action history for BIGBLIND
+          add_amount = amount - player.paid_sum()  # Subtract BB's previous contribution
+      else:
+          add_amount = amount - ActionChecker.agree_amount(state["table"].seats.players)  # Other players
+
+      print("amount=", amount)
+      print("add_amount=", add_amount)
+      player.add_action_history(Const.Action.RAISE, amount, add_amount)
     elif action == 'all_in':
-      cls.__chip_transaction(player, bet_amount)
-      add_amount = bet_amount - ActionChecker.agree_amount(state["table"].seats.players)
-      player.add_action_history(Const.Action.ALLIN, bet_amount, add_amount)
+      cls.__chip_transaction(player, amount)
+      add_amount = amount - ActionChecker.agree_amount(state["table"].seats.players)
+      player.add_action_history(Const.Action.ALLIN, amount, add_amount)
     else:
       raise ValueError("Unexpected action %s received" % action)
     return state
 
   @classmethod
-  def __chip_transaction(cls, player, bet_amount):
-    need_amount = ActionChecker.need_amount_for_action(player, bet_amount)
+  def __chip_transaction(cls, player, amount):
+    need_amount = ActionChecker.need_amount_for_action(player, amount)
+    print("stack=", player.stack)
     player.collect_bet(need_amount)
     player.pay_info.update_by_pay(need_amount)
 
