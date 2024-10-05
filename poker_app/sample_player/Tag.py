@@ -23,7 +23,8 @@ class Tag(BasePokerPlayer):  # Do not forget to make parent class as "BasePokerP
                 last_raise_amount = raise_action_info["amount"].get("max", 0)
 
         # Determine the action to take
-        action = "call"
+        action = random.choice(valid_actions)["action"]
+        # action = "call"
         if action == "raise":
             # Set the maximum raise amount to 2x the last raise amount (taking paid_amount into account)
             max_raise_amount = 2 * last_raise_amount
@@ -38,7 +39,7 @@ class Tag(BasePokerPlayer):  # Do not forget to make parent class as "BasePokerP
             # Ensure min_amount is not greater than max_amount
             if min_amount > max_amount:
                 min_amount, max_amount = max_amount, min_amount
-            # amount = random.randint(min_amount, max_amount) if min_amount <= max_amount else min_amount
+            amount = random.randint(min_amount, max_amount) if min_amount <= max_amount else min_amount
         elif action == "call":
             action_info = next((action_info for action_info in valid_actions if action_info["action"] == "call"), None)
             if action_info:

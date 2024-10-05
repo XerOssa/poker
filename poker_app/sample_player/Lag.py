@@ -1,9 +1,9 @@
 import random
 from poker_app.pypokergui.players import BasePokerPlayer
+# PyPokerEngine-master\pokerAI.\Lib.\site-packages.\
+class Lag(BasePokerPlayer):  # Do not forget to make parent class as "BasePokerPlayer"
 
-class LagPlayer(BasePokerPlayer):  # Do not forget to make parent class as "BasePokerPlayer"
 
-    #  we define the logic to make an action through this method. (so this method would be the core of your AI)
     def declare_action(self, valid_actions, hole_card, round_state):
     # valid_actions format => [raise_action_info, call_action_info, fold_action_info]
         # Initialize the last_raise_amount to 0
@@ -23,7 +23,8 @@ class LagPlayer(BasePokerPlayer):  # Do not forget to make parent class as "Base
                 last_raise_amount = raise_action_info["amount"].get("max", 0)
 
         # Determine the action to take
-        action = "raise"
+        action = random.choice(valid_actions)["action"]
+        # action = "call"
         if action == "raise":
             # Set the maximum raise amount to 2x the last raise amount (taking paid_amount into account)
             max_raise_amount = 2 * last_raise_amount
@@ -38,8 +39,7 @@ class LagPlayer(BasePokerPlayer):  # Do not forget to make parent class as "Base
             # Ensure min_amount is not greater than max_amount
             if min_amount > max_amount:
                 min_amount, max_amount = max_amount, min_amount
-            #amount = random.randint(min_amount, max_amount) if min_amount <= max_amount else min_amount
-            amount = 10
+            amount = random.randint(min_amount, max_amount) if min_amount <= max_amount else min_amount
         elif action == "call":
             action_info = next((action_info for action_info in valid_actions if action_info["action"] == "call"), None)
             if action_info:
@@ -60,6 +60,7 @@ class LagPlayer(BasePokerPlayer):  # Do not forget to make parent class as "Base
         return action, amount
 
 
+
     def receive_game_start_message(self, game_info):
         pass
 
@@ -77,4 +78,4 @@ class LagPlayer(BasePokerPlayer):  # Do not forget to make parent class as "Base
 
 
 def setup_ai():
-    return LagPlayer()
+    return Lag()
