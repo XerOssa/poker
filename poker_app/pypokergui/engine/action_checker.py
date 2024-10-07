@@ -127,7 +127,7 @@ class ActionChecker:
   @classmethod
   def __is_illegal_call(cls, players, amount, player_pos):
     # Pobierz wymaganą kwotę do sprawdzenia
-    agree_amount = cls.agree_amount(players) - players[player_pos].paid_sum()
+    agree_amount = cls.agree_amount(players)# - players[player_pos].paid_sum()
     
     # if players[player_pos].paid_sum():
     #    agree_amount = cls.agree_amount(players) - players[player_pos].paid_sum()
