@@ -66,6 +66,7 @@ def my_view(request):
 
 global_game_manager = GM.GameManager()
 def waiting_room_view(request):
+    
     form_config_table_data = {}
     file_path = 'poker_app/config_players.txt'
     config_players = read_config(file_path)
@@ -123,9 +124,12 @@ def waiting_room_view(request):
 
     else:
         form = HeroForm()
-        form_config_table = GameConfigForm()
-        if 'form_config_table' not in request.session:
-            request.session['form_config_table'] = {}
+
+        # Wypełnij formularz danymi z sesji, jeśli istnieją
+        if 'form_config_table' in request.session:
+            form_config_table = GameConfigForm(initial=request.session['form_config_table'])
+        else:
+            form_config_table = GameConfigForm() 
 
     return render(request, 'waiting_room.html', {
         'form': form,
