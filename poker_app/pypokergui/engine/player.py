@@ -67,7 +67,7 @@ class Player:
 
 
   def is_active(self):
-    return self.pay_info.status != PayInfo.FOLDED and self.stack > 0
+    return self.pay_info.status != PayInfo.FOLDED# and self.stack > 0
 
 
   def is_waiting_ask(self):
@@ -81,7 +81,7 @@ class Player:
     elif kind == Const.Action.CALL:
       history = self.__call_history(chip_amount)
     elif kind == Const.Action.CHECK:
-      history = self.__check_history()
+      history = self.__check_history(chip_amount)
     elif kind == Const.Action.RAISE:
       history = self.__raise_history(chip_amount, add_amount)
     elif kind == Const.Action.ALLIN:
@@ -165,7 +165,7 @@ class Player:
     }
 
 
-  def __check_history(self):
+  def __check_history(self, bet_amount):
     return { "action" : self.ACTION_CHECK_STR }
 
 

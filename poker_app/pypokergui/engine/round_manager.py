@@ -164,7 +164,7 @@ class RoundManager:
       cls.__chip_transaction(player, amount)
       player.add_action_history(Const.Action.CALL, amount)
     elif action == 'check':
-      player.add_action_history(Const.Action.CHECK)
+      player.add_action_history(Const.Action.CHECK, amount)
     elif action == 'raise':
       cls.__chip_transaction(player, amount)
 

@@ -24,7 +24,7 @@ class Whale(BasePokerPlayer):  # Do not forget to make parent class as "BasePoke
 
         # Determine the action to take
         # action = random.choice(valid_actions)["action"]
-        action = "call"
+        action = "fold"
         if action == "raise":
             # Set the maximum raise amount to 2x the last raise amount (taking paid_amount into account)
             max_raise_amount = 2 * last_raise_amount

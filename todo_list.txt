@@ -2,6 +2,4 @@
 # TODO: dodac funkcje ktora czyssci dane przed nastepnym rozdaniem
 # TODO: jak jestem na EP to najpierw mam decyzje a pozniej widze karty (koljenosc wykonywania funkcji)
 # TODO: po showdownie gracze musza pokazać karty
-# TODO: gdy jestem na BB albo SB a ktos zagra za wszystko to nie podlicza blindow
 # TODO: nie pozwol wykonac check jak jest przedemna podbicie badz blindy
-# TODO: nie prawidlowa wartosc min raise
