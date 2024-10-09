@@ -64,6 +64,8 @@ def my_view(request):
 
 
 def waiting_room_view(request):
+    # request.session.clear()
+
     form_config_table_data = {}
     file_path = 'poker_app/config_players.txt'
     config_players = read_config(file_path)
@@ -72,30 +74,29 @@ def waiting_room_view(request):
 
     # Inicjujemy initial_data jako domyślną wartość na początku
     initial_data = {
-        'value_stack': 77,  # domyślna wartość
+        'initial_stack': 77,
         'small_blind': 1,
         'ante': 0
     }
 
-    # if request.method == 'GET':
-    #     if 'form_config_table' in request.session:
-    #         del request.session['form_config_table']
 
     if request.method == 'POST':
+        # if 'form_config_table' in request.session:
+        #     del request.session['form_config_table']
         form = HeroForm(request.POST)
         form_config_table = GameConfigForm(request.POST)
 
         if form_config_table.is_valid():
             config_data = form_config_table.cleaned_data
             form_config_table_data = {
-                'value_stack': config_data.get('value_stack'),
+                'initial_stack': config_data.get('initial_stack'),
                 'small_blind': config_data.get('small_blind'),
                 'ante': config_data.get('ante'),
             }
             request.session['form_config_table'] = form_config_table_data
 
             game_config = {
-                'value_stack': form_config_table_data.get('value_stack'),
+                'initial_stack': form_config_table_data.get('initial_stack'),
                 'small_blind': form_config_table_data.get('small_blind'),
                 'ante': form_config_table_data.get('ante'),
                 'ai_players': players
@@ -106,7 +107,7 @@ def waiting_room_view(request):
         if form.is_valid():
             hero = form.save(commit=False)
             hero.save()
-            value_stack = request.session['game_config'].get('value_stack')
+            # initial_stack = request.session['game_config'].get('initial_stack')
 
             display_id = len(players)
             players.append({
@@ -114,8 +115,8 @@ def waiting_room_view(request):
                 'type': 'human',
                 'name': hero.name,
             })
-            for player in players:
-                player['stack'] = value_stack
+            # for player in players:
+            #     player['stack'] = initial_stack
 
             request.session['players'] = players
             request.session['hero'] = {'name': hero.name}
@@ -132,8 +133,6 @@ def waiting_room_view(request):
 
     else:
         form = HeroForm()
-
-        # Wypełnienie formularza danymi z sesji lub ustawienie domyślnych wartości
         if 'form_config_table' in request.session:
             initial_data = request.session['form_config_table']
 
