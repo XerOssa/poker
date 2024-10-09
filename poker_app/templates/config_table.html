@@ -1,4 +1,4 @@
-<form action="{% url 'waiting_room' %}" method="post" id="config_table_form" class="form-inline">
+<form action="{% url 'waiting_room' %}" method="post" id="initial_data" class="form-inline">
     {% csrf_token %}
     <table class="table table-striped table-bordered">
         <thead>
@@ -10,9 +10,21 @@
         </thead>
         <tbody>
             <tr>
-                <td><input type="number" name="initial_stack" id="initial_stack" value="{{ form_config_table.initial_stack }}" style="text-align: center;"></td>
-                <td><input type="number" name="small_blind" id="small_blind" value="1" style="text-align: center;"></td>
-                <td><input type="number" name="ante" id="ante" value="0" style="text-align: center;"></td>
+                <td>
+                    <input type="number" name="value_stack" id="value_stack" 
+                           value="{{ form_config_table.initial_data.initial_stack }}" 
+                           style="text-align: center;" required>
+                </td>
+                <td>
+                    <input type="number" name="small_blind" id="small_blind" 
+                           value="{{ form_config_table.initial_data.small_blind }}" 
+                           style="text-align: center;" required>
+                </td>
+                <td>
+                    <input type="number" name="ante" id="ante" 
+                           value="{{ form_config_table.initial_data.ante }}" 
+                           style="text-align: center;" required>
+                </td>
             </tr>
         </tbody>
     </table>

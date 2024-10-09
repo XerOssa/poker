@@ -9,7 +9,6 @@ from waiting_room_param import players_list, read_config
 from .forms import HeroForm, GameConfigForm
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-import poker_app.pypokergui.server.game_manager as GM
 
 
 def home(request):
@@ -64,13 +63,23 @@ def my_view(request):
     })
 
 
-global_game_manager = GM.GameManager()
 def waiting_room_view(request):
-    
     form_config_table_data = {}
     file_path = 'poker_app/config_players.txt'
     config_players = read_config(file_path)
+
     players = players_list(config_players)
+
+    # Inicjujemy initial_data jako domyślną wartość na początku
+    initial_data = {
+        'value_stack': 77,  # domyślna wartość
+        'small_blind': 1,
+        'ante': 0
+    }
+
+    # if request.method == 'GET':
+    #     if 'form_config_table' in request.session:
+    #         del request.session['form_config_table']
 
     if request.method == 'POST':
         form = HeroForm(request.POST)
@@ -79,14 +88,14 @@ def waiting_room_view(request):
         if form_config_table.is_valid():
             config_data = form_config_table.cleaned_data
             form_config_table_data = {
-                'initial_stack': config_data.get('initial_stack'),
+                'value_stack': config_data.get('value_stack'),
                 'small_blind': config_data.get('small_blind'),
                 'ante': config_data.get('ante'),
             }
             request.session['form_config_table'] = form_config_table_data
 
             game_config = {
-                'initial_stack': form_config_table_data.get('initial_stack'),
+                'value_stack': form_config_table_data.get('value_stack'),
                 'small_blind': form_config_table_data.get('small_blind'),
                 'ante': form_config_table_data.get('ante'),
                 'ai_players': players
@@ -97,7 +106,7 @@ def waiting_room_view(request):
         if form.is_valid():
             hero = form.save(commit=False)
             hero.save()
-            initial_stack = request.session['game_config'].get('initial_stack', 100)
+            value_stack = request.session['game_config'].get('value_stack')
 
             display_id = len(players)
             players.append({
@@ -106,7 +115,7 @@ def waiting_room_view(request):
                 'name': hero.name,
             })
             for player in players:
-                player['stack'] = initial_stack
+                player['stack'] = value_stack
 
             request.session['players'] = players
             request.session['hero'] = {'name': hero.name}
@@ -121,21 +130,23 @@ def waiting_room_view(request):
             )
             return redirect('hero_registration')
 
-
     else:
         form = HeroForm()
 
-        # Wypełnij formularz danymi z sesji, jeśli istnieją
+        # Wypełnienie formularza danymi z sesji lub ustawienie domyślnych wartości
         if 'form_config_table' in request.session:
-            form_config_table = GameConfigForm(initial=request.session['form_config_table'])
-        else:
-            form_config_table = GameConfigForm() 
+            initial_data = request.session['form_config_table']
+
+    form_config_table = GameConfigForm(initial=initial_data)
 
     return render(request, 'waiting_room.html', {
         'form': form,
-        'form_config_table': form_config_table,
+        'initial_data': initial_data,
         'players': players,
     })
+
+
+
 
 
 def start_game_view(request):
