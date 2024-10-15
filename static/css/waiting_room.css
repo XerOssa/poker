@@ -1,29 +1,4 @@
 /* style.css */
-
-.button {
-  display: grid;
-  padding: 10px 20px;
-  background-color: #0d5097; /* Kolor tła przycisku */
-  color: #030000; /* Kolor tekstu */
-  border: 1px solid #f2f4f5;
-  border-radius: 10px;
-  cursor: pointer;
-  text-decoration: none; /* Usunięcie podkreślenia dla odnośnika */
-  max-width: 150px;
-  text-align: center
-}
-
-table {
-  width: 100%;
-  text-align: center;
-}
-
-th, td {
-  text-align: center;
-  vertical-align: middle;
-}
-
-/* Ogólne ustawienia dla całej strony */
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -32,7 +7,6 @@ body {
   color: #333;
 }
 
-/* Stylizacja dla nagłówka tabeli */
 h2.sub-header {
   text-align: center;
   color: #444;
@@ -40,8 +14,7 @@ h2.sub-header {
   margin-bottom: 20px;
 }
 
-/* Stylizacja dla rules */
-#rule_box {
+#rule_box, #player_box, #input_box {
   width: 80%;
   margin: 0 auto;
   background-color: #fff;
@@ -49,25 +22,6 @@ h2.sub-header {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Stylizacja dla players */
-#player_box {
-  width: 80%;
-  margin: 0 auto;
-  background-color: #fff;
-  padding: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Stylizacja dla players */
-#input_box {
-  width: 80%;
-  margin: 0 auto;
-  background-color: #fff;
-  padding: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Stylizacja dla tabeli */
 .table-responsive {
   overflow-x: auto;
 }
@@ -83,17 +37,13 @@ h2.sub-header {
   padding: 0.75rem;
   vertical-align: middle;
   border-top: 1px solid #dee2e6;
-  text-align: center; /* Add this line */
+  text-align: center; 
 }
 
 .table thead th {
   vertical-align: middle;
   border-bottom: 2px solid #dee2e6;
   background-color: #f8f9fa;
-}
-
-.table tbody + tbody {
-  border-top: 2px solid #dee2e6;
 }
 
 .table-striped tbody tr:nth-of-type(odd) {
@@ -109,12 +59,26 @@ h2.sub-header {
   border: 1px solid #dee2e6;
 }
 
-.table-bordered thead th, .table-bordered thead td {
-  border-bottom-width: 2px;
+.btn {
+  text-align: center;
+  display: inline-block; /* Użycie inline-block */
+  padding: 10px 20px;
+  background-color: #0d5097; /* Kolor tła przycisku */
+  color: #030000; /* Kolor tekstu */
+  border: 1px solid #f2f4f5;
+  border-radius: 10px;
+  cursor: pointer;
+  text-decoration: none; /* Usunięcie podkreślenia dla odnośnika */
+  max-width: 150px;
+  text-align: center; /* Upewnij się, że tekst jest wyśrodkowany */
+  line-height: normal; /* Upewnij się, że linia tekstu jest normalna */
+  overflow: hidden;
+  white-space: nowrap;  /* Nie łami tekstu */
+  text-overflow: ellipsis;  /* Dodaj wielokropek, jeśli tekst jest zbyt długi */
 }
+
 
 .center-input {
   text-align: center;
   width: 100px; /* Dopasuj szerokość wg potrzeb */
 }
-

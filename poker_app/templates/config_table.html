@@ -1,6 +1,6 @@
 <form action="{% url 'waiting_room' %}" method="post" id="initial_data" class="form-inline">
     {% csrf_token %}
-    <table class="table table-striped table-bordered">
+    <table class="table">
         <thead>
             <tr>
                 <th>Stack</th>
@@ -10,13 +10,13 @@
         </thead>
         <tbody>
             <tr>
-                <td style="text-align: center;">
+                <td>
                     {{ form_config_table.initial_stack }}
                 </td>
-                <td style="text-align: center;">
+                <td>
                     {{ form_config_table.small_blind }}
                 </td>
-                <td style="text-align: center;">
+                <td>
                     {{ form_config_table.ante }}
                 </td>
             </tr>
