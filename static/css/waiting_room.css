@@ -13,8 +13,15 @@
   text-align: center
 }
 
+table {
+  width: 100%;
+  text-align: center;
+}
 
-
+th, td {
+  text-align: center;
+  vertical-align: middle;
+}
 
 /* Ogólne ustawienia dla całej strony */
 body {
