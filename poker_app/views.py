@@ -69,7 +69,7 @@ def waiting_room_view(request):
     file_path = 'poker_app/config_players.txt'
     config_players = read_config(file_path)
     players = players_list(config_players)
-
+    
     if request.method == 'POST':
         # request.session.clear()
         
