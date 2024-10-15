@@ -64,27 +64,17 @@ def my_view(request):
 
 
 def waiting_room_view(request):
-    # request.session.clear()
-
+    
     form_config_table_data = {}
     file_path = 'poker_app/config_players.txt'
     config_players = read_config(file_path)
-
     players = players_list(config_players)
 
-    # Inicjujemy initial_data jako domyślną wartość na początku
-    initial_data = {
-        'initial_stack': 77,
-        'small_blind': 1,
-        'ante': 0
-    }
-
-
     if request.method == 'POST':
-        # if 'form_config_table' in request.session:
-        #     del request.session['form_config_table']
-        form = HeroForm(request.POST)
+        # request.session.clear()
+        
         form_config_table = GameConfigForm(request.POST)
+        form = HeroForm(request.POST)               
 
         if form_config_table.is_valid():
             config_data = form_config_table.cleaned_data
@@ -107,7 +97,7 @@ def waiting_room_view(request):
         if form.is_valid():
             hero = form.save(commit=False)
             hero.save()
-            # initial_stack = request.session['game_config'].get('initial_stack')
+            initial_stack = request.session['game_config'].get('initial_stack', 100)
 
             display_id = len(players)
             players.append({
@@ -115,8 +105,8 @@ def waiting_room_view(request):
                 'type': 'human',
                 'name': hero.name,
             })
-            # for player in players:
-            #     player['stack'] = initial_stack
+            for player in players:
+                player['stack'] = initial_stack
 
             request.session['players'] = players
             request.session['hero'] = {'name': hero.name}
@@ -130,19 +120,23 @@ def waiting_room_view(request):
                 }
             )
             return redirect('hero_registration')
-
+        print(form.errors)
+        print(form_config_table.errors)
     else:
         form = HeroForm()
-        if 'form_config_table' in request.session:
-            initial_data = request.session['form_config_table']
 
-    form_config_table = GameConfigForm(initial=initial_data)
+        # Wypełnij formularz danymi z sesji, jeśli istnieją
+        if 'form_config_table' in request.session:
+            form_config_table = GameConfigForm(initial=request.session['form_config_table'])
+        else:
+            form_config_table = GameConfigForm() 
 
     return render(request, 'waiting_room.html', {
         'form': form,
-        'initial_data': initial_data,
+        'form_config_table': form_config_table,
         'players': players,
     })
+
 
 
 
