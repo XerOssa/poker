@@ -148,6 +148,17 @@ body {
   z-index: 0;
 }
 
+.coin {
+  top: 23%;
+  left: 20%;
+  position: absolute;
+  transform: translateX(-40%);
+  width: 7%;
+  height: auto;
+  z-index: 0;
+}
+
+
 .main_pot {
   top: 55%;
   left: 50%;
