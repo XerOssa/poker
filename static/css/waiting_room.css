@@ -7,6 +7,9 @@ body {
   color: #333;
 }
 
+
+
+
 h2.sub-header {
   text-align: center;
   color: #444;
@@ -69,7 +72,7 @@ h2.sub-header {
   border-radius: 10px;
   cursor: pointer;
   text-decoration: none; /* Usunięcie podkreślenia dla odnośnika */
-  max-width: 150px;
+  max-width: 200px;
   text-align: center; /* Upewnij się, że tekst jest wyśrodkowany */
   line-height: normal; /* Upewnij się, że linia tekstu jest normalna */
   overflow: hidden;
@@ -77,8 +80,27 @@ h2.sub-header {
   text-overflow: ellipsis;  /* Dodaj wielokropek, jeśli tekst jest zbyt długi */
 }
 
-
-.center-input {
+.input_config {
   text-align: center;
-  width: 100px; /* Dopasuj szerokość wg potrzeb */
+  width: 100px;
+  padding-left: 100px;
+}
+
+.input_register {
+  width: 120px; /* Dopasuj szerokość wg potrzeb */
+  text-align: center;
+}
+
+.form-group {
+  text-align: center;
+}
+
+input[type="number"] {
+  width: 15%; /* Dopasuj szerokość inputu do komórki */
+  box-sizing: border-box; /* Upewnij się, że padding nie wpłynie na szerokość */
+}
+
+input {
+  text-align: center; /* Wyśrodkowanie tekstu w inputach */
+  padding-left: 15px;
 }

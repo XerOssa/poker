@@ -39,7 +39,7 @@
         
         <form action="{% url 'start_game' %}" method="post" id="start_game_form">
             {% csrf_token %}
-            <div class="form-group" style="text-align: center;">
+            <div class="form-group">
                 <input type="submit" value="Start Poker" class="btn btn-success">
                 <input type="hidden" name="next" value="{{ request.path }}">
             </div>

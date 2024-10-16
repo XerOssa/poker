@@ -1,8 +1,8 @@
 <form action="{% url 'waiting_room' %}" method="post" id="registration_form" class="form-inline">
     {% csrf_token %}
-    <div class="form-group">
+    <div>
         <label for="name">Register Me</label>
-        <input name="name" id="name" class="form-control" placeholder="Enter your name" required>
+        <input name="name" id="name" placeholder="Enter your name" required>
     </div>
     <input type="submit" value="Register" class="btn btn-primary">
     <input type="hidden" name="next" value="{{ request.path }}">
