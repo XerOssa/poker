@@ -23,8 +23,8 @@ class Fish(BasePokerPlayer):  # Do not forget to make parent class as "BasePoker
                 last_raise_amount = raise_action_info["amount"].get("max", 0)
 
         # Determine the action to take
-        # action = random.choice(valid_actions)["action"]
-        action = "fold"
+        action = random.choice(valid_actions)["action"]
+        # action = "fold"
         if action == "raise":
             # Set the maximum raise amount to 2x the last raise amount (taking paid_amount into account)
             max_raise_amount = 2 * last_raise_amount

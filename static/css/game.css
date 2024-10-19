@@ -350,20 +350,20 @@ body {
 .player-5 { top: -80%; left: 30%; }
 
 
-.chip-position-0 { top: -30%; left: 65%; }
-.chip-position-1 { top: 10%; left: 115%; }
+.chip-position-0 { top: -80%; left: 50%; }
+.chip-position-1 { top: 0%; left: 130%; }
 .chip-position-2 { top: 125%; left: 50%; }
-.chip-position-3 { top: 110%; left: 35%; }
-.chip-position-4 { top: 10%; left: -20%; }
+.chip-position-3 { top: 125%; left: 30%; }
+.chip-position-4 { top: 0%; left: -60%; }
 .chip-position-5 { top: -80%; left: 30%; }
 
 .chip-container {
   position: absolute;
-  z-index: 10; /* Żeton nad innymi elementami */
-  display: flex; /* Ustawienie flexbox */
-  flex-direction: column; /* Ustawić kierunek kolumny */
-  align-items: center; /* Wyrównanie do środka (opcjonalne) */
-  padding: 10px; /* Większa przestrzeń wewnętrzna */
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
 }
 
 .chip {
