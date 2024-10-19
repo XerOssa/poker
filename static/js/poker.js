@@ -176,22 +176,24 @@ const updater = {
     },
 
 
+
     updateGame: function(message) {
         console.log("Game update:", message);
         const roundState = message.round_state;
+        const actionHistories = message.action_histories || {};
+        
         if (roundState.pot && roundState.pot.main) {
             $(".main_pot").text("$" + roundState.pot.main.amount);
         }
+        
         this.updateCommunityCards(roundState.community_card);
-        roundState.seats.forEach(this.updatePlayerState.bind(this));
-        highlightNextPlayer(roundState.next_player); 
+        roundState.seats.forEach(player => {
+            this.updatePlayerState(player, actionHistories); // Przekazujemy actionHistories
+        });
+        
+        this.highlightNextPlayer(roundState.next_player); 
     },
-
-
-
     
-
-
     roundResultMessage: function(message) {
         console.log("round Result:", message);
         const resultContainer = $("#round_results");
@@ -215,29 +217,72 @@ const updater = {
     },
 
 
-    updatePlayerState: function(player) {
-        // console.log("wiadomosc player:", player);
+    // updatePlayerState: function(player) {
+    //     const playerDiv = $(`#player-${player.name}`);
+    //     if (playerDiv.length) {
+    //         playerDiv.find(`#player-uuid-${player.name}`).text(`${player.uuid}`);
+    //         playerDiv.find(`#player-stack-${player.name}`).text(`$${player.stack}`);
+
+    //         if (player.state === "folded") {
+    //             playerDiv.find('.material-icons').addClass('inactive');
+    //             playerDiv.find(`#player-cards-human`).hide(); // Ukryj karty, jeśli gracz spasował
+    //         } else {
+    //             playerDiv.find('.material-icons').removeClass('inactive');
+    //             playerDiv.find(`#player-cards-human`).show(); // Pokaż karty, jeśli gracz jest aktywny
+    //         }
+    //             // Logika dodawania żetonów
+    //     if (player.action && (player.action.type === 'raise' || player.action.type === 'bet' || player.action.type === 'call')) {
+    //         const amount = player.action.amount;
+    //         console.log("Action amount:", amount, "Player:", player.name);
+    //         if (amount > 0) {
+    //             renderChip(amount, player.name); // Wywołaj funkcję renderującą żeton dla gracza
+    //         }
+    //     }
+    //     }
+    // },
+
+
+
+    updatePlayerState: function(player, actionHistories) {
         const playerDiv = $(`#player-${player.name}`);
+        
         if (playerDiv.length) {
             playerDiv.find(`#player-uuid-${player.name}`).text(`${player.uuid}`);
             playerDiv.find(`#player-stack-${player.name}`).text(`$${player.stack}`);
-
+    
             if (player.state === "folded") {
                 playerDiv.find('.material-icons').addClass('inactive');
-                playerDiv.find(`#player-cards-human`).hide(); // Ukryj karty, jeśli gracz spasował
+                playerDiv.find(`#player-cards-human`).hide();
             } else {
                 playerDiv.find('.material-icons').removeClass('inactive');
-                playerDiv.find(`#player-cards-human`).show(); // Pokaż karty, jeśli gracz jest aktywny
+                playerDiv.find(`#player-cards-human`).show();
             }
-                // Logika dodawania żetonów
-        if (player.action && (player.action.type === 'raise' || player.action.type === 'bet' || player.action.type === 'call')) {
-            const amount = player.action.amount;
-            if (amount > 0) {
-                renderChip(amount, player.name); // Wywołaj funkcję renderującą żeton dla gracza
+            if (actionHistories) {
+                const playerAction = actionHistories.action_histories.preflop.find(action => action.uuid === player.uuid);
+                if (playerAction) {
+                    if (['raise', 'bet', 'call'].includes(playerAction.action.toLowerCase())) {
+                        const amount = playerAction.amount || 0; // Użyj 0, jeśli amount jest undefined
+                        if (amount > 0) {
+                            this.renderChip(amount, player.name);
+                        }
+                    } else {
+                        console.log(`${player.name} has action: ${playerAction.action}`);
+                    }
+                } else {
+                    console.log(`No action found for player: ${player.uuid}`);
+                }
+            } else {
+                console.warn("actionHistories or actionHistories.preflop is undefined");
             }
-        }
         }
     },
+    
+    
+    
+    
+    
+    
+
 
     
     updateBlinds: function(roundState) {
@@ -305,9 +350,10 @@ const updater = {
 
 
     renderChip: function(amount, player) {
+        console.log("Rendering chip with amount:", amount, "for player:", player);
         const chipContainer = $(`#player-${player} .chip-container`); // Kontener żetonu dla danego gracza
         const chipImage = '<img class="chip" src="/static/images/coin1.png" alt="chip">'; // Zmodyfikuj ścieżkę do obrazu żetonu
-        const amountLabel = `<span class="dealer-token">$${amount}</span>`; // Etykieta z kwotą
+        const amountLabel = `<span class="value">$${amount}</span>`; // Etykieta z kwotą
     
         // Dodaj żeton i kwotę do kontenera
         chipContainer.empty(); // Czyść poprzednie żetony

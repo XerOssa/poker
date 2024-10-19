@@ -352,14 +352,18 @@ body {
 
 .chip-position-0 { top: -30%; left: 65%; }
 .chip-position-1 { top: 10%; left: 115%; }
-.chip-position-2 { top: 110%; left: 50%; }
+.chip-position-2 { top: 125%; left: 50%; }
 .chip-position-3 { top: 110%; left: 35%; }
 .chip-position-4 { top: 10%; left: -20%; }
-.chip-position-5 { top: -30%; left: 35%; }
+.chip-position-5 { top: -80%; left: 30%; }
 
 .chip-container {
   position: absolute;
   z-index: 10; /* Żeton nad innymi elementami */
+  display: flex; /* Ustawienie flexbox */
+  flex-direction: column; /* Ustawić kierunek kolumny */
+  align-items: center; /* Wyrównanie do środka (opcjonalne) */
+  padding: 10px; /* Większa przestrzeń wewnętrzna */
 }
 
 .chip {
@@ -367,12 +371,8 @@ body {
   height: auto;
 }
 
-.dealer-token {
+.value {
   color: #FFF;
-  font-size: 16px;
-  font-weight: bold;
-  position: absolute;
-  top: 5px;
-  left: 5px;
+  font-size: 12px;
 }
 
