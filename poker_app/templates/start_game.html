@@ -29,7 +29,6 @@
                         {% if player.idx == round_state.big_blind_pos %}
                             <span class="label-blind dealer-position-{{round_state.big_blind_pos}}">BB</span>
                         {% endif %}
-                        
                         {% include "player.html" %}
                     </div>
                 {% endfor %}
@@ -51,7 +50,6 @@
         <div>
             {% include "button_action.html" %}
         </div>
-        <img class="coin" src="/static/images/coin1.png">
     </div>
     <script src="{% static 'js/jquery.min.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script>

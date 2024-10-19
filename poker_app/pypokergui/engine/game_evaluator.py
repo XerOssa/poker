@@ -41,12 +41,7 @@ class GameEvaluator:
   @classmethod
   def __find_winners_from(cls, community_card, players):
     score_player = lambda player: HandEvaluator.eval_hand(player.hole_card, community_card)
-    print("score_player: ", score_player)
     active_players = [player for player in players if player.is_active()]
-    if active_players:
-      print("wygrał: ", active_players)
-    else:
-      print("nie ma aktywnych graczy")
     scores = [score_player(player) for player in active_players]
     if scores:
       best_score = max(scores)

@@ -148,15 +148,7 @@ body {
   z-index: 0;
 }
 
-.coin {
-  top: 23%;
-  left: 20%;
-  position: absolute;
-  transform: translateX(-40%);
-  width: 7%;
-  height: auto;
-  z-index: 0;
-}
+
 
 
 .main_pot {
@@ -332,8 +324,6 @@ body {
   position: absolute;
   background-color: #f321a3;
   display: flex;
-  /* justify-content: center; */
-  /* align-items: center; */
 }
 
 .dealer-token {
@@ -341,6 +331,9 @@ body {
   font-size: 16px;
   font-weight: bold;
 }
+
+
+
 
 .dealer-position-0 { top: -30%; left: 60%; }
 .dealer-position-1 { top: 10%; left: 110%; }
@@ -355,3 +348,31 @@ body {
 .player-3 { top: 110%; left: 30%; }
 .player-4 { top: 10%; left: -25%; }
 .player-5 { top: -80%; left: 30%; }
+
+
+.chip-position-0 { top: -30%; left: 65%; }
+.chip-position-1 { top: 10%; left: 115%; }
+.chip-position-2 { top: 110%; left: 50%; }
+.chip-position-3 { top: 110%; left: 35%; }
+.chip-position-4 { top: 10%; left: -20%; }
+.chip-position-5 { top: -30%; left: 35%; }
+
+.chip-container {
+  position: absolute;
+  z-index: 10; /* Żeton nad innymi elementami */
+}
+
+.chip {
+  width: 30px;
+  height: auto;
+}
+
+.dealer-token {
+  color: #FFF;
+  font-size: 16px;
+  font-weight: bold;
+  position: absolute;
+  top: 5px;
+  left: 5px;
+}
+

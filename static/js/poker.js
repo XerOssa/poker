@@ -43,6 +43,7 @@ function activateButton(button) {
     }
 }
 
+
 function declareAction(form) {
     const message = form.formToDict();
     message['type'] = "action_declare_action";
@@ -63,17 +64,6 @@ function declareAction(form) {
     console.log("Hero decision:", message); // Loguj wiadomość
     sendWebSocketMessage("action_declare_action", message);
 }
-
-
-
-function highlightNextPlayer(nextPlayerId) {
-    $(".player-info").removeClass("highlight"); // Usuń podświetlenie od wszystkich
-    if (nextPlayerId !== undefined) {
-        $(`#player-${nextPlayerId} .player-info`).addClass("highlight"); // Dodaj podświetlenie tylko do następnego gracza
-    }
-}
-
-
 
 // Globalna funkcja
 window.activateButton = activateButton;
@@ -189,17 +179,17 @@ const updater = {
     updateGame: function(message) {
         console.log("Game update:", message);
         const roundState = message.round_state;
-        // this.updateBlinds(roundState);                                                  // FIXME: zmiana kolejniosci
         if (roundState.pot && roundState.pot.main) {
             $(".main_pot").text("$" + roundState.pot.main.amount);
         }
         this.updateCommunityCards(roundState.community_card);
-        // Aktualizacja graczy
-        
         roundState.seats.forEach(this.updatePlayerState.bind(this));
-        
-        highlightNextPlayer(roundState.next_player); // Podświetlenie następnego gracza
+        highlightNextPlayer(roundState.next_player); 
     },
+
+
+
+    
 
 
     roundResultMessage: function(message) {
@@ -239,10 +229,17 @@ const updater = {
                 playerDiv.find('.material-icons').removeClass('inactive');
                 playerDiv.find(`#player-cards-human`).show(); // Pokaż karty, jeśli gracz jest aktywny
             }
+                // Logika dodawania żetonów
+        if (player.action && (player.action.type === 'raise' || player.action.type === 'bet' || player.action.type === 'call')) {
+            const amount = player.action.amount;
+            if (amount > 0) {
+                renderChip(amount, player.name); // Wywołaj funkcję renderującą żeton dla gracza
+            }
+        }
         }
     },
-    
 
+    
     updateBlinds: function(roundState) {
         $(".label-dealer, .label-blind").remove();
 
@@ -305,14 +302,18 @@ const updater = {
     sendAction: function(action) {
         sendWebSocketMessage("player_action", { action });
     },
-    
-    // displayChatMessage: function(message) {
-    //     $('#messages').append('<p>' + message + '</p>');
-    // },
 
-    // displayHtmlMessage: function(html) {
-    //     $('#messages').append('<p>Received HTML content</p>');
-    //     console.log('Received HTML content:', html);
-    // },
+
+    renderChip: function(amount, player) {
+        const chipContainer = $(`#player-${player} .chip-container`); // Kontener żetonu dla danego gracza
+        const chipImage = '<img class="chip" src="/static/images/coin1.png" alt="chip">'; // Zmodyfikuj ścieżkę do obrazu żetonu
+        const amountLabel = `<span class="dealer-token">$${amount}</span>`; // Etykieta z kwotą
+    
+        // Dodaj żeton i kwotę do kontenera
+        chipContainer.empty(); // Czyść poprzednie żetony
+        chipContainer.append(chipImage);
+        chipContainer.append(amountLabel);
+    }
 
 };
+
