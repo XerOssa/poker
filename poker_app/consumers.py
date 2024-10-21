@@ -208,10 +208,11 @@ def _parse_destination(destination, game_manager, sockets):
 def _broadcast_message_to_ai(ai_player, message):
     message_type = message['message']['message_type']
     if 'round_start_message' == message_type:
+        round_state = message['message']['round_state']
         round_count = message['message']['round_count']
         hole_card = message['message']['hole_card']
         seats = message['message']['seats']
-        ai_player.receive_round_start_message(round_count, hole_card, seats)
+        ai_player.receive_round_start_message(round_state, round_count, hole_card, seats)
     elif 'street_start_message' == message_type:
         street = message['message']['street']
         round_state = message['message']['round_state']

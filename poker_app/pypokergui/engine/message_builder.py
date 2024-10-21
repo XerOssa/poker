@@ -20,11 +20,12 @@ class MessageBuilder:
     return self.__build_notification_message(message)
 
   @classmethod
-  def build_round_start_message(self, round_count, player_pos, seats):
+  def build_round_start_message(self, round_count, player_pos, seats, state):
     player = seats.players[player_pos]
     hole_card = DataEncoder.encode_player(player, holecard=True)["hole_card"]
     message = {
         "message_type": self.ROUND_START_MESSAGE,
+        "round_state": DataEncoder.encode_round_state(state),
         "round_count": round_count,
         "hole_card": hole_card
     }

@@ -6,6 +6,7 @@ def _gen_game_update_message(message):
     content = {'update_type': message_type}
     
     if 'round_start_message' == message_type:
+        round_state = message['message']['round_state']
         seats = message['message']['seats']
         hero_name = seats[-1]['name']
         round_count = message['message']['round_count']
@@ -13,6 +14,7 @@ def _gen_game_update_message(message):
         content.update({
             'hero_name': hero_name,
             'round_count': round_count,
+            'round_state': round_state,
             'hole_card': hole_card
         })
 

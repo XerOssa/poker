@@ -97,8 +97,8 @@ class ActionChecker:
 
     if can_raise:
         valid_actions.append({"action": "raise", "amount": {"min": min_raise, "max": max_raise}})
-    if can_raise:
-        valid_actions.append({"action": "all_in", "amount": max_raise})
+    # if can_raise:
+    #     valid_actions.append({"action": "all_in", "amount": max_raise})
 
     return valid_actions
 

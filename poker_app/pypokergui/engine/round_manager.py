@@ -20,7 +20,7 @@ class RoundManager:
     cls.__correct_ante(ante_amount, table.seats.players)
     cls.__correct_blind(small_blind_amount, table)
     cls.__deal_holecard(table.deck, table.seats.players)
-    start_msg = cls.__round_start_message(round_count, table)
+    start_msg = cls.__round_start_message(round_count, table,  state)
     state, street_msgs = cls.__start_street(state)
     return state, start_msg + street_msgs
 
@@ -124,9 +124,9 @@ class RoundManager:
       players[idx].append_chip(prize)
 
   @classmethod
-  def __round_start_message(cls, round_count, table):
+  def __round_start_message(cls, round_count, table, state):
     players = table.seats.players
-    gen_msg = lambda idx: (players[idx].uuid, MessageBuilder.build_round_start_message(round_count, idx, table.seats))
+    gen_msg = lambda idx: (players[idx].uuid, MessageBuilder.build_round_start_message(round_count, idx, table.seats, state))
     return reduce(lambda acc, idx: acc + [gen_msg(idx)], range(len(players)), [])
 
   @classmethod

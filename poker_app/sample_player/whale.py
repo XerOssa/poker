@@ -39,7 +39,8 @@ class Whale(BasePokerPlayer):  # Do not forget to make parent class as "BasePoke
             # Ensure min_amount is not greater than max_amount
             if min_amount > max_amount:
                 min_amount, max_amount = max_amount, min_amount
-            amount = random.randint(min_amount, max_amount) if min_amount <= max_amount else min_amount
+            # amount = random.randint(min_amount, max_amount) if min_amount <= max_amount else min_amount
+            amount = 2 * min_amount
         elif action == "call":
             action_info = next((action_info for action_info in valid_actions if action_info["action"] == "call"), None)
             if action_info:
@@ -64,7 +65,7 @@ class Whale(BasePokerPlayer):  # Do not forget to make parent class as "BasePoke
     def receive_game_start_message(self, game_info):
         pass
 
-    def receive_round_start_message(self, round_count, hole_card, seats):
+    def receive_round_start_message(self, round_state, round_count, hole_card, seats):
         pass
 
     def receive_street_start_message(self, street, round_state):
