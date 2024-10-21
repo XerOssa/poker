@@ -140,9 +140,14 @@ const updater = {
         // Zakładamy, że nazwa gracza to 'hero'
         const heroName = message.hero_name;  // Nazwa gracza z wiadomości, może to być również np. message.player_uuid
         const playerCardsContainer = $(`#player-cards-${heroName}`);
-        
+        const roundState = message.round_state;
+        const actionHistories = message.action_histories || {};
+
         playerCardsContainer.empty();  // Czyścimy karty przed nową rundą
-        
+        roundState.seats.forEach(player => {
+            this.updatePlayerState(player, actionHistories);
+        });
+        // console.log("Big blinda płaci:", message.round_state.big_blind);
         // Sprawdzamy, czy mamy dostępne karty hole_card
         if (message.hole_card && message.hole_card.length) {
             console.log("Hero ma:", message.hole_card);
@@ -230,7 +235,9 @@ const updater = {
                 playerDiv.find('.material-icons').removeClass('inactive');
                 playerDiv.find(`#player-cards-human`).show();
             }
-            if (actionHistories) {
+    
+            // Sprawdź, czy istnieje historia akcji dla preflop
+            if (actionHistories && actionHistories.action_histories && actionHistories.action_histories.preflop) {
                 const playerAction = actionHistories.action_histories.preflop.find(action => action.uuid === player.uuid);
                 if (playerAction) {
                     if (['raise', 'bet', 'call'].includes(playerAction.action.toLowerCase())) {
@@ -240,9 +247,12 @@ const updater = {
                         }
                     }
                 }
+            } else {
+                console.warn(`No action history found for player ${player.name} in preflop.`);
             }
         }
     },
+    
     
     
     updateBlinds: function(roundState) {
