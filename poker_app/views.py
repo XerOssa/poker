@@ -124,8 +124,6 @@ def waiting_room_view(request):
         print(form_config_table.errors)
     else:
         form = HeroForm()
-
-        # Wypełnij formularz danymi z sesji, jeśli istnieją
         if 'form_config_table' in request.session:
             form_config_table = GameConfigForm(initial=request.session['form_config_table'])
         else:

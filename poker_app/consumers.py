@@ -132,24 +132,7 @@ class PokerConsumer(AsyncWebsocketConsumer):
                 print("cos nie tak z przebiciem")
 
         return data["action"], amount
-        # amount = 0
-        # if data["action"] == "fold":
-        #     data["amount"] = 0
 
-        # elif data["action"] == "call":
-        #     data["amount"] = actions[1]["amount"]
-        # elif data["action"] == "check":
-        #     data["amount"] = 0
-        # elif data["action"] == "all_in":
-        #     data["amount"] = actions[2]["amount"]
-        # else:
-        #     legal = actions[2]["amount"]
-        #     if legal["min"] <= data["amount"] <= legal["max"]:
-        #         data["amount"] = data["amount"]
-        #     else:
-        #         print("cos nie tak z przebiciem")
-
-        # return data["action"], data["amount"]
 
 
 def setup_config_player(game_config):
@@ -199,12 +182,14 @@ def _find_socket_by_uuid(sockets, uuid):
     target = [sock for sock in sockets if sock.uuid == uuid]
     return target[0] if target else None
 
+
 def _parse_destination(destination, game_manager, sockets):
     if destination == -1:
         return [soc.uuid for soc in sockets] + list(game_manager.ai_players.keys())
     else:
         return [destination]
     
+
 def _broadcast_message_to_ai(ai_player, message):
     message_type = message['message']['message_type']
     if 'round_start_message' == message_type:
