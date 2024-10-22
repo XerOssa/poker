@@ -56,7 +56,8 @@ class GameEvaluator:
   def __gen_hand_info_if_needed(cls, players, community):
     active_players = [player for player in players if player.is_active()]
     gen_hand_info = lambda player: { "uuid": player.uuid, "hand" : HandEvaluator.gen_hand_rank_info(player.hole_card, community) }
-    return [] if len(active_players) == 1 else [gen_hand_info(player) for player in active_players]
+    # return [] if len(active_players) == 1 else [gen_hand_info(player) for player in active_players]
+    return [gen_hand_info(player) for player in active_players]
 
   @classmethod
   def __get_main_pot(cls, players, sidepots):

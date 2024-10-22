@@ -376,3 +376,22 @@ body {
   font-size: 12px;
 }
 
+.cards-container {
+  position: absolute;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+}
+
+.card {
+  width: 60px; /* lub inny rozmiar karty */
+  height: 90px;
+}
+
+.cards-position-0 { top: -80%; left: 50%; }
+.cards-position-1 { top: 0%; left: 130%; }
+.cards-position-2 { top: 125%; left: 50%; }
+.cards-position-3 { top: 125%; left: 30%; }
+.cards-position-4 { top: 0%; left: -60%; }

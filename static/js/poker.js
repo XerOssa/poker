@@ -200,9 +200,10 @@ const updater = {
     },
     
     roundResultMessage: function(message) {
-        console.log("round Result:", message);
-        const resultContainer = $("#round_results");
-        resultContainer.empty();
+        console.log("Round result:", message);
+        const winnerID = message.hand_info; // Załóżmy, że wiadomość zawiera dane o zwycięzcy
+        const winningHand = message.hand_info; // Karty zwycięzcy
+        this.cardsPlayer(winnerID, winningHand); // Przekazanie zwycięzcy i jego kart do funkcji wyświetlającej karty
     },
 
     gameResultMessage: function(message) {
@@ -329,7 +330,24 @@ const updater = {
         chipContainer.empty(); // Czyść poprzednie żetony
         chipContainer.append(chipImage);
         chipContainer.append(amountLabel);
-    }
+    },
 
+    
+    cardsPlayer: function(player, cards) {
+        const cardsContainer = $(`#player-${player.uuid} .cards-container`);
+        
+        cardsContainer.empty(); // Czyść poprzednie karty
+        
+        // Dodaj karty zwycięzcy do kontenera
+        cards.forEach(card => {
+            const cardImage = `<img class="card" src="/static/images/card_${card}.png" alt="${card}">`;
+            cardsContainer.append(cardImage);
+        });
+        
+        // Dodaj odpowiednią klasę CSS dla położenia kart
+        cardsContainer.addClass(`cards-position-${player.position}`);
+    }
+    
+    
 };
 

@@ -1,5 +1,2 @@
-# TODO: kolejnosc wykonywania wczytywania graczy w waiting_room
 # TODO: dodac funkcje ktora czyssci dane przed nastepnym rozdaniem
-# TODO: jak jestem na EP to najpierw mam decyzje a pozniej widze karty (koljenosc wykonywania funkcji)
 # TODO: po showdownie gracze musza pokazać karty
-# TODO: nie pozwol wykonac check jak jest przedemna podbicie badz blindy
