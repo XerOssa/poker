@@ -38,12 +38,10 @@ def _gen_game_update_message(message):
 
     elif 'round_result_message' == message_type:
         round_state = message['message']['round_state']
-        hand_info = message['message']['hand_info']
         winners = message['message']['winners']
         round_count = message['message']['round_count']
         content.update({
             'round_state': round_state,
-            'hand_info': hand_info,
             'winners': winners,
             'round_count': round_count
         })

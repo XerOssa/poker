@@ -93,9 +93,22 @@ class DataEncoder:
     action_histories = { name:histories for name, histories in zip(street_name, street_histories) }
     return { "action_histories": action_histories }
 
+  # @classmethod
+  # def encode_winners(self, winners):
+  #   return { "winners": self.__encode_players(winners) }
+  
+
   @classmethod
   def encode_winners(self, winners):
-    return { "winners": self.__encode_players(winners) }
+      encoded_winners = []
+      
+      for player in winners:
+          winner_data = self.encode_player(player, holecard=True)  # Zakładam, że `holecard=True` zwróci także karty gracza
+          winner_data["hole_card"] = [str(card) for card in player.hole_card]  # Dodajemy karty gracza
+          encoded_winners.append(winner_data)
+
+      return { "winners": encoded_winners }
+
 
   @classmethod
   def encode_round_state(self, state):

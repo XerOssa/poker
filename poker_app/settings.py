@@ -91,6 +91,28 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'INFO',  # Możesz ustawić na 'WARNING' lub wyżej, aby wyciszyć INFO
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django.channels.server': {
+            'handlers': ['console'],
+            'level': 'WARNING',  # Ustawienie na WARNING, aby nie wyświetlać komunikatów INFO
+            'propagate': False,
+        },
+        'django.server': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+    },
+}
 
 LANGUAGE_CODE = 'en-us'
 

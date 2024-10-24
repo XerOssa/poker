@@ -209,8 +209,7 @@ def _broadcast_message_to_ai(ai_player, message):
     elif 'round_result_message' == message_type:
         winners = message['message']['winners']
         round_state = message['message']['round_state']
-        hand_info = message['message']['hand_info']
-        ai_player.receive_round_result_message(winners, hand_info, round_state)
+        ai_player.receive_round_result_message(winners, round_state)
     elif 'game_result_message' == message_type:
         pass
     elif 'ask_message' == message_type:

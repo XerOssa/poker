@@ -201,9 +201,10 @@ const updater = {
     
     roundResultMessage: function(message) {
         console.log("Round result:", message);
-        const winnerID = message.hand_info; // Załóżmy, że wiadomość zawiera dane o zwycięzcy
-        const winningHand = message.hand_info; // Karty zwycięzcy
-        this.cardsPlayer(winnerID, winningHand); // Przekazanie zwycięzcy i jego kart do funkcji wyświetlającej karty
+        const winners = message.winners[0];
+        // console.log("winner id:", winnerID);
+        // console.log("hand:", winningHand);
+        this.cardsPlayer(winners); 
     },
 
     gameResultMessage: function(message) {
@@ -333,19 +334,19 @@ const updater = {
     },
 
     
-    cardsPlayer: function(player, cards) {
-        const cardsContainer = $(`#player-${player.uuid} .cards-container`);
-        
+    cardsPlayer: function(winners) {
+        const cardsContainer = $(`#player-${winners.name} .cards-container`);
+        const hole_card = winners.hole_card;
+        // console.log("winners: ", winners.name, "cards: ", winners.hole_card);  //winners: Fish cards:  ["2c", "2d"]
         cardsContainer.empty(); // Czyść poprzednie karty
         
-        // Dodaj karty zwycięzcy do kontenera
-        cards.forEach(card => {
-            const cardImage = `<img class="card" src="/static/images/card_${card}.png" alt="${card}">`;
+        hole_card.forEach(card => {
+            const cardImage = `<img class="card-player" src="/static/images/card_${card}.png" alt="${card}">`;
             cardsContainer.append(cardImage);
         });
-        
+        position = winners.uuid;
         // Dodaj odpowiednią klasę CSS dla położenia kart
-        cardsContainer.addClass(`cards-position-${player.position}`);
+        cardsContainer.addClass(`cards-position-${position}`);
     }
     
     

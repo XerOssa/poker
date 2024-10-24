@@ -74,7 +74,7 @@ class Random(BasePokerPlayer):  # Do not forget to make parent class as "BasePok
     def receive_game_update_message(self, action, round_state):
         pass
 
-    def receive_round_result_message(self, winners, hand_info, round_state):
+    def receive_round_result_message(self, winners, round_state):
         pass
 
 
