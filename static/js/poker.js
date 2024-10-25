@@ -136,24 +136,19 @@ const updater = {
 
     roundStartMessage: function(message) {
         console.log("Start round:", message);
-    
-        // Zakładamy, że nazwa gracza to 'hero'
-        const heroName = message.hero_name;  // Nazwa gracza z wiadomości, może to być również np. message.player_uuid
+        const heroName = message.hero_name;
         const playerCardsContainer = $(`#player-cards-${heroName}`);
         const roundState = message.round_state;
         const actionHistories = message.action_histories || {};
 
-        playerCardsContainer.empty();  // Czyścimy karty przed nową rundą
+        playerCardsContainer.empty(); 
+        $('.cards-container').empty();
         roundState.seats.forEach(player => {
             this.updatePlayerState(player, actionHistories);
         });
-        // console.log("Big blinda płaci:", message.round_state.big_blind);
-        // Sprawdzamy, czy mamy dostępne karty hole_card
         if (message.hole_card && message.hole_card.length) {
             console.log("Hero ma:", message.hole_card);
             playerCardsContainer.show();
-            
-            // Renderujemy karty
             message.hole_card.forEach(card => {
                 playerCardsContainer.append(`<img class="card" src="/static/images/card_${card}.png" alt="${card}">`);
             });
@@ -202,8 +197,6 @@ const updater = {
     roundResultMessage: function(message) {
         console.log("Round result:", message);
         const winners = message.winners[0];
-        // console.log("winner id:", winnerID);
-        // console.log("hand:", winningHand);
         this.cardsPlayer(winners); 
     },
 
@@ -322,12 +315,9 @@ const updater = {
 
 
     renderChip: function(amount, player) {
-        // console.log("Rendering chip with amount:", amount, "for player:", player);
         const chipContainer = $(`#player-${player} .chip-container`); // Kontener żetonu dla danego gracza
         const chipImage = '<img class="chip" src="/static/images/coin1.png" alt="chip">'; // Zmodyfikuj ścieżkę do obrazu żetonu
         const amountLabel = `<span class="value">$${amount}</span>`; // Etykieta z kwotą
-    
-        // Dodaj żeton i kwotę do kontenera
         chipContainer.empty(); // Czyść poprzednie żetony
         chipContainer.append(chipImage);
         chipContainer.append(amountLabel);
@@ -337,15 +327,12 @@ const updater = {
     cardsPlayer: function(winners) {
         const cardsContainer = $(`#player-${winners.name} .cards-container`);
         const hole_card = winners.hole_card;
-        // console.log("winners: ", winners.name, "cards: ", winners.hole_card);  //winners: Fish cards:  ["2c", "2d"]
         cardsContainer.empty(); // Czyść poprzednie karty
-        
         hole_card.forEach(card => {
             const cardImage = `<img class="card-player" src="/static/images/card_${card}.png" alt="${card}">`;
             cardsContainer.append(cardImage);
         });
         position = winners.uuid;
-        // Dodaj odpowiednią klasę CSS dla położenia kart
         cardsContainer.addClass(`cards-position-${position}`);
     }
     
