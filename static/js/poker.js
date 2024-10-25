@@ -143,6 +143,7 @@ const updater = {
 
         playerCardsContainer.empty(); 
         $('.cards-container').empty();
+        $('.chip-container').empty();
         roundState.seats.forEach(player => {
             this.updatePlayerState(player, actionHistories);
         });
@@ -235,7 +236,7 @@ const updater = {
             if (actionHistories && actionHistories.action_histories && actionHistories.action_histories.preflop) {
                 const playerAction = actionHistories.action_histories.preflop.find(action => action.uuid === player.uuid);
                 if (playerAction) {
-                    if (['raise', 'bet', 'call'].includes(playerAction.action.toLowerCase())) {
+                    if (['smallblind','bigblind', 'raise', 'bet', 'call'].includes(playerAction.action.toLowerCase())) {
                         const amount = playerAction.amount || 0; // Użyj 0, jeśli amount jest undefined
                         if (amount > 0) {
                             this.renderChip(amount, player.name);
@@ -335,7 +336,5 @@ const updater = {
         position = winners.uuid;
         cardsContainer.addClass(`cards-position-${position}`);
     }
-    
-    
 };
 
