@@ -33,6 +33,9 @@ body {
   background-color: #2E7D32;
   border-radius: 350px;
   overflow: hidden;
+  -webkit-box-shadow: 3px 3px 15px 5px rgb(0, 0, 0);
+  -moz-box-shadow: 3px 3px 15px 5px rgba(0, 0, 0);
+  box-shadow: 15px 20px 15px 15px rgb(43, 42, 42);
 }
 
 #round-state-table::before {
@@ -189,7 +192,9 @@ body {
   background-color: rgba(0, 0, 0, 0.5);
   color: #fff;
   font-size: 18px;
-
+  -webkit-box-shadow: 3px 3px 30px 5px rgb(0, 0, 0);
+  -moz-box-shadow: 3px 3px 30px 5px rgba(0, 0, 0);
+  box-shadow: 3px 3px 15px 5px rgba(0, 0, 0);
 }
 
 .seat .seat-body {
@@ -257,8 +262,8 @@ body {
 
 .button-panel {
   position: absolute;
-  top: 85%;
-  left: 50%;
+  top: 87%;
+  left: 43%;
   display: flex;
   flex-direction: row;
   width: 83%;
@@ -268,31 +273,39 @@ body {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
-  align-items: bottom;
-  width: 70%;
+  width: 90%;
 }
 
 .button-action {
   display: inline-block;
-  font-size: 22px;
-  cursor: pointer;
   text-align: center;
   text-decoration: none;
-  outline: none;
+  outline: none; /* Usuwa domyślną obwódkę */
   color: #fff;
   background-color: #040faa;
   border: none;
   border-radius: 20px;
   margin-right: 5px;
+  box-shadow: 5px 5px 10px 5px rgba(0, 0, 0, 0.3);
+  font-size: 17px;
+  padding: 5px;
+  transition-duration: 0.4s;
+  text-transform: uppercase;
+}
+
+.button-action:hover {
+  background-color: aliceblue;
+  color: #040faa;
+  border: 1px solid #040faa;
 }
 
 .button-action.active {
-  border: 2px solid red;
+  background-color: #040faa;
+  color: #fff;
+  border: 2px solid #ffeb3b; /* Jasnożółty kolor obwódki, aby była bardziej widoczna */
+  box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
 }
 
-.hidden {
-  display: none;
-}
 
 /* Stylizacja dla widocznego kontenera */
 .visible {
