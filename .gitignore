@@ -1,3 +1,4 @@
 /djangoenv
 /venv
 /db.sqlite3
+/staticfiles

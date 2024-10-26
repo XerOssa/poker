@@ -9,8 +9,6 @@ body {
   text-align: center;
 }
 
-
-
 .round {
   height: 35px;
   font-size: 2em;
@@ -150,9 +148,6 @@ body {
   height: auto;
   z-index: 0;
 }
-
-
-
 
 .main_pot {
   top: 55%;
@@ -344,9 +339,6 @@ body {
   font-size: 16px;
   font-weight: bold;
 }
-
-
-
 
 .dealer-position-0 { top: -30%; left: 60%; }
 .dealer-position-1 { top: 10%; left: 110%; }
