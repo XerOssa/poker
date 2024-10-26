@@ -153,8 +153,6 @@ const updater = {
             message.hole_card.forEach(card => {
                 playerCardsContainer.append(`<img class="card" src="/static/images/card_${card}.png" alt="${card}">`);
             });
-        } else {
-            console.warn(`${playerName} nie otrzymał kart hole_card.`);
         }
     },
     
@@ -243,8 +241,6 @@ const updater = {
                         }
                     }
                 }
-            } else {
-                console.warn(`No action history found for player ${player.name} in preflop.`);
             }
         }
     },
