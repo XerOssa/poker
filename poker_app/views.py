@@ -3,7 +3,7 @@ import os
 import pandas as pd
 from django.shortcuts import render, redirect
 from django.conf import settings
-from poker_analysis import process_poker_hand, save_to_csv
+from hand_analysis import process_poker_hand, save_to_csv
 from .models import Hero
 from waiting_room_param import players_list, read_config
 from .forms import HeroForm, GameConfigForm
