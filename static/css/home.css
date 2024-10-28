@@ -4,9 +4,9 @@ body {
     background-repeat: no-repeat; /* Wyłączenie powtarzania tła */
 }
 .button {
-    vertical-align: middle;
+    align-items: center;
     width: 200px; /* Szerokość przycisku */
-    height: 50px; /* Wysokość przycisku */
+    height: 30px; /* Wysokość przycisku */
     outline: none; /* Usuwa domyślną obwódkę */
     padding: 10px 20px;
     background-color: #ac1838; /* Kolor tła przycisku */
@@ -23,33 +23,15 @@ body {
     font-size: 22px;
     text-transform: uppercase;
 }
-
-
-.button-action {
-    display: inline-block;
-    text-align: center;
-    text-decoration: none;
-    outline: none; /* Usuwa domyślną obwódkę */
-    color: #fff;
-    background-color: #040faa;
-    border: none;
-    border-radius: 20px;
-    margin-right: 5px;
-    box-shadow: 5px 5px 10px 5px rgba(0, 0, 0, 0.3);
-    font-size: 17px;
-    padding: 5px;
-    transition-duration: 0.4s;
-    text-transform: uppercase;
-  }
   
-  .button-action:hover {
+  .button:hover {
     background-color: aliceblue;
-    color: #040faa;
-    border: 1px solid #040faa;
+    color: #000000;
+    border: 1px solid #000000;
   }
   
-  .button-action.active {
-    background-color: #040faa;
+  .button.active {
+    background-color: #000000;
     color: #fff;
     border: 2px solid #ffeb3b; /* Jasnożółty kolor obwódki, aby była bardziej widoczna */
     box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
@@ -58,7 +40,7 @@ body {
 
 
 .button-container {
-    
+    align-items: center;
     display: flex;
     flex-direction: column; /* Ustawienie kierunku na kolumnę */
     align-items: flex-end; /* Wyrównanie przycisków do prawej */

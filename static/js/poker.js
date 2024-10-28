@@ -143,7 +143,6 @@ const updater = {
 
         playerCardsContainer.empty(); 
         $('.cards-container').empty();
-        $('.chip-container').empty();
         roundState.seats.forEach(player => {
             this.updatePlayerState(player, actionHistories);
         });
@@ -160,6 +159,7 @@ const updater = {
 
     streetStartMessage: function(message) {
         console.log("Start street:", message);
+        $(".chip-container").empty();
         this.renderCommunityCards(message.round_state.community_card);
         this.highlightNextPlayer(message.round_state.next_player);
         const roundState = message.round_state;
@@ -187,7 +187,7 @@ const updater = {
         
         this.updateCommunityCards(roundState.community_card);
         roundState.seats.forEach(player => {
-            this.updatePlayerState(player, actionHistories);
+            this.updatePlayerState(player, actionHistories, roundState);
         });
         
         this.highlightNextPlayer(roundState.next_player); 
@@ -215,7 +215,7 @@ const updater = {
         });
     },
 
-    updatePlayerState: function(player, actionHistories) {
+    updatePlayerState: function(player, actionHistories, roundState) {
         const playerDiv = $(`#player-${player.name}`);
         
         if (playerDiv.length) {
@@ -230,20 +230,26 @@ const updater = {
                 playerDiv.find(`#player-cards-human`).show();
             }
     
-            // Sprawdź, czy istnieje historia akcji dla preflop
-            if (actionHistories && actionHistories.action_histories && actionHistories.action_histories.preflop) {
-                const playerAction = actionHistories.action_histories.preflop.find(action => action.uuid === player.uuid);
-                if (playerAction) {
-                    if (['smallblind','bigblind', 'raise', 'bet', 'call'].includes(playerAction.action.toLowerCase())) {
-                        const amount = playerAction.amount || 0; // Użyj 0, jeśli amount jest undefined
+            // Określenie odpowiedniej fazy na podstawie round_state.street
+            const currentPhase = roundState.street;
+            console.log("round = ", currentPhase);
+            if (actionHistories && actionHistories.action_histories && actionHistories.action_histories[currentPhase]) {
+                const playerActions = actionHistories.action_histories[currentPhase].reverse();
+                console.log("playerActions = ", playerActions);
+                for (let i = playerActions.length - 1; i >= 0; i--) {
+                    const action = playerActions[i];
+                    if (action.uuid === player.uuid && ['smallblind', 'bigblind', 'raise', 'bet', 'call'].includes(action.action.toLowerCase())) {
+                        const amount = action.amount || 0;
                         if (amount > 0) {
                             this.renderChip(amount, player.name);
+                            break;
                         }
                     }
                 }
             }
         }
     },
+    
     
     
     
@@ -315,7 +321,7 @@ const updater = {
         const chipContainer = $(`#player-${player} .chip-container`); // Kontener żetonu dla danego gracza
         const chipImage = '<img class="chip" src="/static/images/coin1.png" alt="chip">'; // Zmodyfikuj ścieżkę do obrazu żetonu
         const amountLabel = `<span class="value">$${amount}</span>`; // Etykieta z kwotą
-        chipContainer.empty(); // Czyść poprzednie żetony
+        chipContainer.empty();
         chipContainer.append(chipImage);
         chipContainer.append(amountLabel);
     },
