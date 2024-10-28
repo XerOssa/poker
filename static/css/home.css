@@ -4,12 +4,10 @@ body {
     background-repeat: no-repeat; /* Wyłączenie powtarzania tła */
 }
 .button {
-    justify-content: center;
-    align-items: center;
-    font-size: 20px;
+    vertical-align: middle;
     width: 200px; /* Szerokość przycisku */
     height: 50px; /* Wysokość przycisku */
-    display: grid;
+    outline: none; /* Usuwa domyślną obwódkę */
     padding: 10px 20px;
     background-color: #ac1838; /* Kolor tła przycisku */
     color: #030000; /* Kolor tekstu */
@@ -18,11 +16,46 @@ body {
     text-decoration: none; /* Usunięcie podkreślenia dla odnośnika */
     max-width: 150px;
     text-align: center;
-    margin-bottom: 10px;
     -webkit-box-shadow: 3px 3px 30px 5px rgb(0, 0, 0);
     -moz-box-shadow: 3px 3px 30px 5px rgba(0, 0, 0);
     box-shadow: 3px 3px 30px 5px rgba(0, 0, 0);
+    transition-duration: 0.4s;
+    font-size: 22px;
+    text-transform: uppercase;
 }
+
+
+.button-action {
+    display: inline-block;
+    text-align: center;
+    text-decoration: none;
+    outline: none; /* Usuwa domyślną obwódkę */
+    color: #fff;
+    background-color: #040faa;
+    border: none;
+    border-radius: 20px;
+    margin-right: 5px;
+    box-shadow: 5px 5px 10px 5px rgba(0, 0, 0, 0.3);
+    font-size: 17px;
+    padding: 5px;
+    transition-duration: 0.4s;
+    text-transform: uppercase;
+  }
+  
+  .button-action:hover {
+    background-color: aliceblue;
+    color: #040faa;
+    border: 1px solid #040faa;
+  }
+  
+  .button-action.active {
+    background-color: #040faa;
+    color: #fff;
+    border: 2px solid #ffeb3b; /* Jasnożółty kolor obwódki, aby była bardziej widoczna */
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+  }
+
+
 
 .button-container {
     

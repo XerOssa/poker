@@ -1,22 +1,42 @@
 import random
+import joblib
 from poker_app.pypokergui.players import BasePokerPlayer
-# PyPokerEngine-master\pokerAI.\Lib.\site-packages.\
-class Tag(BasePokerPlayer):  # Do not forget to make parent class as "BasePokerPlayer"
 
+class Tag(BasePokerPlayer):
+    # def __init__(self):
+        # super().__init__()
+        # # Wczytaj model
+        # self.model = joblib.load("poker_ai_model.pkl")
+    # def declare_action(self, valid_actions, hole_card, round_state):
+    #     # Przetwarzanie danych wejściowych na odpowiedni format
+    #     features = [hole_card, round_state, self.get_stack(), self.get_opponent_last_action()]
+        
+    #     # Przewidywanie akcji
+    #     predicted_action = self.model.predict([features])[0]
+        
+    #     # Przetwarzanie wyjścia na odpowiednią akcję
+    #     action_info = next((action for action in valid_actions if action['action'] == predicted_action), None)
+        
+    #     # Wartość zakładu, jeśli jest potrzebna
+    #     amount = action_info["amount"] if action_info and "amount" in action_info else 0
+        
+    #     print("Fish zagrał:", predicted_action, amount)
+    #     return predicted_action, amount
 
+    # def get_stack(self):
+    #     # Metoda do pobrania stanu stacka gracza
+    #     return self.round_state['seats'][self.seat_position]['stack']
+    
+    # def get_opponent_last_action(self):
+    #     # Metoda do pobrania ostatniej akcji przeciwnika
+    #     return self.round_state['action_histories']['preflop'][-1]['action']
     def declare_action(self, valid_actions, hole_card, round_state):
-    # valid_actions format => [raise_action_info, call_action_info, fold_action_info]
-        # Initialize the last_raise_amount to 0
         last_raise_amount = 0
         paid_amount = 0
-
-        # Find the player's paid amount in the action history
         for action in round_state['action_histories']['preflop']:
             if action['uuid'] == self.uuid:
                 paid_amount = action.get('amount', 0)
                 break
-
-        # Find the last raise amount if available
         if len(valid_actions) > 2:  # Ensure that raise action info is available
             raise_action_info = valid_actions[2]
             if isinstance(raise_action_info["amount"], dict):

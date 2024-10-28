@@ -105,8 +105,8 @@ def build_ai_players(members_info):
 
 
 def _build_ai_player(path):
-    if not AG.healthcheck(path, quiet=True):
-        raise Exception("Failed to setup AI from [ %s ]" % path)
+    # if not AG.healthcheck(path, quiet=True):
+    #     raise Exception("Failed to setup AI from [ %s ]" % path)
     setup_method = AG._import_setup_method(path)
     return setup_method()
 

@@ -1,9 +1,6 @@
-import matplotlib.pyplot as plt
-import os
-import pandas as pd
 from django.shortcuts import render, redirect
 from django.conf import settings
-from hand_analysis import process_poker_hand, save_to_csv
+from hand_analysis import process_poker_hand
 from .models import Hero
 from waiting_room_param import players_list, read_config
 from .forms import HeroForm, GameConfigForm
@@ -27,30 +24,7 @@ def handhistory(request):
     return render(request, 'handhistory.html', {'poker_hands': poker_hands})
 
 
-def charts(request):
-    FILES_PATH = 'hh/*.txt'
-    hands = process_poker_hand(FILES_PATH)
 
-    save_to_csv(hands)
-    df = pd.read_csv('poker_hand.csv')
-    df['cumulative_win_loss'] = df['win_loss'].cumsum()
-    plt.figure(figsize=(15, 4))
-    plt.plot(df.index, df['cumulative_win_loss'])
-    plt.title('Wykres sumy kumulacyjnej win_loss')
-    plt.xlabel('Numer rozdania')
-    plt.ylabel('Suma kumulacyjna win_loss')
-    plt.grid(True)
-
-    plot_filename = 'poker_hand.png'
-    plot_path = os.path.join(settings.MEDIA_ROOT, plot_filename)
-    # plot_path = os.path.join('media', 'poker_hand.png')
-
-    plt.savefig(plot_path)
-    plt.close()
-
-    plot_url = os.path.join(settings.MEDIA_URL, plot_filename)
-    return render(request, 'charts.html', {'plot_url': plot_url})
-    # return render(request, 'charts.html', {'plot_path': plot_path})
 
 
 def my_view(request):

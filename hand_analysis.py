@@ -1,6 +1,9 @@
 import glob
 import re
 import csv
+# from sklearn.model_selection import train_test_split
+# from sklearn.ensemble import RandomForestClassifier
+# from sklearn.metrics import accuracy_score, classification_report
 
 class Hand:
     def __init__(self, hand_text):
@@ -125,52 +128,3 @@ def save_to_csv(hands: list):
 
 
 
-hand_text = """
-Poker Hand #HD1136287140: Hold'em No Limit  ($0.02/$0.05) - 2023/02/25 22:20:13
-Table 'NLHBlue6' 6-max Seat #1 is the button
-Seat 1: Hero ($6.51 in chips)
-Seat 2: cc8457ef ($5.31 in chips)
-Seat 3: 6d5f222 ($5.78 in chips)
-Seat 4: beec2bb ($5 in chips)
-Seat 5: 14e91709 ($4.54 in chips)
-Seat 6: 24cd3922 ($9.54 in chips)
-cc8457ef: posts small blind $0.02
-6d5f222: posts big blind $0.05
-*** HOLE CARDS ***
-Dealt to Hero [6s 6h]
-Dealt to cc8457ef 
-Dealt to 6d5f222 
-Dealt to beec2bb 
-Dealt to 14e91709 
-Dealt to 24cd3922 
-beec2bb: folds
-14e91709: folds
-24cd3922: folds
-Hero: raises $0.05 to $0.1
-cc8457ef: folds
-6d5f222: folds
-Uncalled bet ($0.05) returned to Hero
-*** SHOWDOWN ***
-Hero collected $0.12 from pot
-*** SUMMARY ***
-Total pot $0.12 | Rake $0 | Jackpot $0 | Bingo $0 | Fortune $0
-Seat 1: Hero (button) collected ($0.12)
-Seat 2: cc8457ef (small blind) folded before Flop
-Seat 3: 6d5f222 (big blind) folded before Flop
-Seat 4: beec2bb folded before Flop (didn't bet)
-Seat 5: 14e91709 folded before Flop (didn't bet)
-Seat 6: 24cd3922 folded before Flop (didn't bet)
-"""
-hand = Hand(hand_text)
-
-print(f"Small Blind: {hand.small_blind}")
-print(f"Big Blind: {hand.big_blind}")
-print(f"Hole Cards: {hand.hole_cards}")
-print(f"Preflop Action: {hand.preflop_action}")
-print(f"Flop Action: {hand.flop_action}")
-print(f"Turn Action: {hand.turn_action}")
-print(f"River Action: {hand.river_action}")
-print(f"Showdown Result: {hand.showdown_result}")
-print(f"Total Pot: {hand.total_pot}")
-print(f"Rake: {hand.rake}")
-print(f"Position: {hand.position}")
