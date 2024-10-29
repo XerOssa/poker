@@ -231,18 +231,18 @@ const updater = {
             }
     
             // Określenie odpowiedniej fazy na podstawie round_state.street
-            const currentPhase = roundState.street;
-            console.log("round = ", currentPhase);
-            if (actionHistories && actionHistories.action_histories && actionHistories.action_histories[currentPhase]) {
-                const playerActions = actionHistories.action_histories[currentPhase].reverse();
-                console.log("playerActions = ", playerActions);
-                for (let i = playerActions.length - 1; i >= 0; i--) {
-                    const action = playerActions[i];
-                    if (action.uuid === player.uuid && ['smallblind', 'bigblind', 'raise', 'bet', 'call'].includes(action.action.toLowerCase())) {
-                        const amount = action.amount || 0;
-                        if (amount > 0) {
-                            this.renderChip(amount, player.name);
-                            break;
+            if (roundState && roundState.street === "preflop") {
+                const currentPhase = roundState.street;
+                if (actionHistories && actionHistories.action_histories && actionHistories.action_histories[currentPhase]) {
+                    const playerActions = actionHistories.action_histories[currentPhase].reverse();
+                    for (let i = playerActions.length - 1; i >= 0; i--) {
+                        const action = playerActions[i];
+                        if (action.uuid === player.uuid && ['smallblind', 'bigblind', 'raise', 'bet', 'call'].includes(action.action.toLowerCase())) {
+                            const amount = action.amount || 0;
+                            if (amount > 0) {
+                                this.renderChip(amount, player.name);
+                                break;
+                            }
                         }
                     }
                 }

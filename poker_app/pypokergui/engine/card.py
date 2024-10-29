@@ -86,6 +86,18 @@ percentage_table = {
     "A2o": 0.345, "K2o": 0.490, "Q2o": 0.600, "J2o": 0.685, "T2o": 0.800, "92o": 0.900, "82o": 0.915, "72o": 0.970, "62o": 0.990, "52o": 0.980, "42o": 0.995, "32o": 0.995, "22" : 0.420
 }
 
+preflop_ranges = {
+    "EP": 0.17,
+    "MP": 0.20,
+    "CO": 0.30,
+    "BTN": 0.46,
+    "SB": 0.52,
+}
+
+def get_range(position):
+    return preflop_ranges.get(position.upper(), "Nieznana pozycja")
+
+
 def get_hands_in_range(percentage_table, min_value, max_value):
     hands_in_range = {}
     
@@ -95,10 +107,19 @@ def get_hands_in_range(percentage_table, min_value, max_value):
             
     return hands_in_range
 
-# Użycie funkcji
-range_value = 0.130
-hands_in_selected_range = get_hands_in_range(percentage_table, 0, range_value)
+def is_in_range(hole_card, preflop_ranges, percentage_table):
+    # Pobieramy wartości kart i ich kolory
+    rank1, suit1 = hole_card[0]
+    rank2, suit2 = hole_card[1]
+    
+    # Sprawdzamy, czy karty są suited czy off-suited
+    suited = suit1 == suit2
+    ranks_sorted = ''.join(sorted([rank1, rank2], reverse=True))  # Sortujemy ranki kart
+    
+    # Tworzymy klucz dla ręki z „s” lub „o” na końcu
+    hand_key = f"{ranks_sorted}{'s' if suited else 'o'}"
+    
+    # Sprawdzamy, czy ręka mieści się w zakresie preflop range
+    return percentage_table.get(hand_key, 1) <= preflop_ranges
 
-print("Ręce w zakresie od 0 do 0.030:")
-for hand, value in hands_in_selected_range.items():
-    print(f"{hand}")
+
