@@ -7,17 +7,19 @@ class Random(BasePokerPlayer):
 
     def declare_action(self, valid_actions, hole_card, round_state):
         position = ""
-        player_index = next((i for i, seat in enumerate(round_state["seats"]) if seat['name'] == "Tag"), None)
+        player_index = next((i for i, seat in enumerate(round_state["seats"]) if seat['name'] == "Random"), None)
+        seats = round_state["seats"]
         dealer_pos = round_state["dealer_btn"]
         sb_pos = round_state["small_blind_pos"]
         bb_pos = round_state["big_blind_pos"]
+        seat_count = len(seats)
         if player_index == dealer_pos:
             position = "BTN"
-        elif dealer_pos == (player_index + 1):
+        elif player_index == (dealer_pos + seat_count - 1) % seat_count:
             position = "CO"
-        elif dealer_pos == (player_index + 2):
+        elif player_index == (dealer_pos + seat_count - 2) % seat_count:
             position = "MP"
-        elif dealer_pos == (player_index + 3):
+        elif player_index == (dealer_pos + seat_count - 3) % seat_count:
             position = "EP"
         elif sb_pos == player_index:
             position = "SB"
@@ -48,7 +50,7 @@ class Random(BasePokerPlayer):
 
         if action == "raise":
             max_raise_amount = 2 * last_raise_amount
-            action_info = valid_actions[2]
+            action_info = next((action for action in valid_actions if action["action"] == "raise"), None)
             min_amount = action_info["amount"]["min"]
             max_amount = min(action_info["amount"]["max"], max_raise_amount)
 
@@ -57,7 +59,7 @@ class Random(BasePokerPlayer):
 
             if min_amount > max_amount:
                 min_amount, max_amount = max_amount, min_amount
-            amount = 2 * min_amount
+            amount =  min_amount
         elif action == "call":
             action_info = next((action_info for action_info in valid_actions if action_info["action"] == "call"), None)
             if action_info:

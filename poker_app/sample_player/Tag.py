@@ -32,25 +32,27 @@ class Tag(BasePokerPlayer):
     #     # Metoda do pobrania ostatniej akcji przeciwnika
     #     return self.round_state['action_histories']['preflop'][-1]['action']
     def declare_action(self, valid_actions, hole_card, round_state):
-        Tag_position = ""
+        position = ""
         player_index = next((i for i, seat in enumerate(round_state["seats"]) if seat['name'] == "Tag"), None)
+        seats = round_state["seats"]
         dealer_pos = round_state["dealer_btn"]
         sb_pos = round_state["small_blind_pos"]
         bb_pos = round_state["big_blind_pos"]
+        seat_count = len(seats)
         if player_index == dealer_pos:
-            Tag_position = "BTN"
-        elif dealer_pos == (player_index + 1):
-            Tag_position = "CO"
-        elif dealer_pos == (player_index + 2):
-            Tag_position = "MP"
-        elif dealer_pos == (player_index + 3):
-            Tag_position = "EP"
+            position = "BTN"
+        elif player_index == (dealer_pos + seat_count - 1) % seat_count:
+            position = "CO"
+        elif player_index == (dealer_pos + seat_count - 2) % seat_count:
+            position = "MP"
+        elif player_index == (dealer_pos + seat_count - 3) % seat_count:
+            position = "EP"
         elif sb_pos == player_index:
-            Tag_position = "SB"
+            position = "SB"
         elif bb_pos == player_index:
-            Tag_position = "BB"
+            position = "BB"
 
-        preflop_range = get_range(Tag_position)
+        preflop_range = get_range(position)
         last_raise_amount = 0
         paid_amount = 0
 
@@ -74,7 +76,9 @@ class Tag(BasePokerPlayer):
 
         if action == "raise":
             max_raise_amount = 2 * last_raise_amount
-            action_info = valid_actions.get("raise", None)
+            # Szukamy akcji "raise" w liście valid_actions
+            action_info = next((action for action in valid_actions if action["action"] == "raise"), None)
+
             min_amount = action_info["amount"]["min"]
             max_amount = min(action_info["amount"]["max"], max_raise_amount)
 
@@ -83,7 +87,7 @@ class Tag(BasePokerPlayer):
 
             if min_amount > max_amount:
                 min_amount, max_amount = max_amount, min_amount
-            amount = 2 * min_amount
+            amount = min_amount
         elif action == "call":
             action_info = next((action_info for action_info in valid_actions if action_info["action"] == "call"), None)
             if action_info:
