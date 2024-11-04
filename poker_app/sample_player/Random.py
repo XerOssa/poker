@@ -30,22 +30,27 @@ class Random(BasePokerPlayer):
         last_raise_amount = 0
         paid_amount = 0
 
+
+        raise_action_info = valid_actions[2]
+        if isinstance(raise_action_info["amount"], dict):
+            last_raise_amount = raise_action_info["amount"].get("max", 0)
+
+        action = random.choice(valid_actions)["action"]
+
+        has_raise_action = any(action['action'] == 'raise' for action in round_state['action_histories']['preflop'])
+        
+        
+        # Przechodzimy przez historię akcji, aby znaleźć płaconą kwotę dla gracza
         for action in round_state['action_histories']['preflop']:
             if action['uuid'] == self.uuid:
                 paid_amount = action.get('amount', 0)
                 break
-        if len(valid_actions) > 2:
-            raise_action_info = valid_actions[2]
-            if isinstance(raise_action_info["amount"], dict):
-                last_raise_amount = raise_action_info["amount"].get("max", 0)
-
-        action = random.choice(valid_actions)["action"]
-
-        if round_state['street'] == "preflop":
-            if is_in_range(hole_card, preflop_range, percentage_table):
-                action = "raise"
-            else:
-                action = "fold"
+        if not has_raise_action:
+            if round_state['street'] == "preflop":
+                if is_in_range(hole_card, preflop_range, percentage_table):
+                    action = "raise"
+                else:
+                    action = "fold"
 
 
         if action == "raise":

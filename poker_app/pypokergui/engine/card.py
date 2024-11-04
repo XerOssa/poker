@@ -92,6 +92,7 @@ preflop_ranges = {
     "CO": 0.30,
     "BTN": 0.46,
     "SB": 0.52,
+    "BB": 0.48,
 }
 
 def get_range(position):
@@ -108,18 +109,28 @@ def get_hands_in_range(percentage_table, min_value, max_value):
     return hands_in_range
 
 def is_in_range(hole_card, preflop_ranges, percentage_table):
+    # Definiujemy hierarchię kart
+    rank_order = {'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, 'T': 10,
+                  'J': 11, 'Q': 12, 'K': 13, 'A': 14}
+
     # Pobieramy wartości kart i ich kolory
     rank1, suit1 = hole_card[0]
     rank2, suit2 = hole_card[1]
     
     # Sprawdzamy, czy karty są suited czy off-suited
     suited = suit1 == suit2
-    ranks_sorted = ''.join(sorted([rank1, rank2], reverse=True))  # Sortujemy ranki kart
-    
+
+    # Sortujemy karty według hierarchii
+    if rank_order[rank1] > rank_order[rank2]:
+        ranks_sorted = rank1 + rank2
+    else:
+        ranks_sorted = rank2 + rank1
+
     # Tworzymy klucz dla ręki z „s” lub „o” na końcu
     hand_key = f"{ranks_sorted}{'s' if suited else 'o'}"
     
     # Sprawdzamy, czy ręka mieści się w zakresie preflop range
     return percentage_table.get(hand_key, 1) <= preflop_ranges
+
 
 
