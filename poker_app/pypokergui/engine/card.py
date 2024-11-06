@@ -92,7 +92,7 @@ preflop_ranges = {
     "CO": 0.30,
     "BTN": 0.46,
     "SB": 0.52,
-    "BB": 0.48,
+    "BB": 0
 }
 
 def get_range(position):

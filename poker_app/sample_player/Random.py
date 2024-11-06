@@ -1,35 +1,22 @@
 import random
-from poker_app.pypokergui.players import BasePokerPlayer
+from poker_app.pypokergui.players import BasePokerPlayer, get_player_position
 from poker_app.pypokergui.engine.card import get_range, is_in_range, percentage_table
 
 class Random(BasePokerPlayer):
 
-
     def declare_action(self, valid_actions, hole_card, round_state):
-        position = ""
         player_index = next((i for i, seat in enumerate(round_state["seats"]) if seat['name'] == "Random"), None)
         seats = round_state["seats"]
         dealer_pos = round_state["dealer_btn"]
         sb_pos = round_state["small_blind_pos"]
         bb_pos = round_state["big_blind_pos"]
         seat_count = len(seats)
-        if player_index == dealer_pos:
-            position = "BTN"
-        elif player_index == (dealer_pos + seat_count - 1) % seat_count:
-            position = "CO"
-        elif player_index == (dealer_pos + seat_count - 2) % seat_count:
-            position = "MP"
-        elif player_index == (dealer_pos + seat_count - 3) % seat_count:
-            position = "EP"
-        elif sb_pos == player_index:
-            position = "SB"
-        elif bb_pos == player_index:
-            position = "BB"
-
+        
+        position = get_player_position(player_index, dealer_pos, sb_pos, bb_pos, seat_count)
+        
         preflop_range = get_range(position)
         last_raise_amount = 0
         paid_amount = 0
-
 
         raise_action_info = valid_actions[2]
         if isinstance(raise_action_info["amount"], dict):
@@ -37,25 +24,22 @@ class Random(BasePokerPlayer):
 
         action = random.choice(valid_actions)["action"]
 
-        has_raise_action = any(action['action'] == 'raise' for action in round_state['action_histories']['preflop'])
+        has_raise_action = any(old_action['action'] == 'RAISE' for old_action in round_state['action_histories']['preflop'])
         
-        
-        # Przechodzimy przez historię akcji, aby znaleźć płaconą kwotę dla gracza
-        for action in round_state['action_histories']['preflop']:
-            if action['uuid'] == self.uuid:
-                paid_amount = action.get('amount', 0)
+        for last_action in round_state['action_histories']['preflop']:
+            if last_action['uuid'] == self.uuid:
+                paid_amount = last_action.get('amount', 0)
                 break
-        if not has_raise_action:
-            if round_state['street'] == "preflop":
-                if is_in_range(hole_card, preflop_range, percentage_table):
-                    action = "raise"
-                else:
-                    action = "fold"
-
+        
+        if not has_raise_action and round_state['street'] == "preflop":
+            if is_in_range(hole_card, preflop_range, percentage_table):
+                action = "raise"
+        else:
+            action = "fold"
 
         if action == "raise":
             max_raise_amount = 2 * last_raise_amount
-            action_info = next((action for action in valid_actions if action["action"] == "raise"), None)
+            action_info = next((old_action for old_action in valid_actions if old_action["action"] == "raise"), None)
             min_amount = action_info["amount"]["min"]
             max_amount = min(action_info["amount"]["max"], max_raise_amount)
 
@@ -64,23 +48,20 @@ class Random(BasePokerPlayer):
 
             if min_amount > max_amount:
                 min_amount, max_amount = max_amount, min_amount
-            amount =  min_amount
+            amount = min_amount
         elif action == "call":
             action_info = next((action_info for action_info in valid_actions if action_info["action"] == "call"), None)
-            if action_info:
-                amount = action_info["amount"]
+            amount = action_info["amount"] if action_info else 0
         elif action == "fold":
             action_info = next((action_info for action_info in valid_actions if action_info["action"] == "fold"), None)
-            if action_info:
-                amount = action_info["amount"]
+            amount = action_info["amount"] if action_info else 0
         elif action == "check":
             action_info = next((action_info for action_info in valid_actions if action_info["action"] == "check"), None)
-            if action_info:
-                amount = action_info["amount"]              
+            amount = action_info["amount"] if action_info else 0
         elif action == "all_in":
             action_info = next((action_info for action_info in valid_actions if action_info["action"] == "all_in"), None)
-            if action_info:
-                amount = action_info["amount"]
+            amount = action_info["amount"] if action_info else 0
+
         print("Random zagrał:", action, amount)
         return action, amount
 

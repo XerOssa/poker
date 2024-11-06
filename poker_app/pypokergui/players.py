@@ -107,3 +107,17 @@ class BasePokerPlayer(object):
     round_state = message["round_state"]
     return winners, hand_info, round_state
 
+def get_player_position(player_index, dealer_pos, sb_pos, bb_pos, seat_count):
+  if player_index == dealer_pos:
+      return "BTN"
+  elif player_index == (dealer_pos + seat_count - 1) % seat_count:
+      return "CO"
+  elif player_index == (dealer_pos + seat_count - 2) % seat_count:
+      return "MP"
+  elif player_index == (dealer_pos + seat_count - 3) % seat_count:
+      return "EP"
+  elif sb_pos == player_index:
+      return "SB"
+  elif bb_pos == player_index:
+      return "BB"
+  return ""
