@@ -1,8 +1,9 @@
 import glob
 import re
 import csv
-# from sklearn.model_selection import train_test_split
-# from sklearn.ensemble import RandomForestClassifier
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
 # from sklearn.metrics import accuracy_score, classification_report
 
 class Hand:
@@ -38,7 +39,9 @@ class Hand:
         if text:
             if re.search(r'Hero: folds', text):
                 return 'F', '0.00'
-            for action in ['calls', 'checks', 'bets', 'raises']:
+            if re.search(r'Hero: checks', text):
+                return 'X', '0.00'
+            for action in ['calls', 'bets', 'raises']:
                 match = re.search(f'Hero: {action} \\$(\\d+\\.\\d+)', text)
                 if match:
                     return action[0].upper(), match.group(1)
@@ -62,7 +65,12 @@ class Hand:
         position_start = self.hand_text.find('Table')
         position_end = self.hand_text.find('*** HOLE CARDS ***')
         position_text = self.hand_text[position_start:position_end]
-
+        sb_hero = re.search(r'Hero: posts small blind \$(\d+\.\d+)', self.hand_text)
+        bb_hero = re.search(r'Hero: posts big blind \$(\d+\.\d+)', self.hand_text)
+        if sb_hero:
+            return 'SB'
+        if bb_hero:
+            return 'BB'
         if position_text:
             seat_button_match = re.search(r'Seat #(\d+) is the button', position_text)
             seat_button = int(seat_button_match.group(1)) if seat_button_match else None
@@ -79,7 +87,7 @@ class Hand:
                 if members == 5:
                     return 'MP' if seat_hero == (seat_button - 2) % members else 'CO'
                 if members > 5:
-                    return 'UTG' if seat_hero == (seat_button - 3) % members else 'MP'
+                    return 'EP' if seat_hero == (seat_button - 3) % members else 'MP'
         return None
 
     def line(self):
@@ -112,19 +120,79 @@ def process_poker_hand(FILES_PATH: str) -> list:
 
 
 def from_text(text: str) -> Hand:
-    return Hand(text)  # Przekazujemy tekst do klasy Hand
+    return Hand(text)
 
 
 def save_to_csv(hands: list):
     filename = './poker_hand.csv'
     with open(filename, 'w', newline='') as csvfile:
-        fieldnames = ['Hand_ID', 'stakes', 'date', 'win_loss']
+        fieldnames = ['hole_cards', 'preflop_action', 'position']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
 
         for hand in hands:
-            # Upewnij się, że dodasz odpowiednie atrybuty w klasie Hand
-            writer.writerow({'Hand_ID': hand.hand_text, 'stakes': hand.big_blind, 'date': '', 'win_loss': hand.showdown_result})
+            # Sprawdzamy, czy wszystkie wymagane pola są obecne
+            if hand.hole_cards and hand.preflop_action and hand.position:
+                writer.writerow({
+                    'hole_cards': hand.hole_cards,
+                    'position': hand.position,
+                    'preflop_action': hand.preflop_action
+                })
 
 
 
+position_map = {'EP': 0, 'MP': 1, 'CO': 2, 'BTN': 3, 'SB': 4, 'BB': 5}
+action_map = {'fold': 0, 'raise': 1}
+
+FILES_PATH = 'hh/*.txt'
+
+
+def process_hand_cards(hand):
+    # Przykład: "AdKd" -> [14, 13] (A = 14, K = 13)
+    card_values = {'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, 'T': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14}
+    
+    card1, card2 = hand[0:2], hand[3:5]
+    return [card_values[card1[0]], card_values[card2[0]]]
+
+
+# Procesowanie plików z rozdaniami pokerowymi i utworzenie obiektów Hand
+hands = process_poker_hand(FILES_PATH)
+
+# Zapisanie wyników do pliku CSV
+save_to_csv(hands)
+
+df = pd.read_csv('poker_hand.csv')
+
+df['hole_cards_processed'] = df['hole_cards'].apply(process_hand_cards)
+df['position_processed'] = df['position'].map(position_map)
+df['preflop_action_processed'] = df['preflop_action'].apply(lambda x: x[0] if isinstance(x, tuple) else x)
+
+# Mapowanie akcji na wartości liczbowe
+df['preflop_action_processed'] = df['preflop_action_processed'].map(action_map)
+
+# Sprawdzanie, czy są jakieś NaN
+print(df['preflop_action_processed'].isnull().sum())
+
+# Ewentualne uzupełnienie brakujących danych (np. domyślnie 'fold')
+df['preflop_action_processed'] = df['preflop_action_processed'].fillna(0)
+
+
+# Przygotowanie cech (features) i etykiety docelowej (target)
+X = pd.DataFrame(df['hole_cards_processed'].tolist(), columns=['card1', 'card2'])
+X['position'] = df['position_processed']
+y = df['preflop_action_processed']
+
+# Podział na zestawy treningowy i testowy
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Inicjalizacja i trenowanie modelu
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+model.fit(X_train, y_train)
+
+# Przykładowa ręka do predykcji
+sample_hand = ['Ad Kd', 'BTN']
+sample_hand_processed = process_hand_cards(sample_hand[0]) + [position_map[sample_hand[1]]]
+
+# Predykcja akcji
+decision = model.predict([sample_hand_processed])
+print("Decision:", "raise" if decision == 1 else "fold")
