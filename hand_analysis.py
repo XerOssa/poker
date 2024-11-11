@@ -4,7 +4,7 @@ import csv
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
-# from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import accuracy_score, classification_report
 
 class Hand:
     def __init__(self, hand_text):
@@ -142,7 +142,7 @@ def save_to_csv(hands: list):
 
 
 position_map = {'EP': 0, 'MP': 1, 'CO': 2, 'BTN': 3, 'SB': 4, 'BB': 5}
-action_map = {'fold': 0, 'raise': 1}
+action_map = {'F': 0, 'R': 1}
 
 FILES_PATH = 'hh/*.txt'
 
@@ -162,19 +162,16 @@ hands = process_poker_hand(FILES_PATH)
 save_to_csv(hands)
 
 df = pd.read_csv('poker_hand.csv')
+df = df[df['preflop_action'] != "('', '0.00')"]
 
 df['hole_cards_processed'] = df['hole_cards'].apply(process_hand_cards)
 df['position_processed'] = df['position'].map(position_map)
-df['preflop_action_processed'] = df['preflop_action'].apply(lambda x: x[0] if isinstance(x, tuple) else x)
+df['preflop_action_type'] = df['preflop_action'].apply(lambda x: eval(x)[0] if isinstance(eval(x), tuple) else '')
+df['preflop_action_processed'] = df['preflop_action_type'].map(action_map)
+df['preflop_action_processed'] = df['preflop_action_processed'].fillna(0)
 
 # Mapowanie akcji na wartości liczbowe
-df['preflop_action_processed'] = df['preflop_action_processed'].map(action_map)
-
-# Sprawdzanie, czy są jakieś NaN
-print(df['preflop_action_processed'].isnull().sum())
-
-# Ewentualne uzupełnienie brakujących danych (np. domyślnie 'fold')
-df['preflop_action_processed'] = df['preflop_action_processed'].fillna(0)
+# df['preflop_action_processed'] = df['preflop_action_processed'].map(action_map)
 
 
 # Przygotowanie cech (features) i etykiety docelowej (target)
@@ -188,7 +185,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 # Inicjalizacja i trenowanie modelu
 model = RandomForestClassifier(n_estimators=100, random_state=42)
 model.fit(X_train, y_train)
-
+y_pred = model.predict(X_test)
 # Przykładowa ręka do predykcji
 sample_hand = ['Ad Kd', 'BTN']
 sample_hand_processed = process_hand_cards(sample_hand[0]) + [position_map[sample_hand[1]]]
@@ -196,3 +193,6 @@ sample_hand_processed = process_hand_cards(sample_hand[0]) + [position_map[sampl
 # Predykcja akcji
 decision = model.predict([sample_hand_processed])
 print("Decision:", "raise" if decision == 1 else "fold")
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {accuracy:.2f}")
+print(df['preflop_action_processed'].value_counts())
