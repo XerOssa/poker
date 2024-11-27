@@ -2,10 +2,11 @@ import glob
 import re
 import csv
 import pandas as pd
+import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report
-
+from poker_app.pypokergui.engine.card import processed_hand, percentage_table
 class Hand:
     def __init__(self, hand_text):
         self.hand_text = hand_text
@@ -148,7 +149,7 @@ FILES_PATH = 'hh/*.txt'
 
 
 def process_hand_cards(hand):
-    # Przykład: "AdKd" -> [14, 13] (A = 14, K = 13)
+    # Przykład: 'Ad Kd' -> [14, 13] (A = 14, K = 13)
     card_values = {'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, 'T': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14}
     
     card1, card2 = hand[0:2], hand[3:5]
@@ -187,12 +188,18 @@ model = RandomForestClassifier(n_estimators=100, random_state=42)
 model.fit(X_train, y_train)
 y_pred = model.predict(X_test)
 # Przykładowa ręka do predykcji
+predict_hand = ['Ad', 'Kd']
+# is_in_range(hole_card, preflop_range, percentage_table):
 sample_hand = ['Ad Kd', 'BTN']
+hand_as_range = processed_hand(predict_hand, percentage_table)
 sample_hand_processed = process_hand_cards(sample_hand[0]) + [position_map[sample_hand[1]]]
 
 # Predykcja akcji
+probabilities = np.round(model.predict_proba([sample_hand_processed]), 2)
+
 decision = model.predict([sample_hand_processed])
+print("Probabilities:", probabilities)
 print("Decision:", "raise" if decision == 1 else "fold")
 accuracy = accuracy_score(y_test, y_pred)
 print(f"Accuracy: {accuracy:.2f}")
-print(df['preflop_action_processed'].value_counts())
+# print(df['preflop_action_processed'].value_counts())

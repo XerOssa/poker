@@ -33,7 +33,7 @@ class Fish(BasePokerPlayer):
                 break
         
         if not has_raise_action and round_state['street'] == "preflop":
-            if is_in_range(hole_card, preflop_range, percentage_table):
+            if is_in_range(hole_card, preflop_range):
                 action = "raise"
         else:
             action = "fold"
