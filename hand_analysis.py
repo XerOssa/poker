@@ -132,13 +132,21 @@ def save_to_csv(hands: list):
         writer.writeheader()
 
         for hand in hands:
-            # Sprawdzamy, czy wszystkie wymagane pola są obecne
-            if hand.hole_cards and hand.preflop_action and hand.position:
-                writer.writerow({
-                    'hole_cards': hand.hole_cards,
-                    'position': hand.position,
-                    'preflop_action': hand.preflop_action
-                })
+            # print(hand.hole_cards, hand.preflop_action, hand.position)  
+            action, _ = hand.preflop_action
+            # print(action)
+            # Sprawdzenie, czy pola nie są puste
+            if action:
+                if hand.hole_cards and action and hand.position:
+                # Zmiana formatu kart
+                    cards = hand.hole_cards.split()  # Rozdzielenie np. '6d Ac' na ['6d', 'Ac']
+                    hole_cards_tuple = tuple(cards)  # Zamiana na ('6d', 'Ac')
+
+                    writer.writerow({
+                        'hole_cards': hole_cards_tuple,  # Zapisujemy jako tuple
+                        'position': hand.position,
+                        'preflop_action': action  # Zapisujemy tylko akcję (np. 'F', 'R')
+                    })
 
 
 
@@ -148,12 +156,12 @@ action_map = {'F': 0, 'R': 1}
 FILES_PATH = 'hh/*.txt'
 
 
-def process_hand_cards(hand):
-    # Przykład: 'Ad Kd' -> [14, 13] (A = 14, K = 13)
-    card_values = {'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, 'T': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14}
+# def process_hand_cards(hand):
+#     # Przykład: 'Ad Kd' -> [14, 13] (A = 14, K = 13)
+#     card_values = {'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, 'T': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14}
     
-    card1, card2 = hand[0:2], hand[3:5]
-    return [card_values[card1[0]], card_values[card2[0]]]
+#     card1, card2 = hand[0:2], hand[3:5]
+#     return [card_values[card1[0]], card_values[card2[0]]]
 
 
 # Procesowanie plików z rozdaniami pokerowymi i utworzenie obiektów Hand
@@ -163,23 +171,33 @@ hands = process_poker_hand(FILES_PATH)
 save_to_csv(hands)
 
 df = pd.read_csv('poker_hand.csv')
-df = df[df['preflop_action'] != "('', '0.00')"]
+# df = df[df['preflop_action'] != "('', '0.00')"]
 
-df['hole_cards_processed'] = df['hole_cards'].apply(process_hand_cards)
+# df['hole_cards_processed'] = df['hole_cards'].apply(processed_hand)   # [['6d Ac', "('F', '0.00')", 'CO', list([6, 14])]
+
+# Wyświetlenie wybranych kolumn
+
 df['position_processed'] = df['position'].map(position_map)
-df['preflop_action_type'] = df['preflop_action'].apply(lambda x: eval(x)[0] if isinstance(eval(x), tuple) else '')
-df['preflop_action_processed'] = df['preflop_action_type'].map(action_map)
-df['preflop_action_processed'] = df['preflop_action_processed'].fillna(0)
+df = df.dropna(subset=['position_processed'])   #[['6d Ac', "('F', '0.00')", 'CO', list([6, 14]), 2],
+df['hole_cards'] = df['hole_cards'].apply(lambda x: eval(x) if isinstance(x, str) else x)
 
-# Mapowanie akcji na wartości liczbowe
-# df['preflop_action_processed'] = df['preflop_action_processed'].map(action_map)
-
+# df['preflop_action_type'] = df['preflop_action'].apply(lambda x: eval(x)[0] if isinstance(eval(x), tuple) else '')
+df['preflop_action_processed'] = df['preflop_action'].map(action_map)   #'hole_cards', 'preflop_action', 'position', 'hole_cards_processed','position_processed', 'preflop_action_type', 'preflop_action_processed'],
+df['preflop_action_processed'] = df['preflop_action_processed'].fillna(0)   #['hole_cards', 'preflop_action', 'position', 'hole_cards_processed','position_processed', 'preflop_action_type', 'preflop_action_processed'],
+print(df['preflop_action_processed'])
 
 # Przygotowanie cech (features) i etykiety docelowej (target)
-X = pd.DataFrame(df['hole_cards_processed'].tolist(), columns=['card1', 'card2'])
-X['position'] = df['position_processed']
-y = df['preflop_action_processed']
+X = pd.DataFrame({
+    'hand_strength': df['hole_cards'].apply(lambda hand: processed_hand(hand, percentage_table)),
+    'position': df['position_processed']
+})
 
+# print("X:", X)
+# print(X.isnull().sum())
+y = df['preflop_action_processed']
+print(y.value_counts(normalize=True))
+
+# print("y:", y)
 # Podział na zestawy treningowy i testowy
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
@@ -188,12 +206,10 @@ model = RandomForestClassifier(n_estimators=100, random_state=42)
 model.fit(X_train, y_train)
 y_pred = model.predict(X_test)
 # Przykładowa ręka do predykcji
-predict_hand = ['Ad', 'Kd']
-# is_in_range(hole_card, preflop_range, percentage_table):
-sample_hand = ['Ad Kd', 'BTN']
-hand_as_range = processed_hand(predict_hand, percentage_table)
-sample_hand_processed = process_hand_cards(sample_hand[0]) + [position_map[sample_hand[1]]]
-
+sample_hand = [('Ad', 'Ks'), 'BTN']
+hand_strength = processed_hand(sample_hand[0], percentage_table)
+sample_hand_processed = [hand_strength, position_map[sample_hand[1]]]
+print("sample_hand_processed:", sample_hand_processed)
 # Predykcja akcji
 probabilities = np.round(model.predict_proba([sample_hand_processed]), 2)
 
