@@ -127,7 +127,7 @@ def from_text(text: str) -> Hand:
 def save_to_csv(hands: list):
     filename = './poker_hand.csv'
     with open(filename, 'w', newline='') as csvfile:
-        fieldnames = ['hole_cards', 'preflop_action', 'position']
+        fieldnames = ['hole_cards', 'preflop_action', 'position', 'sample_hand_strength']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
 
@@ -141,11 +141,12 @@ def save_to_csv(hands: list):
                 # Zmiana formatu kart
                     cards = hand.hole_cards.split()  # Rozdzielenie np. '6d Ac' na ['6d', 'Ac']
                     hole_cards_tuple = tuple(cards)  # Zamiana na ('6d', 'Ac')
-
+                    sample_hand_strength  = processed_hand(hole_cards_tuple, percentage_table)  # Obliczenie siły kart
                     writer.writerow({
                         'hole_cards': hole_cards_tuple,  # Zapisujemy jako tuple
                         'position': hand.position,
-                        'preflop_action': action  # Zapisujemy tylko akcję (np. 'F', 'R')
+                        'preflop_action': action,  # Zapisujemy tylko akcję (np. 'F', 'R')
+                        'sample_hand_strength': sample_hand_strength
                     })
 
 
@@ -184,7 +185,7 @@ df['hole_cards'] = df['hole_cards'].apply(lambda x: eval(x) if isinstance(x, str
 # df['preflop_action_type'] = df['preflop_action'].apply(lambda x: eval(x)[0] if isinstance(eval(x), tuple) else '')
 df['preflop_action_processed'] = df['preflop_action'].map(action_map)   #'hole_cards', 'preflop_action', 'position', 'hole_cards_processed','position_processed', 'preflop_action_type', 'preflop_action_processed'],
 df['preflop_action_processed'] = df['preflop_action_processed'].fillna(0)   #['hole_cards', 'preflop_action', 'position', 'hole_cards_processed','position_processed', 'preflop_action_type', 'preflop_action_processed'],
-print(df['preflop_action_processed'])
+# print(df['preflop_action_processed'])
 
 # Przygotowanie cech (features) i etykiety docelowej (target)
 X = pd.DataFrame({
