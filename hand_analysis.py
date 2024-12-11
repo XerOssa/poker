@@ -124,6 +124,11 @@ def from_text(text: str) -> Hand:
     return Hand(text)
 
 
+def save_to_csv(data, filename='poker_hand.csv'):
+    data.to_csv(filename, index=False)
+
+
+
 def save_to_csv(hands: list):
     filename = './poker_hand.csv'
     with open(filename, 'w', newline='') as csvfile:
@@ -141,12 +146,12 @@ def save_to_csv(hands: list):
                 # Zmiana formatu kart
                     cards = hand.hole_cards.split()  # Rozdzielenie np. '6d Ac' na ['6d', 'Ac']
                     hole_cards_tuple = tuple(cards)  # Zamiana na ('6d', 'Ac')
-                    sample_hand_strength  = processed_hand(hole_cards_tuple, percentage_table)  # Obliczenie siły kart
+                    sample_hand_top_range  = processed_hand(hole_cards_tuple, percentage_table)  # Obliczenie siły kart
                     writer.writerow({
                         'hole_cards': hole_cards_tuple,  # Zapisujemy jako tuple
                         'position': hand.position,
                         'preflop_action': action,  # Zapisujemy tylko akcję (np. 'F', 'R')
-                        'sample_hand_strength': sample_hand_strength
+                        'sample_hand_strength': sample_hand_top_range
                     })
 
 
@@ -172,11 +177,6 @@ hands = process_poker_hand(FILES_PATH)
 save_to_csv(hands)
 
 df = pd.read_csv('poker_hand.csv')
-# df = df[df['preflop_action'] != "('', '0.00')"]
-
-# df['hole_cards_processed'] = df['hole_cards'].apply(processed_hand)   # [['6d Ac', "('F', '0.00')", 'CO', list([6, 14])]
-
-# Wyświetlenie wybranych kolumn
 
 df['position_processed'] = df['position'].map(position_map)
 df = df.dropna(subset=['position_processed'])   #[['6d Ac', "('F', '0.00')", 'CO', list([6, 14]), 2],
@@ -185,38 +185,52 @@ df['hole_cards'] = df['hole_cards'].apply(lambda x: eval(x) if isinstance(x, str
 # df['preflop_action_type'] = df['preflop_action'].apply(lambda x: eval(x)[0] if isinstance(eval(x), tuple) else '')
 df['preflop_action_processed'] = df['preflop_action'].map(action_map)   #'hole_cards', 'preflop_action', 'position', 'hole_cards_processed','position_processed', 'preflop_action_type', 'preflop_action_processed'],
 df['preflop_action_processed'] = df['preflop_action_processed'].fillna(0)   #['hole_cards', 'preflop_action', 'position', 'hole_cards_processed','position_processed', 'preflop_action_type', 'preflop_action_processed'],
-# print(df['preflop_action_processed'])
-
 # Przygotowanie cech (features) i etykiety docelowej (target)
-X = pd.DataFrame({
-    'hand_strength': df['hole_cards'].apply(lambda hand: processed_hand(hand, percentage_table)),
-    'position': df['position_processed']
+sample_hand = [('Ad', 'Ks'), 'BTN']
+hand_strength = processed_hand(sample_hand[0], percentage_table)
+# Filtrujemy dane, zachowując tylko te ręce, które mają siłę większą niż `hand_strength` próbki
+df_filtered = df[df['hole_cards'].apply(lambda x: processed_hand(x, percentage_table) < hand_strength)]
+
+X_filtered = pd.DataFrame({
+    'hand_strength': df_filtered['hole_cards'].apply(lambda hand: processed_hand(hand, percentage_table)),
+    'position': df_filtered['position_processed']
 })
+y_filtered = df_filtered['preflop_action_processed']
+# y = df['preflop_action_processed']
+print(y_filtered.value_counts(normalize=True))
+X_train, X_test, y_train, y_test = train_test_split(X_filtered, y_filtered, test_size=0.2, random_state=42)
 
-# print("X:", X)
-# print(X.isnull().sum())
-y = df['preflop_action_processed']
-print(y.value_counts(normalize=True))
-
-# print("y:", y)
-# Podział na zestawy treningowy i testowy
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-# Inicjalizacja i trenowanie modelu
 model = RandomForestClassifier(n_estimators=100, random_state=42)
 model.fit(X_train, y_train)
 y_pred = model.predict(X_test)
-# Przykładowa ręka do predykcji
-sample_hand = [('Ad', 'Ks'), 'BTN']
-hand_strength = processed_hand(sample_hand[0], percentage_table)
-sample_hand_processed = [hand_strength, position_map[sample_hand[1]]]
-print("sample_hand_processed:", sample_hand_processed)
-# Predykcja akcji
-probabilities = np.round(model.predict_proba([sample_hand_processed]), 2)
 
-decision = model.predict([sample_hand_processed])
+sample_hand_processed = pd.DataFrame(
+    [[hand_strength, position_map[sample_hand[1]]]],  # Wartości jako lista list
+    columns=['hand_strength', 'position']  # Poprawne nazwy cech
+)
+print("Feature importances:", model.feature_importances_)
+print("Feature names:", X_train.columns)
+probabilities = np.round(model.predict_proba(sample_hand_processed), 2)
+
+decision = model.predict(sample_hand_processed)
 print("Probabilities:", probabilities)
 print("Decision:", "raise" if decision == 1 else "fold")
 accuracy = accuracy_score(y_test, y_pred)
 print(f"Accuracy: {accuracy:.2f}")
-# print(df['preflop_action_processed'].value_counts())
+
+print(f"Rozmiar X_train: {X_train.shape}")
+print(f"Rozmiar y_train: {y_train.shape}")
+print(f"Rozmiar X_test: {X_test.shape}")
+print(f"Rozmiar y_test: {y_test.shape}")
+
+# Procentowy udział danych treningowych i testowych
+total_samples = len(X_filtered)
+train_percentage = len(X_train) / total_samples * 100
+test_percentage = len(X_test) / total_samples * 100
+print(f"Procent danych treningowych: {train_percentage:.2f}%")
+print(f"Procent danych testowych: {test_percentage:.2f}%")
+
+
+
+
+
