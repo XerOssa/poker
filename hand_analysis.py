@@ -124,11 +124,6 @@ def from_text(text: str) -> Hand:
     return Hand(text)
 
 
-def save_to_csv(data, filename='poker_hand.csv'):
-    data.to_csv(filename, index=False)
-
-
-
 def save_to_csv(hands: list):
     filename = './poker_hand.csv'
     with open(filename, 'w', newline='') as csvfile:
@@ -179,18 +174,21 @@ save_to_csv(hands)
 df = pd.read_csv('poker_hand.csv')
 
 df['position_processed'] = df['position'].map(position_map)
-df = df.dropna(subset=['position_processed'])   #[['6d Ac', "('F', '0.00')", 'CO', list([6, 14]), 2],
+df = df.dropna(subset=['position_processed'])
 df['hole_cards'] = df['hole_cards'].apply(lambda x: eval(x) if isinstance(x, str) else x)
 
-# df['preflop_action_type'] = df['preflop_action'].apply(lambda x: eval(x)[0] if isinstance(eval(x), tuple) else '')
-df['preflop_action_processed'] = df['preflop_action'].map(action_map)   #'hole_cards', 'preflop_action', 'position', 'hole_cards_processed','position_processed', 'preflop_action_type', 'preflop_action_processed'],
-df['preflop_action_processed'] = df['preflop_action_processed'].fillna(0)   #['hole_cards', 'preflop_action', 'position', 'hole_cards_processed','position_processed', 'preflop_action_type', 'preflop_action_processed'],
-# Przygotowanie cech (features) i etykiety docelowej (target)
-sample_hand = [('Ad', 'Ks'), 'BTN']
-hand_strength = processed_hand(sample_hand[0], percentage_table)
-# Filtrujemy dane, zachowując tylko te ręce, które mają siłę większą niż `hand_strength` próbki
-df_filtered = df[df['hole_cards'].apply(lambda x: processed_hand(x, percentage_table) < hand_strength)]
 
+df['preflop_action_processed'] = df['preflop_action'].map(action_map)
+df['preflop_action_processed'] = df['preflop_action_processed'].fillna(0)
+
+sample_hand = [('8s', 'Qs'), 'BTN']
+hand_strength = processed_hand(sample_hand[0], percentage_table)
+
+df_filtered = df[
+    df['hole_cards'].apply(lambda x: processed_hand(x, percentage_table) <= hand_strength)
+    &   (df['position'] == sample_hand[1])
+    ]
+df_filtered.to_csv('filtered_poker_data.csv', index=False)
 X_filtered = pd.DataFrame({
     'hand_strength': df_filtered['hole_cards'].apply(lambda hand: processed_hand(hand, percentage_table)),
     'position': df_filtered['position_processed']
@@ -205,8 +203,8 @@ model.fit(X_train, y_train)
 y_pred = model.predict(X_test)
 
 sample_hand_processed = pd.DataFrame(
-    [[hand_strength, position_map[sample_hand[1]]]],  # Wartości jako lista list
-    columns=['hand_strength', 'position']  # Poprawne nazwy cech
+    [[hand_strength, position_map[sample_hand[1]]]],
+    columns=['hand_strength', 'position'] 
 )
 print("Feature importances:", model.feature_importances_)
 print("Feature names:", X_train.columns)
@@ -218,7 +216,7 @@ print("Decision:", "raise" if decision == 1 else "fold")
 accuracy = accuracy_score(y_test, y_pred)
 print(f"Accuracy: {accuracy:.2f}")
 
-print(f"Rozmiar X_train: {X_train.shape}")
+print(f"Rozmiar X_train: {X_train.head()}")
 print(f"Rozmiar y_train: {y_train.shape}")
 print(f"Rozmiar X_test: {X_test.shape}")
 print(f"Rozmiar y_test: {y_test.shape}")
