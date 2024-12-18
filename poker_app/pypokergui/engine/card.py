@@ -112,20 +112,24 @@ def get_hands_in_range(percentage_table, min_value, max_value):
 def processed_hand(hole_card, percentage_table):
     rank_order = {'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, 'T': 10,
                   'J': 11, 'Q': 12, 'K': 13, 'A': 14}
+    
     rank1, suit1 = hole_card[0]
     rank2, suit2 = hole_card[1]
-    if rank1 == rank2:
-        suited = False
-       
-    suited = suit1 == suit2
+    
+    # Determine if the hand is suited
+    suited = suit1 == suit2 and rank1 != rank2
 
-    if rank_order[rank1] > rank_order[rank2]:
-        ranks_sorted = rank1 + rank2
-    else:
-        ranks_sorted = rank2 + rank1
+    # Sort ranks based on rank_order values
+    sorted_ranks = sorted([rank1, rank2], key=lambda r: rank_order[r], reverse=True)
+    ranks_sorted = ''.join(sorted_ranks)
+
+    # Construct the hand key
     hand_key = f"{ranks_sorted}{'s' if suited else 'o'}"
-    strength_hand = percentage_table.get(hand_key, 1)
+
+    # Retrieve strength from the percentage table
+    strength_hand = percentage_table.get(hand_key, 1)  # Default to 1 if key is not found
     return strength_hand
+
 
 
 def is_in_range(hole_card, preflop_ranges):

@@ -152,18 +152,9 @@ def save_to_csv(hands: list):
 
 
 position_map = {'EP': 0, 'MP': 1, 'CO': 2, 'BTN': 3, 'SB': 4, 'BB': 5}
-action_map = {'F': 0, 'R': 1}
+action_map = {'F': 0, 'R': 1, 'B': 1}
 
 FILES_PATH = 'hh/*.txt'
-
-
-# def process_hand_cards(hand):
-#     # Przykład: 'Ad Kd' -> [14, 13] (A = 14, K = 13)
-#     card_values = {'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, 'T': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14}
-    
-#     card1, card2 = hand[0:2], hand[3:5]
-#     return [card_values[card1[0]], card_values[card2[0]]]
-
 
 # Procesowanie plików z rozdaniami pokerowymi i utworzenie obiektów Hand
 hands = process_poker_hand(FILES_PATH)
@@ -181,7 +172,7 @@ df['hole_cards'] = df['hole_cards'].apply(lambda x: eval(x) if isinstance(x, str
 df['preflop_action_processed'] = df['preflop_action'].map(action_map)
 df['preflop_action_processed'] = df['preflop_action_processed'].fillna(0)
 
-sample_hand = [('8s', 'Qs'), 'BTN']
+sample_hand = [('Qs', 'Qd'), 'BTN']
 hand_strength = processed_hand(sample_hand[0], percentage_table)
 
 df_filtered = df[
