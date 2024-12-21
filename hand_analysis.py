@@ -4,9 +4,9 @@ import csv
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from poker_app.pypokergui.engine.card import processed_hand, percentage_table
 class Hand:
     def __init__(self, hand_text):
@@ -194,24 +194,22 @@ df['preflop_action_processed'] = df['preflop_action'].map(action_map)
 df['preflop_action_processed'] = df['preflop_action_processed'].fillna(0)
 
 
-sample_hand = [('2s', '2d'), 'BTN']
+sample_hand = [('As', '9d'), 'BTN']
 hand_strength = processed_hand(sample_hand[0], percentage_table)
 
 df_filtered = df[
     df['hole_cards'].apply(lambda x: processed_hand(x, percentage_table) <= hand_strength)
     ]
-print(df_filtered['preflop_action'].value_counts())
 df_filtered.to_csv('filtered_poker_data.csv', index=False)
 X_filtered = pd.DataFrame({
     'hand_strength': df_filtered['hole_cards'].apply(lambda hand: processed_hand(hand, percentage_table)),
     'position': df_filtered['position_processed']
 })
 y_filtered = df_filtered['preflop_action_processed']
-# y = df['preflop_action_processed']
 print(y_filtered.value_counts(normalize=True))
 X_train, X_test, y_train, y_test = train_test_split(X_filtered, y_filtered, test_size=0.2, random_state=42)
 
-model = RandomForestClassifier(n_estimators=100, random_state=42)
+model = RandomForestClassifier(n_estimators=100, random_state=42, class_weight= 'balanced')
 model.fit(X_train, y_train)
 y_pred = model.predict(X_test)
 
@@ -238,14 +236,15 @@ print(f"Rozmiar y_train: {y_train.shape}")
 print(f"Rozmiar X_test: {X_test.shape}")
 print(f"Rozmiar y_test: {y_test.shape}")
 
-# Procentowy udział danych treningowych i testowych
-total_samples = len(X_filtered)
-train_percentage = len(X_train) / total_samples * 100
-test_percentage = len(X_test) / total_samples * 100
-print(f"Procent danych treningowych: {train_percentage:.2f}%")
-print(f"Procent danych testowych: {test_percentage:.2f}%")
+cm = confusion_matrix(y_test, y_pred)
 
+TP = cm[1, 1]
+TN = cm[0, 0]
+FP = cm[0, 1]
+FN = cm[1, 0]
+sensitivity = TP / (TP + FN)
+specificity = TN / (TN + FP)
 
-
-
+print(f"Sensitivity: {sensitivity}")
+print(f"Specificity: {specificity}")
 
