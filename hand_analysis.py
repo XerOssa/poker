@@ -3,6 +3,7 @@ import re
 import csv
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report
@@ -13,6 +14,7 @@ class Hand:
         self.small_blind = self.extract_small_blind()
         self.big_blind = self.extract_big_blind()
         self.hole_cards = self.extract_hole_cards()
+        self.is_hero_first = self.is_hero_first_to_act()
         self.preflop_action = self.extract_action()
         self.flop_action = self.extract_action()
         self.turn_action = self.extract_action()
@@ -33,6 +35,25 @@ class Hand:
         pattern = r'Dealt to Hero \[(\w{2}) (\w{2})\]'
         my_cards = re.search(pattern, self.hand_text)
         return f"{my_cards.group(1)} {my_cards.group(2)}" if my_cards else None
+
+    def is_hero_first_to_act(self):
+
+        # Znajdź sekcję preflop
+        preflop_start = self.hand_text.find('*** HOLE CARDS ***')
+        flop_start = self.hand_text.find('Hero:')
+        
+        # Sprawdź, czy flop_start jest większy od preflop_start
+        if flop_start == -1 or flop_start <= preflop_start:
+            # Jeśli flop nie istnieje lub jest źle zlokalizowany, weź tylko sekcję preflop
+            preflop_text = self.hand_text[preflop_start:]
+        else:
+            # Wyciągnij tekst od *** HOLE CARDS *** do *** FLOP ***
+            preflop_text = self.hand_text[preflop_start:flop_start]
+        
+        # Sprawdź, czy jakakolwiek akcja (poza fold) pojawiła się przed Hero
+        actions_before_hero = re.findall(r'^(?!Hero: )(.*?: (calls|bets|raises|checks))', preflop_text, re.MULTILINE)
+        
+        return len(actions_before_hero) == 0  # Jeśli brak akcji, Hero jest pierwszy
 
     def extract_action(self):
         text = self.hand_text
@@ -133,26 +154,27 @@ def save_to_csv(hands: list):
 
         for hand in hands:
             # print(hand.hole_cards, hand.preflop_action, hand.position)  
-            action, _ = hand.preflop_action
-            # print(action)
-            # Sprawdzenie, czy pola nie są puste
-            if action:
-                if hand.hole_cards and action and hand.position:
-                # Zmiana formatu kart
-                    cards = hand.hole_cards.split()  # Rozdzielenie np. '6d Ac' na ['6d', 'Ac']
-                    hole_cards_tuple = tuple(cards)  # Zamiana na ('6d', 'Ac')
-                    sample_hand_top_range  = processed_hand(hole_cards_tuple, percentage_table)  # Obliczenie siły kart
-                    writer.writerow({
-                        'hole_cards': hole_cards_tuple,  # Zapisujemy jako tuple
-                        'position': hand.position,
-                        'preflop_action': action,  # Zapisujemy tylko akcję (np. 'F', 'R')
-                        'sample_hand_strength': sample_hand_top_range
-                    })
+            if hand.is_hero_first:
+                action, _ = hand.preflop_action
+                # print(action)
+                # Sprawdzenie, czy pola nie są puste
+                if action:
+                    if hand.hole_cards and action and hand.position:
+                    # Zmiana formatu kart
+                        cards = hand.hole_cards.split()  # Rozdzielenie np. '6d Ac' na ['6d', 'Ac']
+                        hole_cards_tuple = tuple(cards)  # Zamiana na ('6d', 'Ac')
+                        sample_hand_top_range  = processed_hand(hole_cards_tuple, percentage_table)  # Obliczenie siły kart
+                        writer.writerow({
+                            'hole_cards': hole_cards_tuple,  # Zapisujemy jako tuple
+                            'position': hand.position,
+                            'preflop_action': action,  # Zapisujemy tylko akcję (np. 'F', 'R')
+                            'sample_hand_strength': sample_hand_top_range
+                        })
 
 
 
 position_map = {'EP': 0, 'MP': 1, 'CO': 2, 'BTN': 3, 'SB': 4, 'BB': 5}
-action_map = {'F': 0, 'R': 1, 'B': 1}
+action_map = {'F': 0, 'R': 1}
 
 FILES_PATH = 'hh/*.txt'
 
@@ -163,22 +185,22 @@ hands = process_poker_hand(FILES_PATH)
 save_to_csv(hands)
 
 df = pd.read_csv('poker_hand.csv')
-
+df = df[~df['preflop_action'].isin(['X', 'C', 'B'])]
 df['position_processed'] = df['position'].map(position_map)
 df = df.dropna(subset=['position_processed'])
 df['hole_cards'] = df['hole_cards'].apply(lambda x: eval(x) if isinstance(x, str) else x)
 
-
 df['preflop_action_processed'] = df['preflop_action'].map(action_map)
 df['preflop_action_processed'] = df['preflop_action_processed'].fillna(0)
 
-sample_hand = [('Qs', 'Qd'), 'BTN']
+
+sample_hand = [('2s', '2d'), 'BTN']
 hand_strength = processed_hand(sample_hand[0], percentage_table)
 
 df_filtered = df[
     df['hole_cards'].apply(lambda x: processed_hand(x, percentage_table) <= hand_strength)
-    &   (df['position'] == sample_hand[1])
     ]
+print(df_filtered['preflop_action'].value_counts())
 df_filtered.to_csv('filtered_poker_data.csv', index=False)
 X_filtered = pd.DataFrame({
     'hand_strength': df_filtered['hole_cards'].apply(lambda hand: processed_hand(hand, percentage_table)),
@@ -197,9 +219,14 @@ sample_hand_processed = pd.DataFrame(
     [[hand_strength, position_map[sample_hand[1]]]],
     columns=['hand_strength', 'position'] 
 )
-print("Feature importances:", model.feature_importances_)
-print("Feature names:", X_train.columns)
 probabilities = np.round(model.predict_proba(sample_hand_processed), 2)
+
+
+feature_importances = pd.Series(model.feature_importances_, index=['hand_strength', 'position'])
+feature_importances.plot(kind='bar')
+plt.title('Feature Importance')
+plt.show()
+
 
 decision = model.predict(sample_hand_processed)
 print("Probabilities:", probabilities)
@@ -207,7 +234,6 @@ print("Decision:", "raise" if decision == 1 else "fold")
 accuracy = accuracy_score(y_test, y_pred)
 print(f"Accuracy: {accuracy:.2f}")
 
-print(f"Rozmiar X_train: {X_train.head()}")
 print(f"Rozmiar y_train: {y_train.shape}")
 print(f"Rozmiar X_test: {X_test.shape}")
 print(f"Rozmiar y_test: {y_test.shape}")
