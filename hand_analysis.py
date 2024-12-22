@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
-from poker_app.pypokergui.engine.card import processed_hand, percentage_table
+from poker_app.pypokergui.engine.card import processed_hand, percentiles_table
 class Hand:
     def __init__(self, hand_text):
         self.hand_text = hand_text
@@ -163,7 +163,7 @@ def save_to_csv(hands: list):
                     # Zmiana formatu kart
                         cards = hand.hole_cards.split()  # Rozdzielenie np. '6d Ac' na ['6d', 'Ac']
                         hole_cards_tuple = tuple(cards)  # Zamiana na ('6d', 'Ac')
-                        sample_hand_top_range  = processed_hand(hole_cards_tuple, percentage_table)  # Obliczenie siły kart
+                        sample_hand_top_range  = processed_hand(hole_cards_tuple, percentiles_table)  # Obliczenie siły kart
                         writer.writerow({
                             'hole_cards': hole_cards_tuple,  # Zapisujemy jako tuple
                             'position': hand.position,
@@ -195,14 +195,14 @@ df['preflop_action_processed'] = df['preflop_action_processed'].fillna(0)
 
 
 sample_hand = [('As', '9d'), 'BTN']
-hand_strength = processed_hand(sample_hand[0], percentage_table)
+hand_strength = processed_hand(sample_hand[0], percentiles_table)
 
 df_filtered = df[
-    df['hole_cards'].apply(lambda x: processed_hand(x, percentage_table) <= hand_strength)
+    df['hole_cards'].apply(lambda x: processed_hand(x, percentiles_table) <= hand_strength)
     ]
 df_filtered.to_csv('filtered_poker_data.csv', index=False)
 X_filtered = pd.DataFrame({
-    'hand_strength': df_filtered['hole_cards'].apply(lambda hand: processed_hand(hand, percentage_table)),
+    'hand_strength': df_filtered['hole_cards'].apply(lambda hand: processed_hand(hand, percentiles_table)),
     'position': df_filtered['position_processed']
 })
 y_filtered = df_filtered['preflop_action_processed']
