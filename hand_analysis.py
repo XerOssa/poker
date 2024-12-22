@@ -218,14 +218,6 @@ sample_hand_processed = pd.DataFrame(
     columns=['hand_strength', 'position'] 
 )
 probabilities = np.round(model.predict_proba(sample_hand_processed), 2)
-
-
-feature_importances = pd.Series(model.feature_importances_, index=['hand_strength', 'position'])
-feature_importances.plot(kind='bar')
-plt.title('Feature Importance')
-plt.show()
-
-
 decision = model.predict(sample_hand_processed)
 print("Probabilities:", probabilities)
 print("Decision:", "raise" if decision == 1 else "fold")
@@ -247,4 +239,3 @@ specificity = TN / (TN + FP)
 
 print(f"Sensitivity: {sensitivity}")
 print(f"Specificity: {specificity}")
-
