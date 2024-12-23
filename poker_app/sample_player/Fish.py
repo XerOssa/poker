@@ -1,9 +1,13 @@
 import random
+import joblib
 from poker_app.pypokergui.players import BasePokerPlayer, get_player_position
-from poker_app.pypokergui.engine.card import get_range, is_in_range, percentage_table
+from poker_app.pypokergui.engine.card import get_range
+from hand_analysis import predict_action
 
 class Fish(BasePokerPlayer): 
-
+    def __init__(self):
+        super().__init__()
+        self.model = joblib.load('trained_model.pkl')
 
     def declare_action(self, valid_actions, hole_card, round_state):
         player_index = next((i for i, seat in enumerate(round_state["seats"]) if seat['name'] == "Fish"), None)
@@ -33,7 +37,7 @@ class Fish(BasePokerPlayer):
                 break
         
         if not has_raise_action and round_state['street'] == "preflop":
-            if is_in_range(hole_card, preflop_range):
+            if predict_action(self.model, hole_card) == 1:
                 action = "raise"
         else:
             action = "fold"

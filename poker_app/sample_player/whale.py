@@ -1,6 +1,6 @@
 import random
 from poker_app.pypokergui.players import BasePokerPlayer, get_player_position
-from poker_app.pypokergui.engine.card import get_range, is_in_range, percentage_table
+from poker_app.pypokergui.engine.card import get_range, is_in_range
 
 
 class Whale(BasePokerPlayer):

@@ -4,11 +4,9 @@ import glob
 import re
 import csv
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split, GridSearchCV
+import joblib
+from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from poker_app.pypokergui.engine.card import processed_hand, percentiles_table
 class Hand:
     def __init__(self, hand_text):
@@ -186,6 +184,9 @@ def preparing_data(hands: list) -> pd.DataFrame:
         # Wczytaj przetworzone dane, jeśli plik istnieje
         # print("Loading processed data...")
         df = pd.read_csv(PROCESSED_DATA_PATH)
+        df['hole_cards'] = df['hole_cards'].apply(
+            lambda x: ast.literal_eval(x) if isinstance(x, str) else x
+        )
     else:
         # Jeśli plik nie istnieje, przetwórz dane i zapisz je
         # print("Processing raw data...")
@@ -203,10 +204,8 @@ def preparing_data(hands: list) -> pd.DataFrame:
         df.to_csv(PROCESSED_DATA_PATH, index=False)
     return df
 
-def predict_action(df):
-    print(df.head())
-    sample_hand = [('9s', '4s'), 'BTN']
-    hand_strength = processed_hand(sample_hand[0], percentiles_table)
+def train_model(df):
+
 
     X_filtered = pd.DataFrame({
         'hand_strength': df['hole_cards'].apply(lambda hand: processed_hand(hand, percentiles_table)),
@@ -217,19 +216,24 @@ def predict_action(df):
     X_train, X_test, y_train, y_test = train_test_split(X_filtered, y_filtered, test_size=0.2, random_state=42)
     model = RandomForestClassifier(n_estimators=100, random_state=42, class_weight= 'balanced')
     model.fit(X_train, y_train)
+    joblib.dump(model, 'trained_model.pkl')
+    return model
+
+def predict_action(model, sample_hand):
+    sample_hand = [('9s', '7s'), 'BTN']
+    hand_strength = processed_hand(sample_hand[0], percentiles_table)
     # y_pred = model.predict(X_test)
     sample_hand_processed = pd.DataFrame(
     [[hand_strength, position_map[sample_hand[1]]]],
     columns=['hand_strength', 'position'] 
-)
-    probabilities = np.round(model.predict_proba(sample_hand_processed), 2)
+    )
+    # probabilities = np.round(model.predict_proba(sample_hand_processed), 2)
     decision = model.predict(sample_hand_processed)
     print(decision)
     return decision
 
-def main():
-    hands = process_poker_hand(FILES_PATH)
-    df = preparing_data(hands)
-    predict_action(df)
-    
-main()
+# df = pd.read_csv(PROCESSED_DATA_PATH)
+# df['hole_cards'] = df['hole_cards'].apply(
+#     lambda x: ast.literal_eval(x) if isinstance(x, str) else x
+#     )
+# model = train_model(df)

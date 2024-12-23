@@ -1,6 +1,6 @@
 import random
 import joblib
-from poker_app.pypokergui.engine.card import get_range, is_in_range, percentage_table
+from poker_app.pypokergui.engine.card import get_range, is_in_range
 from poker_app.pypokergui.players import BasePokerPlayer, get_player_position
 
 class Tag(BasePokerPlayer):
