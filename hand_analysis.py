@@ -1,3 +1,5 @@
+import ast
+import os
 import glob
 import re
 import csv
@@ -173,69 +175,61 @@ def save_to_csv(hands: list):
 
 
 
+# Mapowanie pozycji i akcji
 position_map = {'EP': 0, 'MP': 1, 'CO': 2, 'BTN': 3, 'SB': 4, 'BB': 5}
 action_map = {'F': 0, 'R': 1}
-
 FILES_PATH = 'hh/*.txt'
+PROCESSED_DATA_PATH = './poker_hand.csv'
 
-# Procesowanie plików z rozdaniami pokerowymi i utworzenie obiektów Hand
-hands = process_poker_hand(FILES_PATH)
+def preparing_data(hands: list) -> pd.DataFrame:
+    if os.path.exists(PROCESSED_DATA_PATH):
+        # Wczytaj przetworzone dane, jeśli plik istnieje
+        # print("Loading processed data...")
+        df = pd.read_csv(PROCESSED_DATA_PATH)
+    else:
+        # Jeśli plik nie istnieje, przetwórz dane i zapisz je
+        # print("Processing raw data...")
+        hands = process_poker_hand(FILES_PATH)
+        save_to_csv(hands)
+        
+        df = pd.read_csv('poker_hand.csv')
+        df = df[~df['preflop_action'].isin(['X', 'C', 'B'])]
+        df['position_processed'] = df['position'].map(position_map)
+        df = df.dropna(subset=['position_processed'])
+        df['hole_cards'] = df['hole_cards'].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
+        df['preflop_action_processed'] = df['preflop_action'].map(action_map)
+        df['preflop_action_processed'] = df['preflop_action_processed'].fillna(0)
+        # Zapisz przetworzone dane
+        df.to_csv(PROCESSED_DATA_PATH, index=False)
+    return df
 
-# Zapisanie wyników do pliku CSV
-save_to_csv(hands)
+def predict_action(df):
+    print(df.head())
+    sample_hand = [('9s', '4s'), 'BTN']
+    hand_strength = processed_hand(sample_hand[0], percentiles_table)
 
-df = pd.read_csv('poker_hand.csv')
-df = df[~df['preflop_action'].isin(['X', 'C', 'B'])]
-df['position_processed'] = df['position'].map(position_map)
-df = df.dropna(subset=['position_processed'])
-df['hole_cards'] = df['hole_cards'].apply(lambda x: eval(x) if isinstance(x, str) else x)
+    X_filtered = pd.DataFrame({
+        'hand_strength': df['hole_cards'].apply(lambda hand: processed_hand(hand, percentiles_table)),
+        'position': df['position_processed']
+    })
 
-df['preflop_action_processed'] = df['preflop_action'].map(action_map)
-df['preflop_action_processed'] = df['preflop_action_processed'].fillna(0)
-
-
-sample_hand = [('As', '9d'), 'BTN']
-hand_strength = processed_hand(sample_hand[0], percentiles_table)
-
-df_filtered = df[
-    df['hole_cards'].apply(lambda x: processed_hand(x, percentiles_table) <= hand_strength)
-    ]
-df_filtered.to_csv('filtered_poker_data.csv', index=False)
-X_filtered = pd.DataFrame({
-    'hand_strength': df_filtered['hole_cards'].apply(lambda hand: processed_hand(hand, percentiles_table)),
-    'position': df_filtered['position_processed']
-})
-y_filtered = df_filtered['preflop_action_processed']
-print(y_filtered.value_counts(normalize=True))
-X_train, X_test, y_train, y_test = train_test_split(X_filtered, y_filtered, test_size=0.2, random_state=42)
-
-model = RandomForestClassifier(n_estimators=100, random_state=42, class_weight= 'balanced')
-model.fit(X_train, y_train)
-y_pred = model.predict(X_test)
-
-sample_hand_processed = pd.DataFrame(
+    y_filtered = df['preflop_action_processed']
+    X_train, X_test, y_train, y_test = train_test_split(X_filtered, y_filtered, test_size=0.2, random_state=42)
+    model = RandomForestClassifier(n_estimators=100, random_state=42, class_weight= 'balanced')
+    model.fit(X_train, y_train)
+    # y_pred = model.predict(X_test)
+    sample_hand_processed = pd.DataFrame(
     [[hand_strength, position_map[sample_hand[1]]]],
     columns=['hand_strength', 'position'] 
 )
-probabilities = np.round(model.predict_proba(sample_hand_processed), 2)
-decision = model.predict(sample_hand_processed)
-print("Probabilities:", probabilities)
-print("Decision:", "raise" if decision == 1 else "fold")
-accuracy = accuracy_score(y_test, y_pred)
-print(f"Accuracy: {accuracy:.2f}")
+    probabilities = np.round(model.predict_proba(sample_hand_processed), 2)
+    decision = model.predict(sample_hand_processed)
+    print(decision)
+    return decision
 
-print(f"Rozmiar y_train: {y_train.shape}")
-print(f"Rozmiar X_test: {X_test.shape}")
-print(f"Rozmiar y_test: {y_test.shape}")
-
-cm = confusion_matrix(y_test, y_pred)
-
-TP = cm[1, 1]
-TN = cm[0, 0]
-FP = cm[0, 1]
-FN = cm[1, 0]
-sensitivity = TP / (TP + FN)
-specificity = TN / (TN + FP)
-
-print(f"Sensitivity: {sensitivity}")
-print(f"Specificity: {specificity}")
+def main():
+    hands = process_poker_hand(FILES_PATH)
+    df = preparing_data(hands)
+    predict_action(df)
+    
+main()
