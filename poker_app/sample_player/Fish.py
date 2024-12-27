@@ -37,7 +37,7 @@ class Fish(BasePokerPlayer):
                 break
         
         if not has_raise_action and round_state['street'] == "preflop":
-            if predict_action(self.model, hole_card) == 1:
+            if predict_action(self.model, (hole_card, position)) == 1:
                 action = "raise"
         else:
             action = "fold"
@@ -67,7 +67,7 @@ class Fish(BasePokerPlayer):
             action_info = next((action_info for action_info in valid_actions if action_info["action"] == "all_in"), None)
             amount = action_info["amount"] if action_info else 0
 
-        print("Fish zagrał:", action, amount)
+        print("Fish zagrał:", action, amount, "z", hole_card)
         return action, amount
 
 

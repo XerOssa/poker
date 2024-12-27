@@ -1,10 +1,13 @@
 import random
+import joblib
 from poker_app.pypokergui.players import BasePokerPlayer, get_player_position
-from poker_app.pypokergui.engine.card import get_range, is_in_range
+from poker_app.pypokergui.engine.card import get_range
+from hand_analysis import predict_action
 
-
-class Lag(BasePokerPlayer):
-
+class Lag(BasePokerPlayer): 
+    def __init__(self):
+        super().__init__()
+        self.model = joblib.load('trained_model.pkl')
 
     def declare_action(self, valid_actions, hole_card, round_state):
         player_index = next((i for i, seat in enumerate(round_state["seats"]) if seat['name'] == "Lag"), None)
@@ -34,7 +37,7 @@ class Lag(BasePokerPlayer):
                 break
         
         if not has_raise_action and round_state['street'] == "preflop":
-            if is_in_range(hole_card, preflop_range):
+            if predict_action(self.model, (hole_card, position)) == 1:
                 action = "raise"
         else:
             action = "fold"
@@ -64,15 +67,16 @@ class Lag(BasePokerPlayer):
             action_info = next((action_info for action_info in valid_actions if action_info["action"] == "all_in"), None)
             amount = action_info["amount"] if action_info else 0
 
-        print("Lag zagrał:", action, amount)
+        print("Lag zagrał:", action, amount, "z", hole_card)
         return action, amount
+
 
 
 
     def receive_game_start_message(self, game_info):
         pass
 
-    def receive_round_start_message(self, round_state, round_count, hole_card, seats):
+    def receive_round_start_message(self,round_state, round_count, hole_card, seats):
         pass
 
     def receive_street_start_message(self, street, round_state):

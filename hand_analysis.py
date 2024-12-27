@@ -219,17 +219,14 @@ def train_model(df):
     joblib.dump(model, 'trained_model.pkl')
     return model
 
-def predict_action(model, sample_hand):
-    sample_hand = [('9s', '7s'), 'BTN']
-    hand_strength = processed_hand(sample_hand[0], percentiles_table)
-    # y_pred = model.predict(X_test)
+def predict_action(model, hole_cards):
+    hand_strength = processed_hand(hole_cards[0], percentiles_table)  # Oblicz siłę ręki
     sample_hand_processed = pd.DataFrame(
-    [[hand_strength, position_map[sample_hand[1]]]],
-    columns=['hand_strength', 'position'] 
+        [[hand_strength, position_map[hole_cards[1]]]],
+        columns=['hand_strength', 'position'] 
     )
-    # probabilities = np.round(model.predict_proba(sample_hand_processed), 2)
-    decision = model.predict(sample_hand_processed)
-    print(decision)
+    decision = model.predict(sample_hand_processed)  # Przewidywanie akcji
+    print("predicted decision", decision)
     return decision
 
 # df = pd.read_csv(PROCESSED_DATA_PATH)

@@ -1,36 +1,14 @@
 import random
 import joblib
-from poker_app.pypokergui.engine.card import get_range, is_in_range
 from poker_app.pypokergui.players import BasePokerPlayer, get_player_position
+from poker_app.pypokergui.engine.card import get_range
+from hand_analysis import predict_action
 
-class Tag(BasePokerPlayer):
-    # def __init__(self):
-        # super().__init__()
-        # # Wczytaj model
-        # self.model = joblib.load("poker_ai_model.pkl")
-    # def declare_action(self, valid_actions, hole_card, round_state):
-    #     # Przetwarzanie danych wejściowych na odpowiedni format
-    #     features = [hole_card, round_state, self.get_stack(), self.get_opponent_last_action()]
-        
-    #     # Przewidywanie akcji
-    #     predicted_action = self.model.predict([features])[0]
-        
-    #     # Przetwarzanie wyjścia na odpowiednią akcję
-    #     action_info = next((action for action in valid_actions if action['action'] == predicted_action), None)
-        
-    #     # Wartość zakładu, jeśli jest potrzebna
-    #     amount = action_info["amount"] if action_info and "amount" in action_info else 0
-        
-    #     print("Fish zagrał:", predicted_action, amount)
-    #     return predicted_action, amount
+class Tag(BasePokerPlayer): 
+    def __init__(self):
+        super().__init__()
+        self.model = joblib.load('trained_model.pkl')
 
-    # def get_stack(self):
-    #     # Metoda do pobrania stanu stacka gracza
-    #     return self.round_state['seats'][self.seat_position]['stack']
-    
-    # def get_opponent_last_action(self):
-    #     # Metoda do pobrania ostatniej akcji przeciwnika
-    #     return self.round_state['action_histories']['preflop'][-1]['action']
     def declare_action(self, valid_actions, hole_card, round_state):
         player_index = next((i for i, seat in enumerate(round_state["seats"]) if seat['name'] == "Tag"), None)
         seats = round_state["seats"]
@@ -59,7 +37,7 @@ class Tag(BasePokerPlayer):
                 break
         
         if not has_raise_action and round_state['street'] == "preflop":
-            if is_in_range(hole_card, preflop_range):
+            if predict_action(self.model, (hole_card, position)) == 1:
                 action = "raise"
         else:
             action = "fold"
@@ -89,15 +67,16 @@ class Tag(BasePokerPlayer):
             action_info = next((action_info for action_info in valid_actions if action_info["action"] == "all_in"), None)
             amount = action_info["amount"] if action_info else 0
 
-        print("Tag zagrał:", action, amount)
+        print("Tag zagrał:", action, amount, "z", hole_card)
         return action, amount
+
 
 
 
     def receive_game_start_message(self, game_info):
         pass
 
-    def receive_round_start_message(self, round_state, round_count, hole_card, seats):
+    def receive_round_start_message(self,round_state, round_count, hole_card, seats):
         pass
 
     def receive_street_start_message(self, street, round_state):
@@ -106,7 +85,7 @@ class Tag(BasePokerPlayer):
     def receive_game_update_message(self, action, round_state):
         pass
 
-    def receive_round_result_message(self, winners,  round_state):
+    def receive_round_result_message(self, winners, round_state):
         pass
 
 
