@@ -8,9 +8,10 @@ class Tag(BasePokerPlayer):
     def __init__(self):
         super().__init__()
         self.model = joblib.load('trained_model.pkl')
+        self.additional_range = 0
 
     def declare_action(self, valid_actions, hole_card, round_state):
-        player_index = next((i for i, seat in enumerate(round_state["seats"]) if seat['name'] == "Tag"), None)
+        player_index = next((i for i, seat in enumerate(round_state["seats"]) if seat['uuid'] == self.uuid), None)
         seats = round_state["seats"]
         dealer_pos = round_state["dealer_btn"]
         sb_pos = round_state["small_blind_pos"]
@@ -37,8 +38,11 @@ class Tag(BasePokerPlayer):
                 break
         
         if not has_raise_action and round_state['street'] == "preflop":
-            if predict_action(self.model, (hole_card, position)) == 1:
+            if predict_action(self.model, self.additional_range, (hole_card, position)) == 1:
                 action = "raise"
+            else:
+                action = "fold"
+            
         else:
             action = "fold"
 

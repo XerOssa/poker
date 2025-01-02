@@ -5,6 +5,7 @@ import re
 import csv
 import pandas as pd
 import joblib
+import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from poker_app.pypokergui.engine.card import processed_hand, percentiles_table
@@ -206,7 +207,6 @@ def preparing_data(hands: list) -> pd.DataFrame:
 
 def train_model(df):
 
-
     X_filtered = pd.DataFrame({
         'hand_strength': df['hole_cards'].apply(lambda hand: processed_hand(hand, percentiles_table)),
         'position': df['position_processed']
@@ -219,18 +219,29 @@ def train_model(df):
     joblib.dump(model, 'trained_model.pkl')
     return model
 
-def predict_action(model, hole_cards):
+
+
+
+def predict_action(model, additional_range, hole_cards):
+    
     hand_strength = processed_hand(hole_cards[0], percentiles_table)  # Oblicz siłę ręki
+    hand_strength = hand_strength + additional_range
     sample_hand_processed = pd.DataFrame(
         [[hand_strength, position_map[hole_cards[1]]]],
         columns=['hand_strength', 'position'] 
     )
     decision = model.predict(sample_hand_processed)  # Przewidywanie akcji
-    print("predicted decision", decision)
+    probabilities = np.round(model.predict_proba(sample_hand_processed), 2)
+    # decision = np.random.choice(model.classes_, p=probabilities)
+    print("predicted decision", decision, "with probabilities", probabilities)
     return decision
 
-# df = pd.read_csv(PROCESSED_DATA_PATH)
-# df['hole_cards'] = df['hole_cards'].apply(
-#     lambda x: ast.literal_eval(x) if isinstance(x, str) else x
-#     )
-# model = train_model(df)
+
+
+if __name__ == "__main__":
+    # Przygotowanie danych
+    hands = process_poker_hand(FILES_PATH)
+    df = preparing_data(hands=[])  # Lub podaj listę 'hands' jeśli jest potrzebna
+    
+    # Trenowanie modelu
+    model = train_model(df)
