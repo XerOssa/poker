@@ -206,6 +206,7 @@ def preparing_data(hands: list) -> pd.DataFrame:
         df.to_csv(PROCESSED_DATA_PATH, index=False)
     return df
 
+
 def train_model(df):
 
     X_filtered = pd.DataFrame({
@@ -214,7 +215,7 @@ def train_model(df):
     })
 
     y_filtered = df['preflop_action_processed']
-    X_train, X_test, y_train, y_test = train_test_split(X_filtered, y_filtered, test_size=0.2, random_state=42)
+    X_train, y_train = train_test_split(X_filtered, y_filtered, test_size=0.2, random_state=42)
     model = RandomForestClassifier(n_estimators=100, random_state=42, class_weight= 'balanced')
     model.fit(X_train, y_train)
     joblib.dump(model, 'trained_model.pkl')

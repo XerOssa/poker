@@ -27,24 +27,44 @@ class Lag(BasePokerPlayer):
         raise_action_info = valid_actions[2]
         if isinstance(raise_action_info["amount"], dict):
             last_raise_amount = raise_action_info["amount"].get("max", 0)
-
         action = random.choice(valid_actions)["action"]
 
-        has_raise_action = any(old_action['action'] == 'RAISE' for old_action in round_state['action_histories']['preflop'])
+
+        no_action_preflop = not any(old_action['action'] == 'RAISE' for old_action in round_state['action_histories']['preflop'])
+
+        if 'flop' in round_state['action_histories'] and round_state['action_histories']['flop']:
+            no_action_flop = not any(
+                old_action['action'] == 'RAISE' for old_action in round_state['action_histories']['flop']
+            )
+            if no_action_flop:
+                action = "check"
+
+        if 'turn' in round_state['action_histories'] and round_state['action_histories']['turn']:
+            no_action_turn = not any(
+                old_action['action'] == 'RAISE' for old_action in round_state['action_histories']['turn']
+            )
+            if no_action_turn:
+                action = "check"
+
+        if 'river' in round_state['action_histories'] and round_state['action_histories']['river']:
+            no_action_river = not any(
+                old_action['action'] == 'RAISE' for old_action in round_state['action_histories']['river']
+            )
+            if no_action_river:
+                action = "check"
         
+
         for last_action in round_state['action_histories']['preflop']:
             if last_action['uuid'] == self.uuid:
                 paid_amount = last_action.get('amount', 0)
                 break
         
-        if not has_raise_action and round_state['street'] == "preflop":
+        if  no_action_preflop and round_state['street'] == "preflop":
             if predict_action(self.model, self.additional_range ,(hole_card, position)) == 1:
                 action = "raise"
             else:
                 action = "fold"
-            
-        else:
-            action = "fold"
+
 
         if action == "raise":
             max_raise_amount = 2 * last_raise_amount
