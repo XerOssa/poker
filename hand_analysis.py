@@ -177,6 +177,7 @@ def save_to_csv(hands: list):
 # Mapowanie pozycji i akcji
 position_map = {'EP': 0, 'MP': 1, 'CO': 2, 'BTN': 3, 'SB': 4, 'BB': 5}
 action_map = {'F': 0, 'R': 1}
+First_in_action = {'F': 0, 'T': 1}
 FILES_PATH = 'hh/*.txt'
 PROCESSED_DATA_PATH = './poker_hand.csv'
 
@@ -195,7 +196,7 @@ def preparing_data(hands: list) -> pd.DataFrame:
         save_to_csv(hands)
         
         df = pd.read_csv('poker_hand.csv')
-        df = df[~df['preflop_action'].isin(['X', 'C', 'B'])]
+        # df = df[~df['preflop_action'].isin(['X', 'C', 'B'])]
         df['position_processed'] = df['position'].map(position_map)
         df = df.dropna(subset=['position_processed'])
         df['hole_cards'] = df['hole_cards'].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
@@ -220,8 +221,6 @@ def train_model(df):
     return model
 
 
-
-
 def predict_action(model, additional_range, hole_cards):
     
     hand_strength = processed_hand(hole_cards[0], percentiles_table)  # Oblicz siłę ręki
@@ -239,7 +238,6 @@ def predict_action(model, additional_range, hole_cards):
 
 
 if __name__ == "__main__":
-    # Przygotowanie danych
     hands = process_poker_hand(FILES_PATH)
     df = preparing_data(hands=[])  # Lub podaj listę 'hands' jeśli jest potrzebna
     
