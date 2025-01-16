@@ -19,14 +19,7 @@ class Lag(BasePokerPlayer):
         seat_count = len(seats)
         
         position = get_player_position(player_index, dealer_pos, sb_pos, bb_pos, seat_count)
-        
-        preflop_range = get_range(position)
-        last_raise_amount = 0
-        paid_amount = 0
 
-        raise_action_info = valid_actions[2]
-        if isinstance(raise_action_info["amount"], dict):
-            last_raise_amount = raise_action_info["amount"].get("max", 0)
         action = random.choice(valid_actions)["action"]
 
 
