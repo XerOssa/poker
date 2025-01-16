@@ -65,19 +65,10 @@ class Tag(BasePokerPlayer):
             else:
                 action = "fold"
 
-
+        action = "raise"
         if action == "raise":
-            max_raise_amount = 2 * last_raise_amount
             action_info = next((old_action for old_action in valid_actions if old_action["action"] == "raise"), None)
-            min_amount = action_info["amount"]["min"]
-            max_amount = min(action_info["amount"]["max"], max_raise_amount)
-
-            max_amount = max(0, max_amount - paid_amount)
-            min_amount = max(0, min_amount - paid_amount)
-
-            if min_amount > max_amount:
-                min_amount, max_amount = max_amount, min_amount
-            amount = min_amount
+            amount = action_info["amount"]["min"]
         elif action == "call":
             action_info = next((action_info for action_info in valid_actions if action_info["action"] == "call"), None)
             amount = action_info["amount"] if action_info else 0

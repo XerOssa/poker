@@ -8,7 +8,10 @@ import joblib
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, classification_report
 from poker_app.pypokergui.engine.card import processed_hand, percentiles_table
+
+
 class Hand:
     def __init__(self, hand_text):
         self.hand_text = hand_text
@@ -215,19 +218,22 @@ def train_model(df):
     })
 
     y_filtered = df['preflop_action_processed']
-    X_train, y_train = train_test_split(X_filtered, y_filtered, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X_filtered, y_filtered, test_size=0.2, random_state=42)
     model = RandomForestClassifier(n_estimators=100, random_state=42, class_weight= 'balanced')
     model.fit(X_train, y_train)
     joblib.dump(model, 'trained_model.pkl')
+    y_pred = model.predict(X_test)
+    print("Accuracy:", accuracy_score(y_test, y_pred))
+    print("Classification Report:\n", classification_report(y_test, y_pred))
     return model
 
 
 def predict_action(model, additional_range, hole_cards):
     
     hand_strength = processed_hand(hole_cards[0], percentiles_table)  # Oblicz siłę ręki
-    hand_strength = hand_strength + additional_range
+    player_hand_strength = hand_strength + additional_range
     sample_hand_processed = pd.DataFrame(
-        [[hand_strength, position_map[hole_cards[1]]]],
+        [[player_hand_strength, position_map[hole_cards[1]]]],
         columns=['hand_strength', 'position'] 
     )
     decision = model.predict(sample_hand_processed)  # Przewidywanie akcji
@@ -235,7 +241,6 @@ def predict_action(model, additional_range, hole_cards):
     # decision = np.random.choice(model.classes_, p=probabilities)
     print("predicted decision", decision, "with probabilities", probabilities)
     return decision
-
 
 
 if __name__ == "__main__":

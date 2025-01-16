@@ -28,8 +28,8 @@ class Random(BasePokerPlayer):
         if isinstance(raise_action_info["amount"], dict):
             last_raise_amount = raise_action_info["amount"].get("max", 0)
 
-        action = random.choice(valid_actions)["action"]
-
+        # action = random.choice(valid_actions)["action"]
+        
 
         no_action_preflop = not any(old_action['action'] == 'RAISE' for old_action in round_state['action_histories']['preflop'])
 
@@ -66,19 +66,10 @@ class Random(BasePokerPlayer):
             else:
                 action = "fold"
 
-
+        action = "fold"
         if action == "raise":
-            max_raise_amount = 2 * last_raise_amount
             action_info = next((old_action for old_action in valid_actions if old_action["action"] == "raise"), None)
-            min_amount = action_info["amount"]["min"]
-            max_amount = min(action_info["amount"]["max"], max_raise_amount)
-
-            max_amount = max(0, max_amount - paid_amount)
-            min_amount = max(0, min_amount - paid_amount)
-
-            if min_amount > max_amount:
-                min_amount, max_amount = max_amount, min_amount
-            amount = min_amount
+            amount = action_info["amount"]["min"]
         elif action == "call":
             action_info = next((action_info for action_info in valid_actions if action_info["action"] == "call"), None)
             amount = action_info["amount"] if action_info else 0
