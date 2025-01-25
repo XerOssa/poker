@@ -80,6 +80,24 @@ body {
   z-index: 1;
 }
 
+.control-button {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 22px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: #1a73a7;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 20px;
+  z-index: 1;
+}
+
 .player-cards {
   position: relative;
   display: flex;

@@ -76,12 +76,16 @@ class RoundManager:
     if street == Const.Street.PREFLOP:
       return cls.__preflop(state)
     elif street == Const.Street.FLOP:
+      print("***** FLOP *****")
       return cls.__flop(state)
     elif street == Const.Street.TURN:
+      print("***** TURN *****")
       return cls.__turn(state)
     elif street == Const.Street.RIVER:
+      print("***** RIVER *****")
       return cls.__river(state)
     elif street == Const.Street.SHOWDOWN:
+      print("***** SHOWDOWN *****")
       return cls.__showdown(state)
     else:
       raise ValueError("Street is already finished [street = %d]" % street)
@@ -107,6 +111,7 @@ class RoundManager:
   @classmethod
   def __river(cls, state):
     state["table"].add_community_card(state["table"].deck.draw_card())
+
     return cls.__forward_street(state)
 
   @classmethod

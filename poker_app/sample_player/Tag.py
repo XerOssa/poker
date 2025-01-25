@@ -58,7 +58,7 @@ class Tag(BasePokerPlayer):
             else:
                 action = "fold"
 
-        action = "raise"
+        # action = "raise"
         if action == "raise":
             action_info = next((old_action for old_action in valid_actions if old_action["action"] == "raise"), None)
             amount = action_info["amount"]["min"]

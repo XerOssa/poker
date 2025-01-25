@@ -9,6 +9,7 @@ $(document).ready(function() {
     $("#start_game_form").on("submit", handleFormSubmit.bind(null, startGame));
     $("#declare_action_form").on("submit", handleFormSubmit.bind(null, declareAction));
     $('#start-game').on('click', () => sendWebSocketMessage('action_start_game'));
+    $('#pause-game').on('click', togglePauseGame);
 });
 
 function startGame() {
@@ -65,6 +66,19 @@ function declareAction(form) {
     sendWebSocketMessage("action_declare_action", message);
 }
 
+
+let isGamePaused = false;
+
+function togglePauseGame() {
+    isGamePaused = !isGamePaused;
+    if (isGamePaused) {
+        sendWebSocketMessage('action_pause_game');
+        $('#pause-game').text('Resume'); // Zmień tekst na przycisku
+    } else {
+        sendWebSocketMessage('action_resume_game');
+        $('#pause-game').text('Pause');
+    }
+}
 // Globalna funkcja
 window.activateButton = activateButton;
 
