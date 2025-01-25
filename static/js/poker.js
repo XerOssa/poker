@@ -9,7 +9,12 @@ $(document).ready(function() {
     $("#start_game_form").on("submit", handleFormSubmit.bind(null, startGame));
     $("#declare_action_form").on("submit", handleFormSubmit.bind(null, declareAction));
     $('#start-game').on('click', () => sendWebSocketMessage('action_start_game'));
-    $('#pause-game').on('click', togglePauseGame);
+
+    var btn = $(".pause-button");
+    btn.click(function() {
+      btn.toggleClass("paused");
+      return false;
+    });
 });
 
 function startGame() {
