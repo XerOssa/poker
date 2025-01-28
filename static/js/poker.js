@@ -9,11 +9,9 @@ $(document).ready(function() {
     $("#start_game_form").on("submit", handleFormSubmit.bind(null, startGame));
     $("#declare_action_form").on("submit", handleFormSubmit.bind(null, declareAction));
     $('#start-game').on('click', () => sendWebSocketMessage('action_start_game'));
-
-    var btn = $(".pause-button");
-    btn.click(function() {
-      btn.toggleClass("paused");
-      return false;
+    $(".pause-button").click(function(event) {
+        event.preventDefault(); // Prevent default behavior (e.g., form submission if inside a form)
+        $(this).toggleClass("paused"); // Toggle the 'paused' class
     });
 });
 

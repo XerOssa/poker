@@ -65,7 +65,7 @@ body {
 
 
 .button-GO {
-  all: unset; /* Resetuje wszystkie style */
+  all: unset; /* Reset all styles */
   position: absolute;
   top: 8%;
   left: 50%;
@@ -81,16 +81,17 @@ body {
 
   border-style: solid;
   border-width: 25px 0 25px 50px;
-
-  &.paused {
-    border-style: double;
-    border-width: 0px 0 0px 25px;
-  }
-
-  &:hover {
-    border-color: transparent transparent transparent #404040;
-  }
 }
+
+.button-GO.paused {
+  border-style: double;
+  border-width: 0px 0 0px 25px;
+}
+
+.button-GO:hover {
+  border-color: transparent transparent transparent #404040;
+}
+
 
 .player-cards {
   position: relative;
