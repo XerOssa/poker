@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    {% include "index.html" %}
+    {% include "link_scripts.html" %}
     <link rel="icon" type="image/png" href="{% static 'favicon.png' %}">
     <link rel="stylesheet" href="{% static 'css/game.css' %}">
 </head>
@@ -12,6 +12,9 @@
     <!-- Umieść przycisk w odpowiednim miejscu -->
     <div id="round_state">
         <button class="button-GO" id="start-game"></button>
+        <button class="button-restart" id="restart-game"></button>
+        <img class="button-restart" src="/static/images/restart-icon.png">
+        
         <!-- Reszta kodu -->
         <div id="round-state-table" class="img-rounded">
             <div class="card-slot"></div>

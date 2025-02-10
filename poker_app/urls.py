@@ -12,7 +12,7 @@ urlpatterns = [
     path('hero_registration/', views.waiting_room_view, name='hero_registration'),
     path('start_game/', views.start_game_view, name='start_game'),
     path('__debug__/', include(debug_toolbar.urls)),
-    path('', views.home, name='home'),
+    path('', views.index, name='index'),
     re_path(r'ws/pokersocket/$', consumers.PokerConsumer.as_asgi()),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

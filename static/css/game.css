@@ -63,11 +63,24 @@ body {
 }
 
 
+.button-restart {  
+  all: unset;           /* TODO: nie wyswietla sie icona restartu*/
+  position: absolute;
+  top: 13%;
+  left: 50%;
+  transform: translateX(-50%);
+  
+  /* Optional: Set dimensions for the button */
+  width: 60px; /* Set the width of the button */
+  height: 60px; /* Set the height of the button */
+  border: none; /* Remove borders if you want a clean look */
+  cursor: pointer; /* Add a pointer cursor for interactivity */
+}
 
 .button-GO {
   all: unset; /* Reset all styles */
   position: absolute;
-  top: 8%;
+  top: 6%;
   left: 50%;
   transform: translateX(-50%);
   border: 0;

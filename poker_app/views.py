@@ -8,10 +8,10 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
 
-def home(request):
+def index(request):
     context = {}
     Hero.objects.all().delete()
-    return render(request, 'home.html', context)
+    return render(request, 'index.html', context)
 
 
 def handhistory(request):
