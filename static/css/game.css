@@ -64,7 +64,7 @@ body {
 
 
 .button-restart {  
-  all: unset;           /* TODO: nie wyswietla sie icona restartu*/
+  all: unset;
   position: absolute;
   top: 15%;
   left: 50%;
